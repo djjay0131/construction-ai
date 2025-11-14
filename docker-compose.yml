@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: construction-ai-db
+    environment:
+      POSTGRES_USER: construction_ai
+      POSTGRES_PASSWORD: dev_password_change_in_production
+      POSTGRES_DB: construction_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U construction_ai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for Celery (Phase 2 - commented out for Phase 1 MVP)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: construction-ai-redis
+  #   ports:
+  #     - "6379:6379"
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: construction-ai-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+      - ./data:/app/data
+      - ./ml:/app/ml
+      - ./files:/app/files
+    environment:
+      - DEBUG=true
+      - DATABASE_URL=postgresql://construction_ai:dev_password_change_in_production@db:5432/construction_ai
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Celery Worker (Phase 2 - commented out for Phase 1 MVP)
+  # celery-worker:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #     target: development
+  #   container_name: construction-ai-celery-worker
+  #   volumes:
+  #     - ./backend/app:/app/app
+  #     - ./data:/app/data
+  #     - ./ml:/app/ml
+  #     - ./files:/app/files
+  #   environment:
+  #     - DEBUG=true
+  #     - DATABASE_URL=postgresql://construction_ai:dev_password_change_in_production@db:5432/construction_ai
+  #     - REDIS_URL=redis://redis:6379/0
+  #     - CELERY_BROKER_URL=redis://redis:6379/0
+  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  #   depends_on:
+  #     - redis
+  #     - db
+  #   command: celery -A app.core.celery_app worker --loglevel=info
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: construction-ai-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - backend
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: construction-ai-network
