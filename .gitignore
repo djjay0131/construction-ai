@@ -205,3 +205,43 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ==========================================
+# Project Specific
+# ==========================================
+
+# Backend
+backend/data/uploads/
+backend/*.db
+backend/*.sqlite3
+backend/*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.cache/
+
+# Uploaded files and temporary data
+data/uploads/
+data/detections/
+*.dwg
+*.dxf
+*.pdf
+
+# YOLO model weights (large files)
+# Uncomment if you don't want to commit model files
+# backend/app/core/cv/best.pt
+# *.pt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
