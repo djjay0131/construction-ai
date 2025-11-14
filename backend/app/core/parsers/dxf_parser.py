@@ -10,6 +10,8 @@ from typing import List, Dict, Tuple, Optional, Any
 from pathlib import Path
 import logging
 
+from .dwg_converter import DWGConverter
+
 logger = logging.getLogger(__name__)
 
 
@@ -80,12 +82,12 @@ class DXFParser:
         self.elements: List[DXFElement] = []
         self.walls: List[WallElement] = []
         self.texts: List[Dict[str, Any]] = []
+        self.temp_dxf_path: Optional[Path] = None
+        self.converter: Optional[DWGConverter] = None
 
     def load(self) -> bool:
         """
-        Load the DXF file.
-
-        Note: Currently only DXF files are supported. DWG files must be converted to DXF first.
+        Load the DXF/DWG file. DWG files are automatically converted to DXF.
 
         Returns:
             True if successful, False otherwise
@@ -93,20 +95,29 @@ class DXFParser:
         try:
             logger.info(f"Loading CAD file: {self.file_path}")
 
-            # Check if file is DWG (not supported yet)
+            # Handle DWG files - convert to DXF first
             if self.file_path.suffix.lower() == '.dwg':
-                logger.error(
-                    f"DWG files are not yet supported. Please convert {self.file_path.name} to DXF format. "
-                    "You can use free tools like: "
-                    "1. LibreCAD (File -> Save As -> DXF), "
-                    "2. FreeCAD, or "
-                    "3. Online converters like CloudConvert"
-                )
-                return False
+                logger.info(f"DWG file detected. Converting to DXF: {self.file_path.name}")
 
-            self.doc = ezdxf.readfile(str(self.file_path))
+                self.converter = DWGConverter()
+                success, dxf_path, message = self.converter.convert_to_dxf(self.file_path)
+
+                if not success or dxf_path is None:
+                    logger.error(f"Failed to convert DWG to DXF: {message}")
+                    return False
+
+                self.temp_dxf_path = dxf_path
+                logger.info(f"Successfully converted to temporary DXF: {dxf_path}")
+
+                # Load the converted DXF file
+                self.doc = ezdxf.readfile(str(dxf_path))
+            else:
+                # Load DXF file directly
+                self.doc = ezdxf.readfile(str(self.file_path))
+
             logger.info(f"Successfully loaded {self.file_path.name}")
             return True
+
         except IOError as e:
             logger.error(f"Failed to load file {self.file_path}: {e}")
             return False
@@ -299,4 +310,20 @@ class DXFParser:
             "layers": self.get_layers(),
             "entity_count": len(list(self.doc.modelspace())),
             "units": "inches",  # TODO: Parse actual units from drawing
+            "was_converted_from_dwg": self.temp_dxf_path is not None,
         }
+
+    def cleanup(self):
+        """Clean up temporary files created during DWG conversion."""
+        if self.converter:
+            self.converter.cleanup()
+            self.converter = None
+            self.temp_dxf_path = None
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - cleanup temp files."""
+        self.cleanup()

@@ -14,7 +14,8 @@ import traceback
 from app.db.database import get_db
 from app.models.project import Drawing, MaterialTakeoffRecord, TakeoffStatus
 from app.schemas.material import MaterialTakeoff, TakeoffJob
-from app.core.parsers.dxf_parser import DXFParser
+from app.core.parsers.dxf_parser import DXFParser, WallElement
+from app.core.parsers.pdf_parser import PDFParser, PDFWallElement
 from app.core.extraction.lumber_calculator import LumberCalculator, FramingConfig, StudSpacing
 
 logger = logging.getLogger(__name__)
@@ -68,33 +69,53 @@ def process_drawing_takeoff(
     try:
         logger.info(f"Processing drawing: {drawing.original_filename}")
 
-        # Check if file format is supported
-        if drawing.file_format.value == 'dwg':
-            error_msg = (
-                "DWG files are not yet supported in Phase 1 MVP. "
-                "Please convert your DWG file to DXF format using: "
-                "LibreCAD, FreeCAD, or an online converter like CloudConvert. "
-                "DXF support is fully functional!"
-            )
-            raise ValueError(error_msg)
+        # Parse based on file format
+        walls = []
 
-        # Parse the DXF file
-        parser = DXFParser(drawing.file_path)
+        if drawing.file_format.value in ['dxf', 'dwg']:
+            # Parse DXF/DWG file (DWG will be auto-converted to DXF)
+            with DXFParser(drawing.file_path) as parser:
+                if not parser.load():
+                    raise Exception(f"Failed to load {drawing.file_format.value.upper()} file. Please ensure the file is valid.")
 
-        if not parser.load():
-            raise Exception(f"Failed to load {drawing.file_format.value.upper()} file. Please ensure the file is a valid DXF format.")
+                # Get drawing info
+                drawing_info = parser.get_drawing_info()
+                logger.info(f"Drawing info: {drawing_info}")
 
-        # Get drawing info
-        drawing_info = parser.get_drawing_info()
-        logger.info(f"Drawing info: {drawing_info}")
+                # Extract walls from DXF
+                walls = parser.extract_walls()
 
-        # Extract walls
-        # TODO: Intelligently determine which layers contain walls
-        # For now, extract from all layers
-        walls = parser.extract_walls()
+        elif drawing.file_format.value == 'pdf':
+            # Parse PDF file
+            pdf_parser = PDFParser(drawing.file_path)
+
+            if not pdf_parser.load():
+                raise Exception(f"Failed to load PDF file. Please ensure the file is a valid PDF.")
+
+            # Get PDF info
+            pdf_info = pdf_parser.get_drawing_info()
+            logger.info(f"PDF info: {pdf_info}")
+
+            # Extract walls from PDF (process first page only for now)
+            pdf_walls = pdf_parser.extract_walls(page_numbers=[0])
+            pdf_parser.close()
+
+            # Convert PDF walls to standard wall format
+            walls = [
+                WallElement(
+                    start_point=w.start_point,
+                    end_point=w.end_point,
+                    layer=f"page_{w.page_number}",
+                    metadata={"source": "pdf", **w.metadata}
+                )
+                for w in pdf_walls
+            ]
+
+        else:
+            raise ValueError(f"Unsupported file format: {drawing.file_format.value}")
 
         if not walls:
-            logger.warning("No walls found in drawing")
+            logger.warning(f"No walls found in {drawing.file_format.value.upper()} drawing")
 
         # Configure framing calculation
         spacing_enum = StudSpacing.OC_16 if stud_spacing == 16 else StudSpacing.OC_24
@@ -191,10 +212,10 @@ async def create_takeoff(
         raise HTTPException(status_code=404, detail="Drawing not found")
 
     # Check if file format is supported for processing
-    if drawing.file_format.value not in ['dwg', 'dxf']:
+    if drawing.file_format.value not in ['dwg', 'dxf', 'pdf']:
         raise HTTPException(
             status_code=400,
-            detail=f"Processing not yet supported for {drawing.file_format.value} files. Currently only DWG/DXF are supported."
+            detail=f"Processing not yet supported for {drawing.file_format.value} files. Currently DWG, DXF, and PDF are supported."
         )
 
     try:

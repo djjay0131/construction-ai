@@ -10,7 +10,26 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     libpq-dev \
+    wget \
+    git \
+    autoconf \
+    automake \
+    libtool \
+    make \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
+
+# Build and install LibreDWG from source
+RUN cd /tmp && \
+    git clone --depth 1 --branch 0.13.3 https://github.com/LibreDWG/libredwg.git && \
+    cd libredwg && \
+    sh autogen.sh && \
+    ./configure --disable-bindings --disable-doc && \
+    make && \
+    make install && \
+    ldconfig && \
+    cd / && \
+    rm -rf /tmp/libredwg
 
 # Copy requirements
 COPY requirements.txt .

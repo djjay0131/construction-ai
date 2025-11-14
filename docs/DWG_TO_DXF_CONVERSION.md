@@ -1,10 +1,17 @@
-# Converting DWG Files to DXF
+# DWG File Support in Construction AI
 
-## Why DXF Instead of DWG?
+## ✅ DWG Files Are Now Fully Supported!
 
-**Phase 1 MVP currently supports DXF files only.** DWG is a proprietary binary format owned by Autodesk, while DXF (Drawing Exchange Format) is an open ASCII/binary format that's easier to parse.
+**You can now upload DWG files directly** - no manual conversion required!
 
-**Good news:** Converting DWG to DXF is simple and free!
+Construction AI automatically converts DWG files to DXF format using LibreDWG (open-source) during processing. The conversion happens transparently in the backend, and temporary files are automatically cleaned up.
+
+## Manual Conversion (Optional)
+
+While automatic conversion is built-in, you may still want to manually convert DWG to DXF for these reasons:
+- **Faster processing**: Pre-converted files skip the conversion step
+- **File inspection**: Verify drawing contents before upload
+- **Compatibility**: Some very old/complex DWG files may convert better with desktop tools
 
 ## Conversion Options
 
@@ -84,15 +91,27 @@ librecad -x "HFH 9557 Barnes Rd Prefab Plans.dwg" "HFH 9557 Barnes Rd Prefab Pla
 
 Or use the GUI method described above.
 
-## Future Support
+## Supported File Formats
 
-**Phase 2 will include:**
-- Automatic DWG to DXF conversion
-- ODA File Converter integration
-- Support for all AutoCAD versions
-- PDF and image file support
+| Format | Status | Notes |
+|--------|--------|-------|
+| **DXF** | ✅ Supported | Direct parsing, no conversion needed |
+| **DWG** | ✅ Supported | Auto-converted using LibreDWG |
+| **PDF** | ✅ Supported | Vector-based drawings only |
+| **Images** | 🔲 Phase 2 | JPG, PNG - requires computer vision |
 
-For now, manual conversion ensures maximum compatibility and allows Phase 1 MVP to focus on accurate material calculations!
+## How Automatic DWG Conversion Works
+
+```
+Upload DWG → LibreDWG (dwg2dxf) → Temporary DXF → ezdxf Parser → Wall Extraction
+                                        ↓
+                                  Auto Cleanup
+```
+
+1. **Detection**: Backend detects DWG file by extension and magic bytes
+2. **Conversion**: LibreDWG `dwg2dxf` command creates temporary DXF
+3. **Parsing**: Standard DXF parser extracts wall geometry
+4. **Cleanup**: Temporary files automatically deleted after processing
 
 ## Need Help?
 

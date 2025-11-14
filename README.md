@@ -5,7 +5,8 @@ AI-powered web application that automatically calculates material take-off from 
 ## Features
 
 ### Phase 1 (MVP) - Currently Implemented
-- ✅ **DWG/DXF Parsing** - Parse CAD files using ezdxf
+- ✅ **DWG/DXF Parsing** - Parse CAD files using ezdxf with automatic DWG→DXF conversion
+- ✅ **PDF Support** - Extract vector-based walls from PDF architectural drawings
 - ✅ **Wall Extraction** - Extract wall geometry from architectural drawings
 - ✅ **Stud Calculation** - Calculate studs with configurable spacing (12", 16", 24" O.C.)
 - ✅ **Plate Calculation** - Calculate top and bottom plates
@@ -18,7 +19,7 @@ AI-powered web application that automatically calculates material take-off from 
 - 🔲 **Complete Materials** - Concrete, drywall, fasteners, tie-downs
 - 🔲 **Cut List Optimization** - Minimize waste through optimal cutting
 - 🔲 **CAD Output** - Generate labeled DXF/DWG/SVG files
-- 🔲 **Multi-format Input** - Support PDF and image files
+- 🔲 **Image Input** - Support scanned drawings (JPG, PNG)
 - 🔲 **Multi-story Support** - Handle buildings up to 2 floors
 
 ## Tech Stack
@@ -26,7 +27,9 @@ AI-powered web application that automatically calculates material take-off from 
 ### Backend
 - **Python 3.11+** with FastAPI (async, modern, auto-docs)
 - **SQLAlchemy** + PostgreSQL/SQLite (data persistence)
-- **ezdxf** - DWG/DXF parsing
+- **ezdxf** - DXF parsing
+- **LibreDWG** - DWG to DXF conversion
+- **PyMuPDF** - PDF vector extraction
 - **OR-Tools** - Cut list optimization (future)
 - **YOLOv8** - Object detection (future)
 - **LangChain** + Claude/GPT-4 - LLM integration (future)
@@ -163,9 +166,10 @@ construction-ai/
 ### 1. Upload Drawing
 
 - Navigate to http://localhost:5173
-- Click "Upload" or drag and drop a DWG/DXF file
-- Supported formats: DWG, DXF (PDF and images coming soon)
+- Click "Upload" or drag and drop a drawing file
+- Supported formats: **DWG**, **DXF**, **PDF** (vector-based)
 - Maximum file size: 100MB
+- Note: DWG files are automatically converted to DXF
 
 ### 2. Configure Parameters
 
