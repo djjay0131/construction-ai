@@ -107,3 +107,61 @@ export interface HealthCheckResponse {
   service: string
   version: string
 }
+
+// ==========================================
+// Object Detection Types
+// ==========================================
+
+export interface DetectedObject {
+  label: string
+  index: number
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  width_pixels: number
+  height_pixels: number
+  length_pixels: number
+  diagonal_pixels: number
+  confidence: number
+  // Real-world measurements (after calibration)
+  width_real?: number
+  height_real?: number
+  length_real?: number
+  diagonal_real?: number
+}
+
+export interface DetectionResult {
+  detection_id: string
+  original_filename: string
+  image_width: number
+  image_height: number
+  detected_objects: DetectedObject[]
+  object_counts: Record<string, number>
+  annotated_image_url: string
+  processed_at: string
+  confidence_threshold: number
+  selected_labels: string[]
+}
+
+export interface DetectionRequest {
+  confidence?: number
+  selected_labels?: string[]
+}
+
+export interface CalibrationRequest {
+  detection_id: string
+  reference_object_label: string
+  reference_object_index: number
+  reference_dimension: 'width' | 'height'
+  reference_real_size: number
+  unit: string
+}
+
+export interface CalibrationResult {
+  detection_id: string
+  scale_ratio: number
+  unit: string
+  reference_object: string
+  calibrated_objects: DetectedObject[]
+}

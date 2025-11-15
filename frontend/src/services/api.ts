@@ -132,4 +132,72 @@ export async function healthCheck(): Promise<{ status: string; service: string; 
   return response.data
 }
 
+// ==========================================
+// Object Detection API Methods
+// ==========================================
+
+import type { DetectionResult, CalibrationRequest, CalibrationResult } from '@/types/api'
+
+/**
+ * Detect objects in a floor plan image
+ */
+export async function detectObjects(
+  file: File,
+  options?: {
+    confidence?: number
+    selectedLabels?: string[]
+  }
+): Promise<DetectionResult> {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  if (options?.confidence !== undefined) {
+    formData.append('confidence', options.confidence.toString())
+  }
+
+  if (options?.selectedLabels && options.selectedLabels.length > 0) {
+    formData.append('selected_labels', options.selectedLabels.join(','))
+  }
+
+  const response = await api.post<DetectionResult>('/api/detection/detect', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+
+  return response.data
+}
+
+/**
+ * Get annotated image for a detection result
+ */
+export function getAnnotatedImageUrl(detectionId: string): string {
+  return `${API_BASE_URL}/api/detection/image/${detectionId}`
+}
+
+/**
+ * Get a cached detection result
+ */
+export async function getDetectionResult(detectionId: string): Promise<DetectionResult> {
+  const response = await api.get<DetectionResult>(`/api/detection/result/${detectionId}`)
+  return response.data
+}
+
+/**
+ * Calibrate measurements using a reference object
+ */
+export async function calibrateMeasurements(
+  calibration: CalibrationRequest
+): Promise<CalibrationResult> {
+  const response = await api.post<CalibrationResult>('/api/detection/calibrate', calibration)
+  return response.data
+}
+
+/**
+ * Delete a detection result
+ */
+export async function deleteDetectionResult(detectionId: string): Promise<void> {
+  await api.delete(`/api/detection/result/${detectionId}`)
+}
+
 export default api
