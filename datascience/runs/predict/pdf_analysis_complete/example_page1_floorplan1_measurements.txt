@@ -1,0 +1,353 @@
+=== Floor Plan 1 - Real-World Measurements ===
+
+Document Information:
+  Paper Size: ANSI B (Tabloid)
+  Paper Dimensions: 17.00" x 11.00"
+  Page Resolution: 5100 x 3300 pixels
+  DPI: 300
+  Pixels per Inch: 300.00 x 300.00
+
+Scale Information:
+  Scale Notation: Scale: 1/8"=1'-0"
+  Scale Ratio: 1:96.00 (real/drawing)
+  Meaning: 1 inch on paper = 96.00 inches in reality
+           1 inch on paper = 8.00 feet in reality
+
+Floor Plan Dimensions:
+  Pixels: 1352 x 2513 px
+  On Paper: 4.507" x 8.377"
+  Real World: 36'-0.64" x 67'-0.16"
+  Real World (decimal): 36.05' x 67.01'
+  Real World (inches): 432.64" x 804.16"
+  Real World Area: 2416.05 sq ft
+
+
+============================================================
+Detected Objects: 33
+============================================================
+
+NOTE: Object numbers correspond to labels in the annotated image:
+      example_page1_floorplan1_objects_numbered.png
+
+
+DOOR (2 detected)
+------------------------------------------------------------
+
+  door #1:
+    Confidence: 0.133
+    Pixels: 28.8 x 192.7 px
+    On Paper: 0.096" x 0.642"
+    Real Size: 9.22" x 5'-1.67"
+    Real Size (inches): 9.22" x 61.67"
+    Door Width: 9.22" (0.77')
+    Door Height: 61.67" (5.14')
+
+  door #2:
+    Confidence: 0.089
+    Pixels: 18.4 x 185.7 px
+    On Paper: 0.061" x 0.619"
+    Real Size: 5.89" x 4'-11.41"
+    Real Size (inches): 5.89" x 59.41"
+    Door Width: 5.89" (0.49')
+    Door Height: 59.41" (4.95')
+
+WALL (31 detected)
+------------------------------------------------------------
+
+  wall #1:
+    Confidence: 0.616
+    Pixels: 563.9 x 53.7 px
+    On Paper: 1.880" x 0.179"
+    Real Size: 15'-0.44" x 1'-5.19"
+    Real Size (inches): 180.44" x 17.19"
+    Wall Length: 15.04'
+    Wall Thickness: 17.19"
+
+  wall #2:
+    Confidence: 0.594
+    Pixels: 58.4 x 1292.9 px
+    On Paper: 0.195" x 4.310"
+    Real Size: 1'-6.68" x 34'-5.72"
+    Real Size (inches): 18.68" x 413.72"
+    Wall Length: 34.48'
+    Wall Thickness: 18.68"
+
+  wall #3:
+    Confidence: 0.471
+    Pixels: 1158.1 x 30.8 px
+    On Paper: 3.860" x 0.103"
+    Real Size: 30'-10.60" x 9.85"
+    Real Size (inches): 370.60" x 9.85"
+    Wall Length: 30.88'
+    Wall Thickness: 9.85"
+
+  wall #4:
+    Confidence: 0.372
+    Pixels: 625.5 x 18.7 px
+    On Paper: 2.085" x 0.062"
+    Real Size: 16'-8.15" x 6.00"
+    Real Size (inches): 200.15" x 6.00"
+    Wall Length: 16.68'
+    Wall Thickness: 6.00"
+
+  wall #5:
+    Confidence: 0.294
+    Pixels: 627.8 x 53.9 px
+    On Paper: 2.093" x 0.180"
+    Real Size: 16'-8.90" x 1'-5.23"
+    Real Size (inches): 200.90" x 17.23"
+    Wall Length: 16.74'
+    Wall Thickness: 17.23"
+
+  wall #6:
+    Confidence: 0.198
+    Pixels: 51.0 x 447.5 px
+    On Paper: 0.170" x 1.492"
+    Real Size: 1'-4.31" x 11'-11.19"
+    Real Size (inches): 16.31" x 143.19"
+    Wall Length: 11.93'
+    Wall Thickness: 16.31"
+
+  wall #7:
+    Confidence: 0.192
+    Pixels: 613.7 x 37.3 px
+    On Paper: 2.046" x 0.124"
+    Real Size: 16'-4.38" x 11.94"
+    Real Size (inches): 196.38" x 11.94"
+    Wall Length: 16.36'
+    Wall Thickness: 11.94"
+
+  wall #8:
+    Confidence: 0.188
+    Pixels: 570.1 x 65.5 px
+    On Paper: 1.900" x 0.218"
+    Real Size: 15'-2.43" x 1'-8.98"
+    Real Size (inches): 182.43" x 20.98"
+    Wall Length: 15.20'
+    Wall Thickness: 20.98"
+
+  wall #9:
+    Confidence: 0.154
+    Pixels: 41.3 x 1736.0 px
+    On Paper: 0.138" x 5.787"
+    Real Size: 1'-1.23" x 46'-3.51"
+    Real Size (inches): 13.23" x 555.51"
+    Wall Length: 46.29'
+    Wall Thickness: 13.23"
+
+  wall #10:
+    Confidence: 0.136
+    Pixels: 643.8 x 24.9 px
+    On Paper: 2.146" x 0.083"
+    Real Size: 17'-2.02" x 7.97"
+    Real Size (inches): 206.02" x 7.97"
+    Wall Length: 17.17'
+    Wall Thickness: 7.97"
+
+  wall #11:
+    Confidence: 0.135
+    Pixels: 32.4 x 934.7 px
+    On Paper: 0.108" x 3.116"
+    Real Size: 10.36" x 24'-11.11"
+    Real Size (inches): 10.36" x 299.11"
+    Wall Length: 24.93'
+    Wall Thickness: 10.36"
+
+  wall #12:
+    Confidence: 0.105
+    Pixels: 54.1 x 941.4 px
+    On Paper: 0.180" x 3.138"
+    Real Size: 1'-5.31" x 25'-1.23"
+    Real Size (inches): 17.31" x 301.23"
+    Wall Length: 25.10'
+    Wall Thickness: 17.31"
+
+  wall #13:
+    Confidence: 0.101
+    Pixels: 32.8 x 1731.7 px
+    On Paper: 0.109" x 5.772"
+    Real Size: 10.49" x 46'-2.14"
+    Real Size (inches): 10.49" x 554.14"
+    Wall Length: 46.18'
+    Wall Thickness: 10.49"
+
+  wall #14:
+    Confidence: 0.094
+    Pixels: 646.8 x 28.5 px
+    On Paper: 2.156" x 0.095"
+    Real Size: 17'-2.97" x 9.13"
+    Real Size (inches): 206.97" x 9.13"
+    Wall Length: 17.25'
+    Wall Thickness: 9.13"
+
+  wall #15:
+    Confidence: 0.093
+    Pixels: 23.4 x 1244.1 px
+    On Paper: 0.078" x 4.147"
+    Real Size: 7.50" x 33'-2.12"
+    Real Size (inches): 7.50" x 398.12"
+    Wall Length: 33.18'
+    Wall Thickness: 7.50"
+
+  wall #16:
+    Confidence: 0.092
+    Pixels: 630.8 x 33.8 px
+    On Paper: 2.103" x 0.113"
+    Real Size: 16'-9.85" x 10.83"
+    Real Size (inches): 201.85" x 10.83"
+    Wall Length: 16.82'
+    Wall Thickness: 10.83"
+
+  wall #17:
+    Confidence: 0.087
+    Pixels: 646.3 x 16.4 px
+    On Paper: 2.154" x 0.055"
+    Real Size: 17'-2.83" x 5.26"
+    Real Size (inches): 206.83" x 5.26"
+    Wall Length: 17.24'
+    Wall Thickness: 5.26"
+
+  wall #18:
+    Confidence: 0.086
+    Pixels: 24.7 x 1223.5 px
+    On Paper: 0.082" x 4.078"
+    Real Size: 7.89" x 32'-7.51"
+    Real Size (inches): 7.89" x 391.51"
+    Wall Length: 32.63'
+    Wall Thickness: 7.89"
+
+  wall #19:
+    Confidence: 0.082
+    Pixels: 25.7 x 55.5 px
+    On Paper: 0.086" x 0.185"
+    Real Size: 8.21" x 1'-5.77"
+    Real Size (inches): 8.21" x 17.77"
+    Wall Length: 1.48'
+    Wall Thickness: 8.21"
+
+  wall #20:
+    Confidence: 0.082
+    Pixels: 592.1 x 32.1 px
+    On Paper: 1.974" x 0.107"
+    Real Size: 15'-9.48" x 10.27"
+    Real Size (inches): 189.48" x 10.27"
+    Wall Length: 15.79'
+    Wall Thickness: 10.27"
+
+  wall #21:
+    Confidence: 0.081
+    Pixels: 41.0 x 1240.0 px
+    On Paper: 0.137" x 4.133"
+    Real Size: 1'-1.11" x 33'-0.79"
+    Real Size (inches): 13.11" x 396.79"
+    Wall Length: 33.07'
+    Wall Thickness: 13.11"
+
+  wall #22:
+    Confidence: 0.078
+    Pixels: 50.6 x 1690.4 px
+    On Paper: 0.169" x 5.635"
+    Real Size: 1'-4.21" x 45'-0.92"
+    Real Size (inches): 16.21" x 540.92"
+    Wall Length: 45.08'
+    Wall Thickness: 16.21"
+
+  wall #23:
+    Confidence: 0.074
+    Pixels: 36.8 x 1251.7 px
+    On Paper: 0.123" x 4.172"
+    Real Size: 11.78" x 33'-4.53"
+    Real Size (inches): 11.78" x 400.53"
+    Wall Length: 33.38'
+    Wall Thickness: 11.78"
+
+  wall #24:
+    Confidence: 0.073
+    Pixels: 25.0 x 1599.0 px
+    On Paper: 0.083" x 5.330"
+    Real Size: 8.00" x 42'-7.68"
+    Real Size (inches): 8.00" x 511.68"
+    Wall Length: 42.64'
+    Wall Thickness: 8.00"
+
+  wall #25:
+    Confidence: 0.071
+    Pixels: 37.4 x 941.1 px
+    On Paper: 0.125" x 3.137"
+    Real Size: 11.98" x 25'-1.16"
+    Real Size (inches): 11.98" x 301.16"
+    Wall Length: 25.10'
+    Wall Thickness: 11.98"
+
+  wall #26:
+    Confidence: 0.064
+    Pixels: 22.7 x 937.2 px
+    On Paper: 0.076" x 3.124"
+    Real Size: 7.25" x 24'-11.90"
+    Real Size (inches): 7.25" x 299.90"
+    Wall Length: 24.99'
+    Wall Thickness: 7.25"
+
+  wall #27:
+    Confidence: 0.054
+    Pixels: 14.7 x 1181.9 px
+    On Paper: 0.049" x 3.940"
+    Real Size: 4.71" x 31'-6.20"
+    Real Size (inches): 4.71" x 378.20"
+    Wall Length: 31.52'
+    Wall Thickness: 4.71"
+
+  wall #28:
+    Confidence: 0.053
+    Pixels: 34.4 x 431.9 px
+    On Paper: 0.115" x 1.440"
+    Real Size: 11.01" x 11'-6.20"
+    Real Size (inches): 11.01" x 138.20"
+    Wall Length: 11.52'
+    Wall Thickness: 11.01"
+
+  wall #29:
+    Confidence: 0.052
+    Pixels: 539.1 x 32.0 px
+    On Paper: 1.797" x 0.107"
+    Real Size: 14'-4.53" x 10.24"
+    Real Size (inches): 172.53" x 10.24"
+    Wall Length: 14.38'
+    Wall Thickness: 10.24"
+
+  wall #30:
+    Confidence: 0.051
+    Pixels: 641.5 x 31.9 px
+    On Paper: 2.138" x 0.106"
+    Real Size: 17'-1.29" x 10.20"
+    Real Size (inches): 205.29" x 10.20"
+    Wall Length: 17.11'
+    Wall Thickness: 10.20"
+
+  wall #31:
+    Confidence: 0.050
+    Pixels: 58.5 x 1610.2 px
+    On Paper: 0.195" x 5.367"
+    Real Size: 1'-6.73" x 42'-11.28"
+    Real Size (inches): 18.73" x 515.28"
+    Wall Length: 42.94'
+    Wall Thickness: 18.73"
+
+
+============================================================
+SUMMARY STATISTICS
+============================================================
+
+
+DOOR:
+  Count: 2
+  Average Size: 7.55" x 60.54" (0.63' x 5.05')
+  Width Range: 5.89" - 9.22"
+  Height Range: 59.41" - 61.67"
+
+WALL:
+  Count: 31
+  Average Size: 94.60" x 216.26" (7.88' x 18.02')
+  Width Range: 4.71" - 370.60"
+  Height Range: 5.26" - 555.51"
+  Total Wall Length: 773.07' (773.0687866210938 linear feet)

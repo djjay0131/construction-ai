@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import ObjectDetectionPage from './pages/ObjectDetectionPage'
+import FloorPlanAnalysisPage from './pages/FloorPlanAnalysisPage'
 import './App.css'
 
 function App() {
@@ -19,6 +20,12 @@ function App() {
                   Material Takeoff
                 </Link>
                 <Link
+                  to="/floor-plan-analysis"
+                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-transparent hover:border-primary-500"
+                >
+                  Floor Plan Analysis
+                </Link>
+                <Link
                   to="/detection"
                   className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-transparent hover:border-primary-500"
                 >
@@ -32,6 +39,7 @@ function App() {
         {/* Routes */}
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/floor-plan-analysis" element={<FloorPlanAnalysisPage />} />
           <Route path="/detection" element={<ObjectDetectionPage />} />
         </Routes>
       </div>

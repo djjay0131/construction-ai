@@ -1,0 +1,264 @@
+Treated Steps
+&Risers
+LAUNDRY
+RoQM
+8' Clg
+(Vinyl)
+BEDROQM #3
+Clg
+(Carpet)
+2/10
+DECK
+Treated Decking
+2/10
+HALLWAY
+1/6
+1/6
+Clg
+IOx3
+[8x6/8
+(Carpet)
+1-Sh
+& 1-Rod
+9 Lite
+CLOSET #3
+2/0
+4-Sh
+12"W
+33"W
+LIN
+CLOSET #2
+24"W
+1-Sh; & 1-Rod
+15"B
+DW
+15"B
+1/6
+1/6
+Pull Down
+~
+42"
+36"SB
+Stairs
+BcC
+24"5
+2/10
+Pull
+to 48
+30"
+Microwave Above
+2/10
+4-Sh
+KITCHEN
+24"x48"
+PAN
+BEDROQM#2
+24"Wi24"B
+Clg
+2/6
+HALL
+Island
+BATH
+Clg
+(Vinyl)
+2/6
+(Carpet)
+8' Clg
+(Vinyl)
+Hw
+36x12
+REF.
+Fbgls;
+Tub/ Shwr
+1-Sh; & 2-Rod
+48"
+DINING
+Van;
+ROOM
+MASTER
+3
+8' Clg
+CLOSET
+Fbgls
+(Vinyl)
+Tub/ Shwr
+MASTER
+Clg
+3
+(Carpet)
+BATH
+8
+8" Clg
+#
+(Vinyl)
+(Vinyl)
+2/10
+2/10
+Carpet)
+(Vinyl)
+2/10
+Carpet)
+GREATROQM
+8' Clg
+COAT
+1
+(Carpet)
+2/0
+{
+MASTER BEDROOM
+Clg
+(Carpet)
+Je
+3/0x6/8
+2-278x57/2
+Top Lite
+2-2/8x5/2
+FRONT PORCH
+Vinyl Clg
+Treated Decking
+Treated Steps
+Risers
+Total Finished Area:
+First Floor Plan
+First Floor
+1200
+FPorch
+92
+Scale: 1/8"=1'-0"
+Rear Deck
+100
+Range -
+Van
+
+=== Detailed OCR Results ===
+Text: Treated Steps (confidence: 0.992)
+Text: &Risers (confidence: 0.760)
+Text: LAUNDRY (confidence: 0.999)
+Text: RoQM (confidence: 0.495)
+Text: 8' Clg (confidence: 0.785)
+Text: (Vinyl) (confidence: 0.999)
+Text: BEDROQM #3 (confidence: 0.670)
+Text: Clg (confidence: 0.990)
+Text: (Carpet) (confidence: 1.000)
+Text: 2/10 (confidence: 0.998)
+Text: DECK (confidence: 0.999)
+Text: Treated Decking (confidence: 0.808)
+Text: 2/10 (confidence: 1.000)
+Text: HALLWAY (confidence: 0.998)
+Text: 1/6 (confidence: 0.999)
+Text: 1/6 (confidence: 0.999)
+Text: Clg (confidence: 0.998)
+Text: IOx3 (confidence: 0.781)
+Text: [8x6/8 (confidence: 0.905)
+Text: (Carpet) (confidence: 1.000)
+Text: 1-Sh (confidence: 0.998)
+Text: & 1-Rod (confidence: 0.816)
+Text: 9 Lite (confidence: 0.760)
+Text: CLOSET #3 (confidence: 0.915)
+Text: 2/0 (confidence: 0.999)
+Text: 4-Sh (confidence: 0.905)
+Text: 12"W (confidence: 0.912)
+Text: 33"W (confidence: 0.998)
+Text: LIN (confidence: 0.755)
+Text: CLOSET #2 (confidence: 0.982)
+Text: 24"W (confidence: 0.965)
+Text: 1-Sh; & 1-Rod (confidence: 0.489)
+Text: 15"B (confidence: 0.761)
+Text: DW (confidence: 0.990)
+Text: 15"B (confidence: 0.916)
+Text: 1/6 (confidence: 1.000)
+Text: 1/6 (confidence: 0.981)
+Text: Pull Down (confidence: 0.953)
+Text: ~ (confidence: 0.275)
+Text: 42" (confidence: 1.000)
+Text: 36"SB (confidence: 0.996)
+Text: Stairs (confidence: 0.948)
+Text: BcC (confidence: 0.323)
+Text: 24"5 (confidence: 0.512)
+Text: 2/10 (confidence: 0.861)
+Text: Pull (confidence: 0.998)
+Text: to 48 (confidence: 0.262)
+Text: 30" (confidence: 0.502)
+Text: Microwave Above (confidence: 0.998)
+Text: 2/10 (confidence: 1.000)
+Text: 4-Sh (confidence: 0.644)
+Text: KITCHEN (confidence: 0.975)
+Text: 24"x48" (confidence: 0.877)
+Text: PAN (confidence: 1.000)
+Text: BEDROQM#2 (confidence: 0.649)
+Text: 24"Wi24"B (confidence: 0.755)
+Text: Clg (confidence: 0.999)
+Text: 2/6 (confidence: 0.911)
+Text: HALL (confidence: 0.992)
+Text: Island (confidence: 0.999)
+Text: BATH (confidence: 0.998)
+Text: Clg (confidence: 1.000)
+Text: (Vinyl) (confidence: 0.999)
+Text: 2/6 (confidence: 0.996)
+Text: (Carpet) (confidence: 1.000)
+Text: 8' Clg (confidence: 0.915)
+Text: (Vinyl) (confidence: 0.999)
+Text: Hw (confidence: 0.666)
+Text: 36x12 (confidence: 0.952)
+Text: REF. (confidence: 0.897)
+Text: Fbgls; (confidence: 0.432)
+Text: Tub/ Shwr (confidence: 0.775)
+Text: 1-Sh; & 2-Rod (confidence: 0.788)
+Text: 48" (confidence: 1.000)
+Text: DINING (confidence: 0.999)
+Text: Van; (confidence: 0.821)
+Text: ROOM (confidence: 0.999)
+Text: MASTER (confidence: 1.000)
+Text: 3 (confidence: 0.685)
+Text: 8' Clg (confidence: 0.867)
+Text: CLOSET (confidence: 1.000)
+Text: Fbgls (confidence: 1.000)
+Text: (Vinyl) (confidence: 0.999)
+Text: Tub/ Shwr (confidence: 0.917)
+Text: MASTER (confidence: 0.997)
+Text: Clg (confidence: 0.482)
+Text: 3 (confidence: 0.077)
+Text: (Carpet) (confidence: 1.000)
+Text: BATH (confidence: 0.975)
+Text: 8 (confidence: 0.506)
+Text: 8" Clg (confidence: 0.403)
+Text: # (confidence: 0.140)
+Text: (Vinyl) (confidence: 1.000)
+Text: (Vinyl) (confidence: 0.999)
+Text: 2/10 (confidence: 1.000)
+Text: 2/10 (confidence: 0.998)
+Text: Carpet) (confidence: 0.999)
+Text: (Vinyl) (confidence: 0.999)
+Text: 2/10 (confidence: 0.999)
+Text: Carpet) (confidence: 0.987)
+Text: GREATROQM (confidence: 0.788)
+Text: 8' Clg (confidence: 0.785)
+Text: COAT (confidence: 0.999)
+Text: 1 (confidence: 0.524)
+Text: (Carpet) (confidence: 1.000)
+Text: 2/0 (confidence: 1.000)
+Text: { (confidence: 0.179)
+Text: MASTER BEDROOM (confidence: 0.937)
+Text: Clg (confidence: 1.000)
+Text: (Carpet) (confidence: 1.000)
+Text: Je (confidence: 0.463)
+Text: 3/0x6/8 (confidence: 0.998)
+Text: 2-278x57/2 (confidence: 0.460)
+Text: Top Lite (confidence: 0.979)
+Text: 2-2/8x5/2 (confidence: 0.885)
+Text: FRONT PORCH (confidence: 0.927)
+Text: Vinyl Clg (confidence: 0.643)
+Text: Treated Decking (confidence: 0.930)
+Text: Treated Steps (confidence: 0.985)
+Text: Risers (confidence: 1.000)
+Text: Total Finished Area: (confidence: 0.759)
+Text: First Floor Plan (confidence: 0.998)
+Text: First Floor (confidence: 0.947)
+Text: 1200 (confidence: 1.000)
+Text: FPorch (confidence: 1.000)
+Text: 92 (confidence: 1.000)
+Text: Scale: 1/8"=1'-0" (confidence: 0.578)
+Text: Rear Deck (confidence: 1.000)
+Text: 100 (confidence: 0.999)
+Text: Range - (confidence: 0.710)
+Text: Van (confidence: 0.652)

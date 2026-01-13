@@ -1,0 +1,18 @@
+=== Paper Size Information ===
+
+Page Number: 1
+Dimensions (pixels): 5100 x 3300
+Dimensions (inches): 17.00" x 11.00"
+DPI: 300
+Paper Size: ANSI B (Tabloid)
+Orientation: Landscape
+
+=== Common Architectural Paper Sizes ===
+
+ARCH Series:
+  ARCH A: 9" x 12"
+  ARCH B: 12" x 18"
+  ARCH C: 18" x 24"
+  ARCH D: 24" x 36"
+  ARCH E: 36" x 48"
+  ARCH E1: 30" x 42"

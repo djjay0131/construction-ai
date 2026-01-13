@@ -1,0 +1,252 @@
+=== Floor Plan 1 OCR Results ===
+
+18- 8"x16" VENTS @
+65 SQ. FT. PER VENT= 11.70 SQFT. VENTING PROVIDED
+30'-8"
+13
+9"
+16' -11"
+4" Brick Skirt
+10"Deep * 24"Wide Cont_Conc_Ftg
+8"x16"
+8" CMU
+8"x16"
+Went
+ent
+11-7/8" I-Joist
+per manufacturer
+4
+32"x24"
+Access Door
+Conditioned Crawlspace w/ 2"
+5
+Brick Skict
+Deep
+24" Wide Cont,
+Conc tg;
+Thermax perimeter insulation
+& 10 mil poly ground cover over
+{
+8"x16"
+8" CMU
+8"x16'
+compacted sand fill
+Vent
+Vent
+8
+13'-11 1/4"
+16'-0 3/4"
+11-7/8" I-Joist
+11-7/8" I-Joist
+d
+per manufacturer
+per manufacturer
+1
+3
+8
+3
+3
+Girder (Syp
+1
+(Typ_
+3
+Conditioned Crawlspace w/ 2"
+1
+Thermax perimeter insulation
+Conditioned Crawlspace w/ 2"
+& 10 mil poly ground cover over
+1
+Thermax perimeter insulation
+3
+compacted sand fill
+& 10 mil poly ground cover over
+compacted sand fill
+3
+3
+8
+~
+2
+1
+Provide mechanical supply for
+Provide mechanical supply for
+conditioned crawl in accordance
+conditioned crawl in accordance
+with R408.3 2.2
+with R408.3 2.2
+1
+12"x16" CMU
+11-7/8" I-Joist
+Pier (Typ:)
+11-7/8" I-Joist
+per manufacturer
+per manufacturer
+3
+(8xl6 Foundation Vents used
+3
+construction to be permanently
+sealed upon implementation
+1/2"x18" H.D. Galv. Anchor Bolts
+of crawl space conditioning)
+d
+6' O.C_
+max; & within 12" max
+from Corners & Plate ends (typ.)
+1
+d
+13'-11 1/4"
+16'-0 3/4"
+8"x16'
+8"x16"
+X16"
+Vent
+8" CMU
+Vent
+8" CMU
+Vent
+Brick Skirt
+Deep
+24"Wide Cont,
+Brick Skirt
+16" Brick Column
+*Note: Brick Skirt Extends Past
+(filled solid) Typ
+Outer Frame Line by 4"
+10"Deep x 24"Wide Cont, Conc;
+9'-9 1/4"
+6'-6 1/2"
+13'-11 1/4"
+16 '-3 3/4"
+4 1/2"
+30
+Foundation Plan
+Gcale: 1/8"
+during
+Conc;
+Ftg
+Ftg:
+
+=== Detailed Results ===
+Text: 18- 8"x16" VENTS @ (confidence: 0.936)
+Text: 65 SQ. FT. PER VENT= 11.70 SQFT. VENTING PROVIDED (confidence: 0.736)
+Text: 30'-8" (confidence: 0.943)
+Text: 13 (confidence: 1.000)
+Text: 9" (confidence: 1.000)
+Text: 16' -11" (confidence: 0.618)
+Text: 4" Brick Skirt (confidence: 0.888)
+Text: 10"Deep * 24"Wide Cont_Conc_Ftg (confidence: 0.403)
+Text: 8"x16" (confidence: 0.594)
+Text: 8" CMU (confidence: 0.686)
+Text: 8"x16" (confidence: 0.959)
+Text: Went (confidence: 0.431)
+Text: ent (confidence: 0.497)
+Text: 11-7/8" I-Joist (confidence: 0.815)
+Text: per manufacturer (confidence: 1.000)
+Text: 4 (confidence: 0.383)
+Text: 32"x24" (confidence: 0.965)
+Text: Access Door (confidence: 0.979)
+Text: Conditioned Crawlspace w/ 2" (confidence: 0.980)
+Text: 5 (confidence: 0.092)
+Text: Brick Skict (confidence: 0.614)
+Text: Deep (confidence: 0.975)
+Text: 24" Wide Cont, (confidence: 0.570)
+Text: Conc tg; (confidence: 0.655)
+Text: Thermax perimeter insulation (confidence: 0.988)
+Text: & 10 mil poly ground cover over (confidence: 0.969)
+Text: { (confidence: 0.538)
+Text: 8"x16" (confidence: 0.594)
+Text: 8" CMU (confidence: 0.993)
+Text: 8"x16' (confidence: 0.967)
+Text: compacted sand fill (confidence: 0.954)
+Text: Vent (confidence: 0.842)
+Text: Vent (confidence: 0.747)
+Text: 8 (confidence: 0.318)
+Text: 13'-11 1/4" (confidence: 0.829)
+Text: 16'-0 3/4" (confidence: 0.788)
+Text: 11-7/8" I-Joist (confidence: 0.458)
+Text: 11-7/8" I-Joist (confidence: 0.779)
+Text: d (confidence: 0.225)
+Text: per manufacturer (confidence: 0.903)
+Text: per manufacturer (confidence: 0.849)
+Text: 1 (confidence: 0.148)
+Text: 3 (confidence: 0.244)
+Text: 8 (confidence: 0.203)
+Text: 3 (confidence: 1.000)
+Text: 3 (confidence: 0.171)
+Text: Girder (Syp (confidence: 0.282)
+Text: 1 (confidence: 0.286)
+Text: (Typ_ (confidence: 0.683)
+Text: 3 (confidence: 0.845)
+Text: Conditioned Crawlspace w/ 2" (confidence: 0.778)
+Text: 1 (confidence: 0.226)
+Text: Thermax perimeter insulation (confidence: 0.999)
+Text: Conditioned Crawlspace w/ 2" (confidence: 0.940)
+Text: & 10 mil poly ground cover over (confidence: 0.829)
+Text: 1 (confidence: 0.748)
+Text: Thermax perimeter insulation (confidence: 0.996)
+Text: 3 (confidence: 0.329)
+Text: compacted sand fill (confidence: 0.881)
+Text: & 10 mil poly ground cover over (confidence: 0.743)
+Text: compacted sand fill (confidence: 0.983)
+Text: 3 (confidence: 0.265)
+Text: 3 (confidence: 0.237)
+Text: 8 (confidence: 0.992)
+Text: ~ (confidence: 0.049)
+Text: 2 (confidence: 0.991)
+Text: 1 (confidence: 0.877)
+Text: Provide mechanical supply for (confidence: 0.989)
+Text: Provide mechanical supply for (confidence: 0.876)
+Text: conditioned crawl in accordance (confidence: 0.930)
+Text: conditioned crawl in accordance (confidence: 0.975)
+Text: with R408.3 2.2 (confidence: 0.912)
+Text: with R408.3 2.2 (confidence: 0.912)
+Text: 1 (confidence: 0.084)
+Text: 12"x16" CMU (confidence: 0.799)
+Text: 11-7/8" I-Joist (confidence: 0.579)
+Text: Pier (Typ:) (confidence: 0.499)
+Text: 11-7/8" I-Joist (confidence: 0.553)
+Text: per manufacturer (confidence: 1.000)
+Text: per manufacturer (confidence: 0.998)
+Text: 3 (confidence: 0.996)
+Text: (8xl6 Foundation Vents used (confidence: 0.778)
+Text: 3 (confidence: 0.998)
+Text: construction to be permanently (confidence: 0.990)
+Text: sealed upon implementation (confidence: 0.759)
+Text: 1/2"x18" H.D. Galv. Anchor Bolts (confidence: 0.579)
+Text: of crawl space conditioning) (confidence: 0.854)
+Text: d (confidence: 0.253)
+Text: 6' O.C_ (confidence: 0.683)
+Text: max; & within 12" max (confidence: 0.767)
+Text: from Corners & Plate ends (typ.) (confidence: 0.629)
+Text: 1 (confidence: 0.069)
+Text: d (confidence: 0.875)
+Text: 13'-11 1/4" (confidence: 0.829)
+Text: 16'-0 3/4" (confidence: 0.788)
+Text: 8"x16' (confidence: 0.851)
+Text: 8"x16" (confidence: 0.635)
+Text: X16" (confidence: 0.254)
+Text: Vent (confidence: 1.000)
+Text: 8" CMU (confidence: 0.761)
+Text: Vent (confidence: 0.980)
+Text: 8" CMU (confidence: 0.853)
+Text: Vent (confidence: 1.000)
+Text: Brick Skirt (confidence: 0.610)
+Text: Deep (confidence: 0.994)
+Text: 24"Wide Cont, (confidence: 0.664)
+Text: Brick Skirt (confidence: 0.727)
+Text: 16" Brick Column (confidence: 0.970)
+Text: *Note: Brick Skirt Extends Past (confidence: 0.967)
+Text: (filled solid) Typ (confidence: 0.769)
+Text: Outer Frame Line by 4" (confidence: 0.974)
+Text: 10"Deep x 24"Wide Cont, Conc; (confidence: 0.457)
+Text: 9'-9 1/4" (confidence: 0.914)
+Text: 6'-6 1/2" (confidence: 0.905)
+Text: 13'-11 1/4" (confidence: 0.929)
+Text: 16 '-3 3/4" (confidence: 0.693)
+Text: 4 1/2" (confidence: 0.860)
+Text: 30 (confidence: 0.819)
+Text: Foundation Plan (confidence: 1.000)
+Text: Gcale: 1/8" (confidence: 0.511)
+Text: during (confidence: 0.794)
+Text: Conc; (confidence: 0.638)
+Text: Ftg (confidence: 0.513)
+Text: Ftg: (confidence: 0.547)

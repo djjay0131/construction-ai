@@ -200,4 +200,169 @@ export async function deleteDetectionResult(detectionId: string): Promise<void> 
   await api.delete(`/api/detection/result/${detectionId}`)
 }
 
-export default api
+// ==========================================
+// Floor Plan Analysis API Methods
+// ==========================================
+
+export interface ScaleInfo {
+  found: boolean
+  notation?: string
+  format?: string
+  drawing_unit?: string
+  real_unit?: string
+  drawing_value?: number
+  real_value?: number
+  scale_ratio?: number
+}
+
+export interface PaperSize {
+  name: string
+  width_inches: number
+  height_inches: number
+  orientation: string
+}
+
+export interface BoundingBox {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  confidence: number
+}
+
+export interface DetectedObject {
+  id: number
+  class_name: string
+  confidence: number
+  bbox: BoundingBox
+  real_dimensions?: any
+}
+
+export interface FloorPlanInfo {
+  id: number
+  bbox: BoundingBox
+  image_url: string
+  annotated_image_url?: string
+  numbered_image_url?: string
+  scale?: ScaleInfo
+  detected_objects?: DetectedObject[]
+  object_counts?: Record<string, number>
+  ocr_text?: string
+  width_pixels: number
+  height_pixels: number
+  width_inches?: number
+  height_inches?: number
+  real_width?: string
+  real_height?: string
+  real_area_sqft?: number
+}
+
+export interface PDFAnalysisResult {
+  analysis_id: string
+  filename: string
+  num_pages: number
+  page_number: number
+  paper_size: PaperSize
+  floor_plans: FloorPlanInfo[]
+  num_floor_plans: number
+  full_page_ocr?: string
+  full_page_scale?: ScaleInfo
+  processing_time_seconds: number
+  warnings: string[]
+}
+
+export interface FloorPlanDetectionRequest {
+  analysis_id: string
+  floor_plan_id: number
+  confidence?: number
+  manual_scale?: string
+}
+
+export interface FloorPlanDetectionResult {
+  floor_plan_id: number
+  detected_objects: DetectedObject[]
+  object_counts: Record<string, number>
+  annotated_image_url: string
+  numbered_image_url: string
+  scale_used: ScaleInfo
+  measurements_summary?: string
+}
+
+/**
+ * Upload and analyze a PDF to detect floor plans
+ */
+export async function analyzePDF(
+  file: File,
+  pageNumber: number = 1
+): Promise<PDFAnalysisResult> {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const response = await api.post<PDFAnalysisResult>(
+    `/api/floor-plan/analyze-pdf?page_number=${pageNumber}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  )
+
+  return response.data
+}
+
+/**
+ * Detect objects in a specific floor plan
+ */
+export async function detectObjectsInFloorPlan(
+  request: FloorPlanDetectionRequest
+): Promise<FloorPlanDetectionResult> {
+  const response = await api.post<FloorPlanDetectionResult>(
+    '/api/floor-plan/detect-objects',
+    request
+  )
+
+  return response.data
+}
+
+/**
+ * Get an image from floor plan analysis
+ */
+export function getFloorPlanImageUrl(analysisId: string, filename: string): string {
+  return `${API_BASE_URL}/api/floor-plan/image/${analysisId}/${filename}`
+}
+
+/**
+ * Get analysis status
+ */
+export async function getAnalysisStatus(analysisId: string): Promise<{
+  exists: boolean
+  num_floor_plans?: number
+  floor_plan_ids?: number[]
+}> {
+  const response = await api.get(`/api/floor-plan/status/${analysisId}`)
+  return response.data
+}
+
+/**
+ * Delete an analysis
+ */
+export async function deleteAnalysis(analysisId: string): Promise<void> {
+  await api.delete(`/api/floor-plan/analysis/${analysisId}`)
+}
+
+/**
+ * Export analysis as JSON file
+ */
+export function exportAnalysisJSON(analysisId: string): string {
+  return `${API_BASE_URL}/api/floor-plan/export/${analysisId}`
+}
+
+/**
+ * Export floor plan with detection results as JSON file
+ */
+export function exportFloorPlanJSON(analysisId: string, floorPlanId: number): string {
+  return `${API_BASE_URL}/api/floor-plan/export/${analysisId}/floor-plan/${floorPlanId}`
+}
+
+

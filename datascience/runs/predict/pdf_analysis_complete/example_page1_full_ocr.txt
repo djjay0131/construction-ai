@@ -1,0 +1,360 @@
+=== Full Page OCR Results ===
+
+PAVE
+Project
+CRAWL SPACE VENTILATION
+1062 SQ: FT. OF TOTAL UNDER FLOOR AREA/15O= 7.08 SQFT. VENTING REQUIRED
+Sponsor:
+18 - 8"x16" VENTS
+SQ
+FT
+PER VENT= 11.70 SQFT. VENTING PROVIDED
+Virginia Housing
+16'
+10"Deep
+2fmido
+2/8x5/2
+8"x16
+(8"x16'
+Treated Steps
+LAUNDRY
+ROOM
+"Clg
+(Vinvl)
+BEDROQM #3
+11-7/8'
+T-Joist
+per manufacturer
+(Carpet)
+32"x24'
+Access
+2/10
+DECK
+Treated Decking
+2/10
+#a
+1-Sh; & 1-Rod
+1/6
+Theditione
+~Cretespacsulatizn
+1
+CLOSET #3
+poly ground cover over
+8"x16'
+~compacted sand fill
+33"W
+CLOSET #t2
+& 1-Rod
+Pull Down
+13'-11 1/4
+16'-0 3/4
+Stairs
+2/10
+Range
+Microwave Above
+2/10
+11-7/8" I-Joist
+11-7/8"
+I-Joist
+manufacturer
+per manufacturer_
+KITCHEN
+?sland
+PAN
+HALL
+BEDROQM t2
+g
+(Vinvl)
+BATH
+(Carbet)
+(Vinyl)
+Gizae SYP.
+8
+8
+Tub/ Shwr_
+Conditioned Crawlspace w/
+Conditioned Crawlspace
+Thermax perimete
+insulation
+1-Sh
+2-Ro
+Thermax perimete
+insulation
+& 10 mil poly ground cover over
+& 10 mil polv
+'ound cover over
+DINING
+compacted sand fill
+compacted sand fill
+3
+MSSE8
+TFbgls _
+MASTER
+3
+S
+(Carpet)
+5
+Poovidenechaaicalrsacobyr-donce
+supply
+for
+Pondideonechaaical
+rsaccordonce
+
+with R408
+2 2
+with R408
+2 2
+2/10
+2/10
+(Carpet)
+2/10
+11-7/8" I-Joist
+Pzerl6"yCMu
+11-7/8" I-Joist
+20
+manufacturer
+per manufacturer-
+GREAT ROOM
+ICQAT
+(Carpet)
+2/0
+(8x16 Foundation Vents
+during
+MASTER
+BEDROQM
+construction
+bermanentlv
+sealed upon
+lementation
+(Carfler)
+1/2"x18" HD
+Galv
+Anchor Bolts
+crawl space conditioning)
+O.C. max
+within
+max
+from Corners
+Plate ends (typ.)
+Designer
+Craig T. Meadows
+13'-111/4
+'~0 3/4
+3/0x6/8
+Vent
+8" Cmu
+8" Cmu
+Top Lite
+2-2/8*5/2
+Construction
+FRONT PORCH
+Brick Column
+*Note: Brick Skirt Extends Past
+Treated Decking
+(filled solid)
+Typ-
+Habitat For
+Outer Frame Line by 4"
+Cont
+Humanity
+Treated Steps
+Uedicors
+9 1/4"
+6 1/2
+PGW
+3/4"
+4 1/2
+Total Finished Area:
+First Floor Plan
+First Floor
+1200
+Sheet #
+FPorch
+92
+Scale: 178"=1'-0"
+Rear Deck
+100
+Foundation Plan
+Scale: 178"-1"-0"
+A-2
+"Deep
+
+=== Detailed Results with Confidence ===
+Text: PAVE (confidence: 1.000)
+Text: Project (confidence: 1.000)
+Text: CRAWL SPACE VENTILATION (confidence: 0.803)
+Text: 1062 SQ: FT. OF TOTAL UNDER FLOOR AREA/15O= 7.08 SQFT. VENTING REQUIRED (confidence: 0.471)
+Text: Sponsor: (confidence: 1.000)
+Text: 18 - 8"x16" VENTS (confidence: 0.685)
+Text: SQ (confidence: 0.701)
+Text: FT (confidence: 0.990)
+Text: PER VENT= 11.70 SQFT. VENTING PROVIDED (confidence: 0.831)
+Text: Virginia Housing (confidence: 0.999)
+Text: 16' (confidence: 1.000)
+Text: 10"Deep (confidence: 0.634)
+Text: 2fmido (confidence: 0.015)
+Text: 2/8x5/2 (confidence: 0.707)
+Text: 8"x16 (confidence: 0.956)
+Text: (8"x16' (confidence: 0.393)
+Text: Treated Steps (confidence: 1.000)
+Text: LAUNDRY (confidence: 0.999)
+Text: ROOM (confidence: 0.908)
+Text: "Clg (confidence: 0.882)
+Text: (Vinvl) (confidence: 0.547)
+Text: BEDROQM #3 (confidence: 0.723)
+Text: 11-7/8' (confidence: 0.980)
+Text: T-Joist (confidence: 0.878)
+Text: per manufacturer (confidence: 1.000)
+Text: (Carpet) (confidence: 1.000)
+Text: 32"x24' (confidence: 0.898)
+Text: Access (confidence: 1.000)
+Text: 2/10 (confidence: 0.999)
+Text: DECK (confidence: 1.000)
+Text: Treated Decking (confidence: 0.989)
+Text: 2/10 (confidence: 0.998)
+Text: #a (confidence: 0.072)
+Text: 1-Sh; & 1-Rod (confidence: 0.535)
+Text: 1/6 (confidence: 0.999)
+Text: Theditione (confidence: 0.676)
+Text: ~Cretespacsulatizn (confidence: 0.328)
+Text: 1 (confidence: 0.916)
+Text: CLOSET #3 (confidence: 0.665)
+Text: poly ground cover over (confidence: 0.795)
+Text: 8"x16' (confidence: 0.977)
+Text: ~compacted sand fill (confidence: 0.740)
+Text: 33"W (confidence: 0.998)
+Text: CLOSET #t2 (confidence: 0.504)
+Text: & 1-Rod (confidence: 0.558)
+Text: Pull Down (confidence: 0.775)
+Text: 13'-11 1/4 (confidence: 0.977)
+Text: 16'-0 3/4 (confidence: 0.998)
+Text: Stairs (confidence: 0.999)
+Text: 2/10 (confidence: 1.000)
+Text: Range (confidence: 1.000)
+Text: Microwave Above (confidence: 0.980)
+Text: 2/10 (confidence: 0.993)
+Text: 11-7/8" I-Joist (confidence: 0.558)
+Text: 11-7/8" (confidence: 0.952)
+Text: I-Joist (confidence: 0.939)
+Text: manufacturer (confidence: 0.978)
+Text: per manufacturer_ (confidence: 0.685)
+Text: KITCHEN (confidence: 0.621)
+Text: ?sland (confidence: 0.643)
+Text: PAN (confidence: 1.000)
+Text: HALL (confidence: 0.999)
+Text: BEDROQM t2 (confidence: 0.478)
+Text: g (confidence: 0.764)
+Text: (Vinvl) (confidence: 0.893)
+Text: BATH (confidence: 0.996)
+Text: (Carbet) (confidence: 0.901)
+Text: (Vinyl) (confidence: 0.994)
+Text: Gizae SYP. (confidence: 0.357)
+Text: 8 (confidence: 0.236)
+Text: 8 (confidence: 0.637)
+Text: Tub/ Shwr_ (confidence: 0.938)
+Text: Conditioned Crawlspace w/ (confidence: 0.767)
+Text: Conditioned Crawlspace (confidence: 1.000)
+Text: Thermax perimete (confidence: 1.000)
+Text: insulation (confidence: 1.000)
+Text: 1-Sh (confidence: 0.998)
+Text: 2-Ro (confidence: 0.980)
+Text: Thermax perimete (confidence: 0.994)
+Text: insulation (confidence: 0.693)
+Text: & 10 mil poly ground cover over (confidence: 0.870)
+Text: & 10 mil polv (confidence: 0.740)
+Text: 'ound cover over (confidence: 0.918)
+Text: DINING (confidence: 1.000)
+Text: compacted sand fill (confidence: 0.606)
+Text: compacted sand fill (confidence: 0.770)
+Text: 3 (confidence: 0.389)
+Text: MSSE8 (confidence: 0.243)
+Text: TFbgls _ (confidence: 0.324)
+Text: MASTER (confidence: 0.999)
+Text: 3 (confidence: 0.601)
+Text: S (confidence: 0.098)
+Text: (Carpet) (confidence: 0.576)
+Text: 5 (confidence: 0.088)
+Text: Poovidenechaaicalrsacobyr-donce (confidence: 0.184)
+Text: supply (confidence: 0.785)
+Text: for (confidence: 1.000)
+Text: Pondideonechaaical (confidence: 0.522)
+Text: rsaccordonce (confidence: 0.417)
+Text:  (confidence: 0.000)
+Text: with R408 (confidence: 0.853)
+Text: 2 2 (confidence: 0.799)
+Text: with R408 (confidence: 0.807)
+Text: 2 2 (confidence: 0.958)
+Text: 2/10 (confidence: 0.997)
+Text: 2/10 (confidence: 1.000)
+Text: (Carpet) (confidence: 0.358)
+Text: 2/10 (confidence: 1.000)
+Text: 11-7/8" I-Joist (confidence: 0.939)
+Text: Pzerl6"yCMu (confidence: 0.238)
+Text: 11-7/8" I-Joist (confidence: 0.944)
+Text: 20 (confidence: 0.051)
+Text: manufacturer (confidence: 1.000)
+Text: per manufacturer- (confidence: 0.537)
+Text: GREAT ROOM (confidence: 0.579)
+Text: ICQAT (confidence: 0.716)
+Text: (Carpet) (confidence: 1.000)
+Text: 2/0 (confidence: 0.998)
+Text: (8x16 Foundation Vents (confidence: 0.802)
+Text: during (confidence: 0.838)
+Text: MASTER (confidence: 0.996)
+Text: BEDROQM (confidence: 0.813)
+Text: construction (confidence: 1.000)
+Text: bermanentlv (confidence: 0.568)
+Text: sealed upon (confidence: 0.960)
+Text: lementation (confidence: 0.997)
+Text: (Carfler) (confidence: 0.413)
+Text: 1/2"x18" HD (confidence: 0.903)
+Text: Galv (confidence: 1.000)
+Text: Anchor Bolts (confidence: 0.710)
+Text: crawl space conditioning) (confidence: 0.685)
+Text: O.C. max (confidence: 0.656)
+Text: within (confidence: 1.000)
+Text: max (confidence: 0.985)
+Text: from Corners (confidence: 1.000)
+Text: Plate ends (typ.) (confidence: 0.698)
+Text: Designer (confidence: 0.886)
+Text: Craig T. Meadows (confidence: 0.623)
+Text: 13'-111/4 (confidence: 0.613)
+Text: '~0 3/4 (confidence: 0.526)
+Text: 3/0x6/8 (confidence: 0.722)
+Text: Vent (confidence: 0.751)
+Text: 8" Cmu (confidence: 0.514)
+Text: 8" Cmu (confidence: 0.514)
+Text: Top Lite (confidence: 0.964)
+Text: 2-2/8*5/2 (confidence: 0.686)
+Text: Construction (confidence: 1.000)
+Text: FRONT PORCH (confidence: 0.962)
+Text: Brick Column (confidence: 0.994)
+Text: *Note: Brick Skirt Extends Past (confidence: 0.968)
+Text: Treated Decking (confidence: 0.993)
+Text: (filled solid) (confidence: 0.634)
+Text: Typ- (confidence: 0.419)
+Text: Habitat For (confidence: 1.000)
+Text: Outer Frame Line by 4" (confidence: 0.929)
+Text: Cont (confidence: 0.812)
+Text: Humanity (confidence: 1.000)
+Text: Treated Steps (confidence: 0.998)
+Text: Uedicors (confidence: 0.012)
+Text: 9 1/4" (confidence: 0.987)
+Text: 6 1/2 (confidence: 0.657)
+Text: PGW (confidence: 0.986)
+Text: 3/4" (confidence: 0.668)
+Text: 4 1/2 (confidence: 0.613)
+Text: Total Finished Area: (confidence: 0.961)
+Text: First Floor Plan (confidence: 0.997)
+Text: First Floor (confidence: 0.565)
+Text: 1200 (confidence: 0.999)
+Text: Sheet # (confidence: 0.996)
+Text: FPorch (confidence: 1.000)
+Text: 92 (confidence: 1.000)
+Text: Scale: 178"=1'-0" (confidence: 0.476)
+Text: Rear Deck (confidence: 0.932)
+Text: 100 (confidence: 0.997)
+Text: Foundation Plan (confidence: 0.918)
+Text: Scale: 178"-1"-0" (confidence: 0.348)
+Text: A-2 (confidence: 0.850)
+Text: "Deep (confidence: 0.999)

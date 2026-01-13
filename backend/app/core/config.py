@@ -35,12 +35,17 @@ class Settings(BaseSettings):
     # LLM APIs
     OPENAI_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
 
-    # YOLO Model
+    # YOLO Models
     YOLO_MODEL_PATH: str = "./ml/yolo/models/best.pt"
-    YOLO_CONFIDENCE_THRESHOLD: float = 0.5
-
-    # Material Calculation Defaults
+    YOLO_BOUNDARY_MODEL_PATH: str = "../datascience/runs/yolo12xtrain_floorplan_boundary/yolo12x_floorplan_boundary_exp2/weights/best.pt"
+    YOLO_OBJECT_MODEL_PATH: str = "../datascience/runs/yolo12xtrain/yolo12x_exp3/weights/best.pt"
+    
+    # PDF Processing
+    PDF_DPI: int = 300
+    POPPLER_PATH: Optional[str] = None  # Set if poppler not in PATH
+    
     DEFAULT_STUD_SPACING_INCHES: int = 16  # 16" O.C.
     STANDARD_LUMBER_LENGTHS: list[int] = [96, 120, 144, 168, 192, 240]  # inches (8', 10', 12', 14', 16', 20')
 

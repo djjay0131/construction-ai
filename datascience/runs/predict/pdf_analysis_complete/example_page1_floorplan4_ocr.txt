@@ -1,0 +1,34 @@
+=== Floor Plan 4 OCR Results ===
+
+PAVE
+Project
+Sponsor:
+Virginia Housing
+1
+g
+e
+8
+E
+1
+<
+38
+esigner
+aig T. Meadows
+onstruction
+
+=== Detailed Results ===
+Text: PAVE (confidence: 0.996)
+Text: Project (confidence: 1.000)
+Text: Sponsor: (confidence: 1.000)
+Text: Virginia Housing (confidence: 0.745)
+Text: 1 (confidence: 0.792)
+Text: g (confidence: 0.999)
+Text: e (confidence: 0.453)
+Text: 8 (confidence: 0.984)
+Text: E (confidence: 0.014)
+Text: 1 (confidence: 0.122)
+Text: < (confidence: 0.099)
+Text: 38 (confidence: 0.087)
+Text: esigner (confidence: 0.831)
+Text: aig T. Meadows (confidence: 0.879)
+Text: onstruction (confidence: 1.000)

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #00ff00;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 3px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #ff0000;
+        }
+        .success {
+            color: #00ff00;
+        }
+        input[type="file"] {
+            background: #00ff00;
+            color: #000;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Backend API Test Tool</h1>
+    <p>Test the Construction AI backend API endpoints</p>
+
+    <!-- Health Check -->
+    <div class="test-section">
+        <h2>1. Health Check</h2>
+        <button onclick="testHealth()">Test /api/health</button>
+        <div id="health-result" class="result"></div>
+    </div>
+
+    <!-- CORS Test -->
+    <div class="test-section">
+        <h2>2. CORS Test</h2>
+        <button onclick="testCORS()">Test CORS Headers</button>
+        <div id="cors-result" class="result"></div>
+    </div>
+
+    <!-- PDF Analysis Test -->
+    <div class="test-section">
+        <h2>3. PDF Analysis Test</h2>
+        <input type="file" id="pdf-file" accept=".pdf">
+        <br>
+        <button onclick="testPDFAnalysis()">Test /api/floor-plan/analyze-pdf</button>
+        <div id="pdf-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.className = 'result ' + (isError ? 'error' : 'success');
+            element.textContent = message;
+        }
+
+        async function testHealth() {
+            log('health-result', 'Testing...');
+            try {
+                const response = await fetch(`${API_URL}/api/health`);
+                const data = await response.json();
+                log('health-result',
+                    `✓ Success!\nStatus: ${response.status}\nResponse:\n${JSON.stringify(data, null, 2)}`
+                );
+            } catch (error) {
+                log('health-result',
+                    `✗ Error!\n${error.message}\n\nPossible causes:\n- Backend not running\n- Wrong URL\n- CORS issue\n- Network problem`,
+                    true
+                );
+            }
+        }
+
+        async function testCORS() {
+            log('cors-result', 'Testing...');
+            try {
+                const response = await fetch(`${API_URL}/api/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                };
+
+                log('cors-result',
+                    `✓ CORS Headers:\n${JSON.stringify(corsHeaders, null, 2)}\n\nIf Access-Control-Allow-Origin is null, CORS is NOT configured properly.`
+                );
+            } catch (error) {
+                log('cors-result',
+                    `✗ CORS Test Failed!\n${error.message}`,
+                    true
+                );
+            }
+        }
+
+        async function testPDFAnalysis() {
+            const fileInput = document.getElementById('pdf-file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                log('pdf-result', '✗ Please select a PDF file first!', true);
+                return;
+            }
+
+            const file = fileInput.files[0];
+            log('pdf-result', `Testing with file: ${file.name}\nSize: ${(file.size / 1024 / 1024).toFixed(2)} MB\nUploading...`);
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch(`${API_URL}/api/floor-plan/analyze-pdf?page_number=1`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const data = await response.json();
+                log('pdf-result',
+                    `✓ Success!\nStatus: ${response.status}\nFloor plans detected: ${data.num_floor_plans}\n\nResponse:\n${JSON.stringify(data, null, 2)}`
+                );
+            } catch (error) {
+                log('pdf-result',
+                    `✗ Error!\n${error.message}\n\nFull error:\n${error.stack || error}`,
+                    true
+                );
+            }
+        }
+
+        // Auto-run health check on load
+        window.onload = () => {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
+

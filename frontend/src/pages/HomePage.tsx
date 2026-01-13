@@ -58,23 +58,23 @@ export default function HomePage() {
       case 'processing':
         return 'Processing takeoff...'
       case 'completed':
-        return 'Processing completed!'
-      case 'error':
-        return 'Error occurred'
+        return 'Processing complete!'
       default:
         return ''
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Construction AI</h1>
-              <p className="text-sm text-gray-600 mt-1">Automated Material Take-off from Architectural Drawings</p>
+              <h1 className="text-4xl font-bold mb-2">Construction AI</h1>
+              <p className="text-primary-100 text-lg">
+                Automated Material Take-off from Architectural Drawings
+              </p>
             </div>
             <div className="text-sm text-gray-500">v0.1.0</div>
           </div>
@@ -206,10 +206,10 @@ export default function HomePage() {
             </div>
 
             <div className="bg-white rounded-lg shadow p-6">
-              <Upload className="h-8 w-8 text-primary-600 mb-3" />
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Optimized Cut Lists</h3>
+              <Loader2 className="h-8 w-8 text-primary-600 mb-3" />
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Fast Processing</h3>
               <p className="text-gray-600 text-sm">
-                Minimize waste with intelligent lumber cutting optimization
+                Get your material takeoff results in minutes, not hours
               </p>
             </div>
           </div>

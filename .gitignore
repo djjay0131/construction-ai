@@ -246,5 +246,7 @@ data/detections/
 .DS_Store
 Thumbs.db
 
-
-.data/
+poppler-25.12.0/
+data/
+datascience/runs/yolo12xtrain/
+datascience/runs/yolo12xtrain_floorplan_boundary/

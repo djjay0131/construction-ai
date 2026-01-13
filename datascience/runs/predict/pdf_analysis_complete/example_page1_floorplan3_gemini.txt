@@ -1,0 +1,30 @@
+=== Floor Plan 3 Gemini Analysis ===
+
+{
+  "scale": {
+    "found": false,
+    "notation": null,
+    "format": null,
+    "drawing_unit": null,
+    "real_unit": null,
+    "drawing_value": null,
+    "real_value": null
+  },
+  "title": "LYNETTE JCC MODEL",
+  "room_labels": [],
+  "dimensions": [],
+  "all_text": [
+    "Virginia Housing",
+    "LYNETTE JCC MODEL",
+    "9557 Barnes Rd.",
+    "Toano, VA 23168",
+    "Designer",
+    "Craig T. Meadows",
+    "Construction",
+    "Habitat For",
+    "Humanity",
+    "PGW",
+    "Sheet #"
+  ],
+  "notes": []
+}

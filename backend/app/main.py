@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 import logging
 
 # Import API routers
-from app.api import upload, takeoff, detection
+from app.api import upload, takeoff, detection, floor_plan
 from app.db.database import init_db
 
 # Configure logging
@@ -32,6 +32,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        "http://localhost:5174",  # Vite dev server (alternative port)
         "http://localhost:3000",
     ],  # Vite & React dev servers
     allow_credentials=True,
@@ -92,6 +93,7 @@ async def global_exception_handler(request, exc):
 app.include_router(upload.router, prefix="/api/upload", tags=["Upload"])
 app.include_router(takeoff.router, prefix="/api/takeoff", tags=["Takeoff"])
 app.include_router(detection.router, prefix="/api/detection", tags=["Object Detection"])
+app.include_router(floor_plan.router, prefix="/api/floor-plan", tags=["Floor Plan Analysis"])
 
 
 if __name__ == "__main__":

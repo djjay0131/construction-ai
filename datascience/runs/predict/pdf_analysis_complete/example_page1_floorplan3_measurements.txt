@@ -1,0 +1,20 @@
+=== Floor Plan 3 - Real-World Measurements ===
+
+Document Information:
+  Paper Size: ANSI B (Tabloid)
+  Paper Dimensions: 17.00" x 11.00"
+  Page Resolution: 5100 x 3300 pixels
+  DPI: 300
+  Pixels per Inch: 300.00 x 300.00
+
+Scale Information:
+  Scale Notation: Not found
+  WARNING: No valid scale found. Real-world dimensions cannot be calculated.
+
+Floor Plan Dimensions:
+  Pixels: 446 x 2486 px
+  On Paper: 1.487" x 8.287"
+  Real World: Cannot calculate (no scale)
+
+
+No objects detected in this floor plan.
