@@ -245,3 +245,6 @@ data/detections/
 # OS
 .DS_Store
 Thumbs.db
+
+
+.data/
