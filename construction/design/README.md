@@ -1,18 +1,38 @@
-# Design Documents - Proposal Polishing
+# Design Documents - Implementation
 
-This folder contains design documents for the Construction.AI proposal polishing process.
+This folder contains design documents for Construction.AI implementation.
 
 ## Documents
 
-### Proposal Structure
+### Architecture Reference
 
-- [proposal-structure.md](proposal-structure.md) - Document organization and section flow
-- [novelty-analysis.md](novelty-analysis.md) - Key contributions and differentiation
-- [literature-review.md](literature-review.md) - Bibliography analysis and citation coverage
+- [vvuq-integration-plan.md](vvuq-integration-plan.md) - Physics-based structural analysis design (from proposal)
+
+### To Be Created
+
+- `kg-schema.md` - Neo4j Knowledge Graph schema design
+- `api-design.md` - REST API endpoint specifications
+- `agent-architecture.md` - Multi-agent system design
+- `data-flow.md` - End-to-end data flow documentation
+
+## Reference Architecture
+
+The implementation follows the architecture defined in the proposal:
+
+| Component | Proposal Section | Description |
+| --------- | ---------------- | ----------- |
+| Architecture | 02-architecture.tex | Overall system design |
+| Knowledge Graph | 03-knowledge-graph.tex | Neo4j schema and entities |
+| Agentic Workflow | 05-agentic-workflow.tex | 5-agent system design |
+| V&V Framework | 05a-verification-validation.tex | Testing approach |
+
+## Proposal Links
+
+- Published: [GitHub Pages](https://djjay0131.github.io/construction-ai-proposal/)
+- Source: `../construction-ai-proposal/proposal/sections/`
 
 ## Document Naming Convention
 
-Use descriptive names that indicate the document focus:
-- `{aspect}-analysis.md` - Analysis documents
-- `{section}-polish.md` - Section-specific polish notes
-- `{topic}-review.md` - Review and checklist documents
+- `{component}-design.md` - Component design documents
+- `{feature}-spec.md` - Feature specifications
+- `{topic}-notes.md` - Research and decision notes
