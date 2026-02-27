@@ -59,6 +59,7 @@ class BeamSolveResult:
     M: np.ndarray           # bending moment field [lb·in]
     V: np.ndarray           # shear force field [lb]
     w_max: float            # peak deflection [in]
+    M_max: float            # peak bending moment [lb·in]
     sigma_max: float        # peak bending stress [psi]
     tau_max: float          # peak shear stress [psi]
     deflection_ratio: float # w_max / L  (dimensionless)
@@ -188,6 +189,7 @@ def solve_simply_supported(
         M=M,
         V=V,
         w_max=w_max,
+        M_max=M_max,
         sigma_max=sigma_max,
         tau_max=tau_max,
         deflection_ratio=w_max / L,
