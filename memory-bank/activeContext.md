@@ -1,63 +1,53 @@
 # Active Context
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-04-01 (HW4 report complete)
 
 ## Current Work Phase
 
-**Implementation Setup - Synced with Proposal Repository**
+**VVSC Homework Studies — AOE/CS/ME 6444, Spring 2026, Dr. Chris Roy**
 
-This is the **implementation repository** for Construction.AI. Documentation has been synchronized from the proposal repository to maintain consistency.
+Active development of verification and validation scripts for the
+Euler-Bernoulli FD beam solver (residential wood header use case).
 
 ## Current State
 
-**Implementation Repository Status:**
+**VVSC Study Files:**
 
-- Backend: Python FastAPI (existing prototype)
-- Frontend: React TypeScript (existing prototype)
-- Docker: docker-compose configuration present
-- Documentation: Synced from proposal repo (2026-02-03)
+| File | HW | Status |
+|------|----|--------|
+| `backend/app/core/structural/beam_solver.py` | — | Base solver (float64 dense LU) |
+| `backend/app/core/structural/hw3_verification.py` | HW3 | ✅ Complete |
+| `backend/app/core/structural/hw4_solution_verification.py` | HW4 | ✅ Complete |
+| `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex` | HW4 Report | ✅ Complete (9 pages, inline figures, formal p_th=2 derivation) |
 
-**Proposal Repository Status (see ../construction-ai-proposal/):**
+**HW4 Key Facts (for next steps / HW5 UQ):**
+- Reliable SRQ for UQ: **w_max** (p_obs ≈ 2.00, Fs = 1.25, asymptotic)
+- M_max / σ_max: noise-dominated at all grids — use exact formula, not FD derivative
+- Recommended grid for parametric UQ study: **N=20** (h=4.800 in, U_NUM=0.28%)
+- Fine grid reference: **N=160** (h=0.600 in, U_NUM=0.004%)
+- U_IT = 0 (direct solver); U_RO negligible in float64
+- float32 breaks at N≥80; always use float64
 
-- 12-page IEEE conference paper
-- 21-slide Beamer presentation
-- VVUQ integration Phase 1 complete, Phases 2-3 in progress
-- Published at: [GitHub Pages](https://djjay0131.github.io/construction-ai-proposal/)
+## Immediate Next Steps
+
+1. **HW5 — Uncertainty Quantification** (Monte Carlo / sensitivity study)
+   - Use N=20 as parametric grid (validated in HW4)
+   - Run 100s–1000s of cases varying E, q₀, geometry
+   - SRQs: w_max, σ_max (use section_modulus directly, not FD derivative)
+   - Write HW5 LaTeX report (follow same structure as HW4 report)
+2. Implementation sprint review (Construction.AI backend/frontend)
+
+**HW4 fully complete** (2026-04-01):
+- Script: `hw4_solution_verification.py` ✅
+- Report: `hw4_report/VVSC_Chuang_ChengShun_HW4.pdf` ✅ (9 pp, inline figs, formal p_th derivation)
 
 ## Repository Relationship
 
 | Repository | Purpose | Status |
 | ---------- | ------- | ------ |
-| construction-ai | Implementation code | Active development |
+| construction-ai | Implementation code + VVSC studies | Active |
 | construction-ai-proposal | Research proposal | VVUQ integration ongoing |
 
-**Sync Strategy:** Both repos share memory-bank and construction folder patterns. A cross-project sync agent maintains consistency between documentation.
-
-## Implementation Architecture (from Proposal)
-
-**KG-Centered Architecture**: Knowledge Graph (Neo4j) as the backbone for grounded, repeatable decisions.
-
-**Multi-Agent System** (5 specialized agents):
-
-1. Extraction QA Agent - Validates plan parsing
-2. Component Inference Agent - Identifies structural components
-3. Code & Compliance Agent - Checks building codes
-4. Procurement Agent - Generates BOMs
-5. Instruction Generation Agent - Creates build instructions
-
-**Data Flow:**
-
-```
-Plans → Extraction → Normalization → Inference → Optimization → Export
-                          ↓
-                    Knowledge Graph
-```
-
-## Immediate Next Steps
-
-**Implementation Tasks:**
-
-1. Review existing backend/frontend code
 2. Map current implementation to proposal architecture
 3. Identify implementation gaps
 4. Create implementation sprint plan

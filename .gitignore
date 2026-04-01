@@ -229,6 +229,12 @@ data/detections/
 *.dwg
 *.dxf
 *.pdf
+!backend/app/core/structural/hw4_report/*.pdf
+!backend/app/core/structural/hw4_figures/*.pdf
+
+# LaTeX build artifacts
+*.aux
+*.out
 
 # YOLO model weights (large files)
 # Uncomment if you don't want to commit model files
