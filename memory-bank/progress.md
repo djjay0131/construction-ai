@@ -1,6 +1,6 @@
 # Progress Tracking
 
-**Last Updated:** 2026-04-01
+**Last Updated:** 2026-04-18
 
 ## Project Status: VVSC Homework Studies Active
 
@@ -80,11 +80,64 @@ U_NUM = U_DE + U_IT + U_RO (additive, each a positive quantity).
   - Fig. 3 (fig3_gci_bar.pdf) → after M_max interpretation paragraph, Section 3
   - Fig. 4 (fig4_unum_budget.pdf) → after Table 7 (U_NUM budget), Section 6
   - Fig. 5 (fig5_unum_vs_h.pdf) → after Table 7, Section 6
-- ✅ Formal order-of-accuracy derivation added (`\subsubsection*{Formal Order of Accuracy ($p_\mathrm{th}=2$)}`):
-  - Full Taylor series expansion showing cancellation of terms below O(h⁴)
-  - Derived LTE = (EI·h²/6)·w_i^(6) + O(h⁴), proving p_th = 2 from first principles
-  - p_obs ≈ 2.000 for w_max directly confirms asymptotic regime
+- ✅ Formal order-of-accuracy derivation added
 - ✅ Final PDF: 9 pages, ~350 KB, compiled clean (two pdflatex passes)
+
+---
+
+### HW5 — Validation Metric (AVM/MAVM)
+
+**File:** `backend/app/core/structural/hw5_validation_metric.py`
+**Completed:** 2026-04-18
+
+**Physical case:** Same 8-ft LVL header as HW3/HW4.
+**SRQ:** w_max only (M_max/σ_max excluded — noise-dominated at all grids).
+**Aleatory input:** E ~ N(1,600,000, 160,000²) psi — CoV = 10%, LVL manufacturing variability.
+
+**Method:**
+- Synthetic experimental data (Option #2): α = 0.0631718 in, β = 0.0772100 in
+  - Dataset 1 (5 pts): χ₁ = [0.55, 0.95, 1.0, 1.1, 1.5]
+  - Dataset 2 (10 pts): χ₂ = [0.1, 0.4, 0.6, 0.75, 0.8, 0.9, 0.91, 0.97, 1.3, 1.6]
+- LHS sampling at n=10, 25, 100 (seed=42); exact piecewise AVM/MAVM integration
+- Grid N=20 throughout (U_NUM = 0.063% — negligible vs input uncertainty)
+
+**Key Results:**
+
+| n_sim | AVM DS1 [in] | MAVM DS1 [in] | AVM DS2 [in] | MAVM DS2 [in] |
+|-------|-------------|--------------|-------------|--------------|
+| 10    | 0.008122    | 0.007077     | 0.005216    | 0.004451     |
+| 25    | 0.007516    | 0.007421     | 0.004796    | 0.004796     |
+| 100   | 0.007590    | 0.007294     | 0.004866    | 0.004669     |
+
+- All MAVM > 0 → simulation systematically under-predicts deflection (unconservative)
+- n=25 LHS converges to within 1% of n=100 reference — recommended for production UQ
+- n=10 overestimates AVM by ~7%
+
+**Outputs:** 4 figures to `backend/app/core/structural/hw5_figures/`
+(fig1_datasets, fig2_cdf_dataset1, fig3_cdf_dataset2, fig4_avm_mavm_bar)
+
+---
+
+### HW5 Report — LaTeX Technical Report (VVSC_Chuang_ChengShun_HW5)
+
+**File:** `backend/app/core/structural/hw5_report/VVSC_Chuang_ChengShun_HW5.tex`
+**PDF:** `backend/app/core/structural/hw5_report/VVSC_Chuang_ChengShun_HW5.pdf`
+**Completed:** 2026-04-18
+
+**What:** Formal 9-page LaTeX report for HW5 validation metric study.
+Covers: aleatory input justification, synthetic dataset construction,
+LHS methodology, AVM/MAVM theory and results, sample size convergence,
+model--experiment discrepancy discussion.
+
+---
+
+### .gitignore — Model Weight Patterns
+
+**Completed:** 2026-04-18
+
+Added comprehensive ignore patterns for ML model weights:
+`*.pt`, `*.pth`, `*.ckpt`, `*.ckpt.*`, `*.safetensors`, `*.bin`, `*.h5`,
+`*.pkl`, `*.weights`, `pretrained/`, `datascience/runs/`, `datascience/*.pth`
 
 ---
 

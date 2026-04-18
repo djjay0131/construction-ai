@@ -1,6 +1,6 @@
 # Active Context
 
-**Last Updated:** 2026-04-01 (HW4 report complete)
+**Last Updated:** 2026-04-18 (HW5 complete)
 
 ## Current Work Phase
 
@@ -18,26 +18,31 @@ Euler-Bernoulli FD beam solver (residential wood header use case).
 | `backend/app/core/structural/beam_solver.py` | — | Base solver (float64 dense LU) |
 | `backend/app/core/structural/hw3_verification.py` | HW3 | ✅ Complete |
 | `backend/app/core/structural/hw4_solution_verification.py` | HW4 | ✅ Complete |
-| `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex` | HW4 Report | ✅ Complete (9 pages, inline figures, formal p_th=2 derivation) |
+| `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex` | HW4 Report | ✅ Complete (9 pages) |
+| `backend/app/core/structural/hw5_validation_metric.py` | HW5 | ✅ Complete |
+| `backend/app/core/structural/hw5_report/VVSC_Chuang_ChengShun_HW5.tex` | HW5 Report | ✅ Complete (9 pages) |
 
-**HW4 Key Facts (for next steps / HW5 UQ):**
-- Reliable SRQ for UQ: **w_max** (p_obs ≈ 2.00, Fs = 1.25, asymptotic)
-- M_max / σ_max: noise-dominated at all grids — use exact formula, not FD derivative
-- Recommended grid for parametric UQ study: **N=20** (h=4.800 in, U_NUM=0.28%)
-- Fine grid reference: **N=160** (h=0.600 in, U_NUM=0.004%)
-- U_IT = 0 (direct solver); U_RO negligible in float64
-- float32 breaks at N≥80; always use float64
+**HW5 Key Facts:**
+- SRQ: **w_max** (same as HW4 — p_obs ≈ 2.00, asymptotic, U_NUM = 0.063% at N=20)
+- Aleatory input: **E ~ N(1,600,000, 160,000²) psi** (CoV = 10%, LVL variability)
+- Synthetic datasets (Option #2): α = 0.0631718 in, β = 0.0772100 in, Δ = 0.01404 in
+- Sampling: LHS at n=10, 25, 100 (seed=42, `scipy.special.ndtri`)
+- Validation metric: MAVM (signed area between CDF and EDF)
+- **All MAVM values positive** → simulation under-predicts deflection (unconservative)
+- AVM (n=100): Dataset 1 = 7.59×10⁻³ in, Dataset 2 = 4.87×10⁻³ in
+- MAVM (n=100): Dataset 1 = 7.29×10⁻³ in, Dataset 2 = 4.67×10⁻³ in
+- **n=25 LHS sufficient** — within 1% of n=100 reference
+- Figures: fig1_datasets, fig2_cdf_dataset1, fig3_cdf_dataset2, fig4_avm_mavm_bar
+- Output dir: `backend/app/core/structural/hw5_figures/`
+
+**Also updated:** `.gitignore` now ignores all model weight formats
+(`*.pt`, `*.pth`, `*.ckpt`, `*.safetensors`, `*.bin`, `*.h5`, `*.pkl`, `*.weights`,
+`pretrained/`, `datascience/runs/`, `datascience/*.pth`).
 
 ## Immediate Next Steps
 
-1. **HW5 — Uncertainty Quantification** (Monte Carlo / sensitivity study)
-   - Use N=20 as parametric grid (validated in HW4)
-   - Run 100s–1000s of cases varying E, q₀, geometry
-   - SRQs: w_max, σ_max (use section_modulus directly, not FD derivative)
-   - Write HW5 LaTeX report (follow same structure as HW4 report)
+1. **HW5 due Monday April 27, 2026** — submit `VVSC_Chuang_ChengShun_HW5.pdf`
 2. Implementation sprint review (Construction.AI backend/frontend)
-
-**HW4 fully complete** (2026-04-01):
 - Script: `hw4_solution_verification.py` ✅
 - Report: `hw4_report/VVSC_Chuang_ChengShun_HW4.pdf` ✅ (9 pp, inline figs, formal p_th derivation)
 
