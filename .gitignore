@@ -236,10 +236,19 @@ data/detections/
 *.aux
 *.out
 
-# YOLO model weights (large files)
-# Uncomment if you don't want to commit model files
-# backend/app/core/cv/best.pt
-# *.pt
+# Model weights (large files)
+*.pt
+*.pth
+*.ckpt
+*.ckpt.*
+*.safetensors
+*.bin
+*.h5
+*.pkl
+*.weights
+pretrained/
+datascience/runs/
+datascience/*.pth
 
 # IDE
 .vscode/
