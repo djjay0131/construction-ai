@@ -1,0 +1,39 @@
+name: rfdetr-floorplan
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+
+  # PyTorch with CUDA 12.1 (update cuda version to match your driver)
+  - pytorch>=2.1.0
+  - torchvision>=0.16.0
+  - pytorch-cuda=12.1
+
+  # Scientific stack
+  - numpy>=1.26
+  - pillow>=10.0
+  - matplotlib>=3.8
+  - tqdm>=4.66
+
+  # Jupyter
+  - jupyterlab>=4.0
+  - ipykernel>=6.0
+  - ipywidgets>=8.0
+
+  - pip:
+    # RF-DETR 2XLarge requires the [plus] extension (PML 1.0 license)
+    - "rfdetr[plus]>=1.6"
+
+    # Supervision for YOLO → COCO conversion and evaluation
+    - "supervision>=0.24"
+
+    # Dataset / annotation utilities
+    - pycocotools>=2.0.7
+
+    # Misc
+    - python-dotenv>=1.0
