@@ -192,8 +192,10 @@ $r=h_{\mathrm{coarse}}/h_{\mathrm{fine}}=2$:
 The requirement of \emph{at least four} systematically refined grids is satisfied
 by five levels (four refinement steps at $r=2$ each).
 Figure~\ref{fig:gci} shows the SRQ convergence with GCI uncertainty bands.
+Figures~\ref{fig:de_error}--\ref{fig:roundoff_error} provide dedicated plots for each
+uncertainty source ($\UDE$, $\UIT$, $\URO$) separately.
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{../hw4_figures/fig1_convergence_gci.pdf}
   \caption{SRQ values versus grid level $N$ with GCI uncertainty bands ($\pm\UDE$)
@@ -267,7 +269,7 @@ operating in its asymptotic regime.  Consequently $F_s=1.25$ applies throughout.
 The asymptotic ratio equals exactly 1.000 for all triplets, providing strong
 confirmation that the solution is well within the asymptotic convergence range.
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.72\textwidth]{../hw4_figures/fig2_pobs_triplets.pdf}
   \caption{Observed order of accuracy $\pobs$ for each SRQ across the three
@@ -275,6 +277,19 @@ confirmation that the solution is well within the asymptotic convergence range.
     $w_{\max}$ achieves $\pobs\approx2$ in all triplets (asymptotic, $F_s=1.25$);
     $M_{\max}$ and $\sigma_{\max}$ have $\pobs<0$ (noise-dominated, $F_s=3.00$).}
   \label{fig:pobs}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{../hw4_figures/fig6_de_error.pdf}
+  \caption{Discretization error $\UDE$ (GCI) versus grid spacing $h$ on a
+    log--log scale for each SRQ.  The black dashed lines show the theoretical
+    $\mathcal{O}(h^2)$ slope anchored to the finest available GCI estimate.
+    $N=10$ has no GCI estimate (no coarser triplet) and is excluded.
+    $w_{\max}$ tracks the $h^2$ slope closely; $M_{\max}$ and $\sigma_{\max}$
+    yield tiny GCI values ($\ll0.001\%$) owing to near-exact floating-point
+    cancellation in the FD derivative.}
+  \label{fig:de_error}
 \end{figure}
 
 \subsection{Results — \texorpdfstring{$M_{\max}$}{M\_max} and \texorpdfstring{$\sigma_{\max}$}{sigma\_max}}
@@ -318,7 +333,7 @@ $\sigma_{\max}=M_{\max}/S$ are obtained directly from closed-form
 formulae (not from the FD derivative), the round-off contamination in
 Eq.~\eqref{eq:mfd} does not affect the structural assessment.
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.62\textwidth]{../hw4_figures/fig3_gci_bar.pdf}
   \caption{GCI percentage for fine grid ($N=160$) and parametric grid ($N=20$)
@@ -340,6 +355,19 @@ is verified to be $\ll1$ for all grids; see Table~\ref{tab:roundoff}).
 \[
   \boxed{\UIT = 0 \text{ for all grid levels.}}
 \]
+
+Figure~\ref{fig:ie_error} documents this result visually: all $\UIT$ values are
+exactly zero on every grid, confirming that the direct solver introduces no
+iterative error regardless of mesh resolution.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{../hw4_figures/fig7_ie_error.pdf}
+  \caption{Iterative error $\UIT$ versus grid spacing $h$ for all three SRQs.
+    All values are identically zero (direct LU solver; no iterative loop).
+    Each grid-level annotation confirms $\UIT=0.0\times10^{0}$.}
+  \label{fig:ie_error}
+\end{figure}
 
 % =============================================================
 \section{Round-Off Error}
@@ -406,6 +434,24 @@ so round-off is entirely negligible and float64 remains safe.
 Figure~\ref{fig:pobs} shows $\pobs$ across all triplets and SRQs, clearly
 illustrating the asymptotic $\pobs\approx2$ for $w_{\max}$ and the
 noise-dominated behaviour for $M_{\max}$ and $\sigma_{\max}$.
+Figure~\ref{fig:roundoff_error} provides a dedicated comparison of the
+reported $\URO$, the raw $|\Delta_{f32-f64}|$ measurement, and the
+$\varepsilon_{f32}\kappa|f|$ theoretical upper bound.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{../hw4_figures/fig8_roundoff_error.pdf}
+  \caption{Round-off error $\URO$ versus grid spacing $h$ for each SRQ.
+    Three series are shown: reported $\URO$ (red triangles, selected value),
+    raw $|\Delta_{f32-f64}|$ (blue crosses), and the theoretical upper bound
+    $\varepsilon_{f32}\kappa|f|$ (green squares).
+    Vertical orange dashed lines mark grids where the float32 solve is
+    unreliable ($\varepsilon_{f32}\kappa>1$); at $N=160$ the reported $\URO$
+    switches to the float64 backward-error bound, which is orders of magnitude
+    smaller.  $\URO$ grows as $\kappa\propto h^{-4}$ for float32 while
+    remaining negligible for float64 throughout.}
+  \label{fig:roundoff_error}
+\end{figure}
 
 % =============================================================
 \section{Total Numerical Uncertainty Budget}
@@ -504,7 +550,7 @@ $\UDE$ and $\UNUM$ decrease monotonically with refinement} as expected
 for a stable, $\mathcal{O}(h^2)$ scheme. Figure~\ref{fig:unum_budget}
 shows the stacked $\UNUM$ budget for the two target grids.
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{../hw4_figures/fig4_unum_budget.pdf}
   \caption{Stacked $\UNUM$ budget ($\UDE+\UIT+\URO$) for fine grid ($N=160$)
@@ -512,7 +558,7 @@ shows the stacked $\UNUM$ budget for the two target grids.
   \label{fig:unum_budget}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{../hw4_figures/fig5_unum_vs_h.pdf}
   \caption{Log--log plot of $\UDE$, $\URO$, and $\UNUM$ versus grid spacing $h$

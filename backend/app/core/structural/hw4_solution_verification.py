@@ -47,6 +47,10 @@ Outputs (console + figures written to ./hw4_figures/):
         fig2_pobs_triplets.{pdf,png}     — Observed order vs triplet
         fig3_gci_bar.{pdf,png}           — GCI% for fine & parametric grids
         fig4_unum_budget.{pdf,png}       — Stacked U_NUM budget comparison
+        fig5_unum_vs_h.{pdf,png}         — U_DE, U_RO, U_NUM vs h (all grids)
+        fig6_de_error.{pdf,png}          — Discretization error U_DE vs h (separate)
+        fig7_ie_error.{pdf,png}          — Iterative error U_IT vs h (= 0, documented)
+        fig8_roundoff_error.{pdf,png}    — Round-off error U_RO vs h (separate)
 
 Run:
     cd construction-ai/backend/app/core/structural
@@ -880,6 +884,156 @@ def fig4_unum_budget(unum_fine: Dict, unum_param: Dict) -> None:
         plt.close(fig)
 
 
+def fig6_de_error(all_unum: Dict[int, Dict]) -> None:
+    """
+    Figure 6 — Discretization Error (U_DE) vs grid spacing h for all SRQs.
+    Log-log plot, one subplot per SRQ, with O(h²) reference slope.
+    N=10 has no U_DE (no coarser pair available) and is omitted.
+    """
+    h_arr = np.array([L / N for N in GRID_LEVELS])
+
+    with plt.rc_context(_RC):
+        fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
+
+        for ax, srq, unit in zip(axes, SRQ_LABELS, SRQ_UNITS):
+            ude_arr = np.array([
+                all_unum[N][srq]["U_DE"] if not math.isnan(all_unum[N][srq]["U_DE"]) else np.nan
+                for N in GRID_LEVELS
+            ], dtype=float)
+
+            mask = np.isfinite(ude_arr)
+            if mask.sum() > 1:
+                ax.loglog(h_arr[mask], ude_arr[mask], "bs-",
+                          ms=7, lw=1.8, label=r"$U_{DE}$ (GCI)")
+                # O(h²) reference slope anchored to finest valid point
+                i_fine = np.where(mask)[0][0]
+                C = ude_arr[i_fine] / h_arr[i_fine] ** 2
+                h_ref = np.array([h_arr[mask][0], h_arr[mask][-1]])
+                ax.loglog(h_ref, C * h_ref ** 2, "k--", lw=0.9, alpha=0.6,
+                          label=r"$\mathcal{O}(h^2)$ ref")
+
+            # Mark the N=10 point as unavailable
+            idx10 = GRID_LEVELS.index(10)
+            ax.axvline(h_arr[idx10], color="gray", ls=":", lw=0.8, alpha=0.6)
+            ax.text(h_arr[idx10] * 1.05, ax.get_ylim()[0] if ax.get_ylim()[0] > 0 else 1e-10,
+                    "N=10\n(no U_DE)", fontsize=7, color="gray", va="bottom")
+
+            ax.set_xlabel(r"Grid spacing $h$ [in]")
+            ax.set_ylabel(f"$U_{{DE}}$ [{unit}]")
+            ax.set_title(f"DE Error — {srq}")
+            ax.legend(fontsize=8)
+            ax.invert_xaxis()
+            ax.grid(True, which="both", color="gray", alpha=0.3, lw=0.5)
+
+        fig.suptitle(
+            r"Discretization Error $U_{DE}$ vs. Grid Spacing $h$"
+            f"\n8-ft LVL Header, q₀ = {Q0_LBFT:.0f} lb/ft",
+            fontsize=11, y=1.01,
+        )
+        fig.tight_layout()
+        _save(fig, "fig6_de_error")
+        plt.close(fig)
+
+
+def fig7_ie_error(all_unum: Dict[int, Dict]) -> None:
+    """
+    Figure 7 — Iterative Error (U_IT) vs grid spacing h for all SRQs.
+    U_IT = 0 for all grids (direct LU solver); the figure documents this
+    explicitly with an annotated zero-line and a table of relative values.
+    """
+    h_arr = np.array([L / N for N in GRID_LEVELS])
+
+    with plt.rc_context(_RC):
+        fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+
+        for ax, srq, unit in zip(axes, SRQ_LABELS, SRQ_UNITS):
+            uit_arr = np.array([all_unum[N][srq]["U_IT"] for N in GRID_LEVELS], dtype=float)
+
+            ax.plot(h_arr, uit_arr, "go-", ms=7, lw=1.5, label=r"$U_{IT}$")
+            ax.axhline(0.0, color="red", ls="--", lw=1.0, alpha=0.7,
+                       label="Zero reference")
+
+            # Annotate each point
+            for hv, uv, N in zip(h_arr, uit_arr, GRID_LEVELS):
+                ax.annotate(f"N={N}\n{uv:.1e}",
+                            xy=(hv, uv), xytext=(0, 12),
+                            textcoords="offset points",
+                            ha="center", fontsize=7, color="darkgreen")
+
+            ax.set_xlabel(r"Grid spacing $h$ [in]")
+            ax.set_ylabel(f"$U_{{IT}}$ [{unit}]")
+            ax.set_title(f"IE Error — {srq}")
+            ax.set_ylim(-1e-15, 1e-14)
+            ax.invert_xaxis()
+            ax.legend(fontsize=8)
+            ax.grid(True, color="gray", alpha=0.3, lw=0.5)
+
+        fig.suptitle(
+            r"Iterative Error $U_{IT}$ vs. Grid Spacing $h$"
+            "\n(Direct LU solver — $U_{IT} = 0$ for all grids)"
+            f"\n8-ft LVL Header, q₀ = {Q0_LBFT:.0f} lb/ft",
+            fontsize=11, y=1.02,
+        )
+        fig.tight_layout()
+        _save(fig, "fig7_ie_error")
+        plt.close(fig)
+
+
+def fig8_roundoff_error(all_unum: Dict[int, Dict], roundoff: Dict[int, Dict]) -> None:
+    """
+    Figure 8 — Round-Off Error (U_RO) vs grid spacing h for all SRQs.
+    Plots both the raw |Δ(f32, f64)| and the ε·κ·|f| upper bound.
+    Log-log plot, one subplot per SRQ.
+    """
+    h_arr = np.array([L / N for N in GRID_LEVELS])
+    _raw_keys  = {"w_max": "raw_URO_wmax",  "M_max": "raw_URO_Mmax",  "sigma_max": "raw_URO_sigma"}
+    _uro_keys  = {"w_max": "URO_wmax",       "M_max": "URO_Mmax",       "sigma_max": "URO_sigma"}
+    _kub_keys  = {"w_max": "URO_kappa_f32",  "M_max": "URO_kappa_f32",  "sigma_max": "URO_kappa_f32"}
+
+    with plt.rc_context(_RC):
+        fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
+
+        for ax, srq, unit in zip(axes, SRQ_LABELS, SRQ_UNITS):
+            uro_arr = np.array([roundoff[N][_uro_keys[srq]]     for N in GRID_LEVELS], dtype=float)
+            raw_arr = np.array([roundoff[N][_raw_keys[srq]]     for N in GRID_LEVELS], dtype=float)
+            kub_arr = np.array([roundoff[N]["URO_kappa_f32"]    for N in GRID_LEVELS], dtype=float)
+
+            # Reported U_RO (selected value)
+            ax.loglog(h_arr, np.maximum(uro_arr, 1e-30), "r^-",
+                      ms=7, lw=1.8, label=r"$U_{RO}$ (reported)")
+
+            # Raw |Δ f32–f64|
+            ax.loglog(h_arr, np.maximum(raw_arr, 1e-30), "bx--",
+                      ms=7, lw=1.2, label=r"$|\Delta_{f32-f64}|$ raw")
+
+            # ε_f32·κ·|f| upper bound on U_RO
+            ax.loglog(h_arr, np.maximum(kub_arr, 1e-30), "g:s",
+                      ms=5, lw=1.0, label=r"$\varepsilon_{f32}\cdot\kappa\cdot|f|$")
+
+            # Mark grids where float32 is invalid
+            for N, hv in zip(GRID_LEVELS, h_arr):
+                if not roundoff[N]["f32_valid"]:
+                    ax.axvline(hv, color="orange", ls=":", lw=0.8, alpha=0.7)
+                    ax.text(hv * 1.04, uro_arr[GRID_LEVELS.index(N)] * 2,
+                            "f32\ninvalid", fontsize=6, color="darkorange")
+
+            ax.set_xlabel(r"Grid spacing $h$ [in]")
+            ax.set_ylabel(f"$U_{{RO}}$ [{unit}]")
+            ax.set_title(f"Round-Off Error — {srq}")
+            ax.legend(fontsize=7)
+            ax.invert_xaxis()
+            ax.grid(True, which="both", color="gray", alpha=0.3, lw=0.5)
+
+        fig.suptitle(
+            r"Round-Off Error $U_{RO}$ vs. Grid Spacing $h$"
+            f"\n8-ft LVL Header, q₀ = {Q0_LBFT:.0f} lb/ft",
+            fontsize=11, y=1.01,
+        )
+        fig.tight_layout()
+        _save(fig, "fig8_roundoff_error")
+        plt.close(fig)
+
+
 def fig5_unum_vs_h(all_unum: Dict[int, Dict]) -> None:
     """
     Figure 5 — Log-log plot of U_DE, U_RO, and U_NUM vs grid spacing h
@@ -1017,6 +1171,9 @@ def main() -> None:
     fig3_gci_bar(gci_data)
     fig4_unum_budget(unum_fine, unum_param)
     fig5_unum_vs_h(unum_all)
+    fig6_de_error(unum_all)
+    fig7_ie_error(unum_all)
+    fig8_roundoff_error(unum_all, roundoff)
     print(f"\n  Figures saved to: {OUTPUT_DIR}/")
     print("\nDone.\n")
 
