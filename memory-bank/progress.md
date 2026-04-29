@@ -1,6 +1,6 @@
 # Progress Tracking
 
-**Last Updated:** 2026-04-18
+**Last Updated:** 2026-04-28
 
 ## Project Status: VVSC Homework Studies Active
 
@@ -128,6 +128,70 @@ U_NUM = U_DE + U_IT + U_RO (additive, each a positive quantity).
 Covers: aleatory input justification, synthetic dataset construction,
 LHS methodology, AVM/MAVM theory and results, sample size convergence,
 model--experiment discrepancy discussion.
+
+---
+
+### Final Project — Predictive UQ Script
+
+**File:** `backend/app/core/structural/project_prediction_uq.py`
+**Completed:** 2026-04-28
+
+**What:** Nested sampling p-box analysis combining aleatory E and epistemic q₀.
+
+**Key Results:**
+- Outer loop: Nₑ ∈ {5,10,25,100} q₀ samples over [400,600] lb/ft
+- Inner loop: Nₐ=100 LHS samples of E ~ N(1.6M, 160K²) psi per outer point
+- P-box stabilises by Nₑ=10; Nₑ=25 used for production
+- 5th–95th percentile interval at q₀=600: [0.047, 0.099] in
+- Compared p-box to single uniform-q₀ CDF — uniform underestimates 95th pct by ~12%
+- Model form extrapolation: d⁺(q₀), d⁻(q₀) linear regressions (R²=0.998/0.999)
+- U_MF⁺=2.003×10⁻³ in, U_MF⁻=0.642×10⁻³ in at q₀=600
+
+**Total Uncertainty Budget at q₀=600 lb/ft, w_nom=0.0842 in:**
+
+| Source | Magnitude [in] | % w_nom |
+|--------|---------------|---------|
+| Aleatory E (5–95%) | 1.159×10⁻² | 13.77% |
+| Epistemic q₀ (p-box) | 1.390×10⁻² | 16.52% |
+| U_MF⁺ (upper) | 2.003×10⁻³ | 2.38% |
+| U_MF⁻ (lower) | 6.42×10⁻⁴ | 0.76% |
+| U_NUM_max (corner) | 2.601×10⁻⁴ | 0.31% |
+| **Total upper** | **2.776×10⁻²** | **32.98%** |
+| **Total lower** | **2.640×10⁻²** | **31.36%** |
+
+**Outputs:** 4 figures to `backend/app/core/structural/project_figures/`
+(fig1_pbox, fig2_pbox_vs_uniform, fig3_model_form_extrap, fig4_total_uncertainty)
+
+---
+
+### Final Project Report — LaTeX Conference Paper (VVSC_Chuang_ChengShun_Project)
+
+**File:** `backend/app/core/structural/project_report/VVSC_Chuang_ChengShun_Project.tex`
+**PDF:** `backend/app/core/structural/project_report/VVSC_Chuang_ChengShun_Project.pdf`
+**Completed:** 2026-04-28
+
+**What:** Full 11-page two-column conference paper consolidating HW2–HW5 and
+Final Project into a single ASME V&V 20 / Roy–Oberkampf VV&UQ study.
+
+**Structure:** Application description → Code verification (HW3) → Solution
+verification GCI (HW4) → Model validation AVM/MAVM (HW5) → Predictive UQ
+p-box → Discussion → Conclusions → Future Work → Appendices.
+
+**Future Work section added 2026-04-28** (`\subsection{Limitations and Future Work}`):
+Seven literature-backed directions with 13 new `\bibitem` entries:
+
+| Direction | Key references added |
+|-----------|---------------------|
+| Timoshenko shear correction (reduce d⁺ bias at L/d=8.5) | Rahman et al. 2020 (Buildings), Sofi et al. 2015 (Acta Mech.) |
+| Physical ASTM D198 validation tests | Gilbert et al. 2019 (Struct. Safety) |
+| Bayesian calibration of (E, κₛ) | Mishra et al. 2017 (Eng. Struct.), Chocholaty et al. 2023 (ACME) |
+| PCE surrogate + Sobol indices | Novák & Novák 2018 (BSB), Lim et al. 2023 (Structures) |
+| Creep / moisture time-dependence | Musselman et al. 2018 (CBM), Granello & Palermo 2019 |
+| Semi-rigid supports & multi-span | Jiang, Zheng & Han 2018 (SMO) |
+| Reliability index / fragility AK-MCS | Du & Xu 2023 (DPR) |
+| Spatially varying E(x) random field | Leichsenring et al. 2018 (IJRS) |
+
+**Compile status:** Two pdflatex passes — 11 pages, 692 KB, zero citation warnings.
 
 ---
 

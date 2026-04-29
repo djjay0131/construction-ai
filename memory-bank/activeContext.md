@@ -1,19 +1,20 @@
 # Active Context
 
-**Last Updated:** 2026-04-18 (HW5 complete)
+**Last Updated:** 2026-04-28 (Final Project report complete)
 
 ## Current Work Phase
 
-**VVSC Homework Studies — AOE/CS/ME 6444, Spring 2026, Dr. Chris Roy**
+**VVSC Final Project — AOE/CS/ME 6444, Spring 2026, Dr. Chris Roy**
 
-Active development of verification and validation scripts for the
-Euler-Bernoulli FD beam solver (residential wood header use case).
+All homework studies complete. Final project conference-paper report finished,
+including Predictive UQ (p-box, nested sampling, model-form extrapolation, total
+uncertainty budget) and a Future Work section with literature-backed extensions.
 
 ## Current State
 
 **VVSC Study Files:**
 
-| File | HW | Status |
+| File | Assignment | Status |
 |------|----|--------|
 | `backend/app/core/structural/beam_solver.py` | — | Base solver (float64 dense LU) |
 | `backend/app/core/structural/hw3_verification.py` | HW3 | ✅ Complete |
@@ -21,6 +22,8 @@ Euler-Bernoulli FD beam solver (residential wood header use case).
 | `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex` | HW4 Report | ✅ Complete (9 pages) |
 | `backend/app/core/structural/hw5_validation_metric.py` | HW5 | ✅ Complete |
 | `backend/app/core/structural/hw5_report/VVSC_Chuang_ChengShun_HW5.tex` | HW5 Report | ✅ Complete (9 pages) |
+| `backend/app/core/structural/project_prediction_uq.py` | Final Project | ✅ Complete |
+| `backend/app/core/structural/project_report/VVSC_Chuang_ChengShun_Project.tex` | Final Report | ✅ Complete (11 pages) |
 
 **HW5 Key Facts:**
 - SRQ: **w_max** (same as HW4 — p_obs ≈ 2.00, asymptotic, U_NUM = 0.063% at N=20)
@@ -35,16 +38,30 @@ Euler-Bernoulli FD beam solver (residential wood header use case).
 - Figures: fig1_datasets, fig2_cdf_dataset1, fig3_cdf_dataset2, fig4_avm_mavm_bar
 - Output dir: `backend/app/core/structural/hw5_figures/`
 
+**Final Project Key Facts:**
+- Application: 8-ft LVL header, q₀ ∈ [400,600] lb/ft (epistemic), E ~ N(1.6M, 160K²) psi (aleatory)
+- Method: Nested sampling p-box (outer Nₑ=25 epistemic, inner Nₐ=100 LHS aleatory)
+- P-box 5th–95th pct at q₀=600: [0.047, 0.099] in
+- Epistemic (q₀ p-box) = 16.5% of w_nom; Aleatory (E scatter) = 13.8%; total ≈ 32%
+- Model form: d⁺=1.609×10⁻³ in (under-predict), d⁻=0.530×10⁻³ in — extrapolated to q₀=600
+- U_MF⁺=2.003×10⁻³ in, U_MF⁻=0.642×10⁻³ in; U_NUM_max=2.60×10⁻⁴ in (corner)
+- Total upper bound = 33% of w_nom; total lower = 31% (asymmetric due to d⁺>d⁻)
+- Figures: fig1_pbox, fig2_pbox_vs_uniform, fig3_model_form_extrap, fig4_total_uncertainty
+- Output dir: `backend/app/core/structural/project_figures/`
+- Report: `project_report/VVSC_Chuang_ChengShun_Project.tex` — 11 pages, clean compile
+- **Future Work section added 2026-04-28** — 7 directions with 13 new references:
+  Timoshenko shear correction, physical ASTM D198 testing, Bayesian calibration of (E, κₛ),
+  PCE surrogate (Sobol indices), creep/moisture time-dependence, semi-rigid boundaries,
+  reliability index / fragility (AK-MCS), spatially varying E(x) random field
+
 **Also updated:** `.gitignore` now ignores all model weight formats
 (`*.pt`, `*.pth`, `*.ckpt`, `*.safetensors`, `*.bin`, `*.h5`, `*.pkl`, `*.weights`,
 `pretrained/`, `datascience/runs/`, `datascience/*.pth`).
 
 ## Immediate Next Steps
 
-1. **HW5 due Monday April 27, 2026** — submit `VVSC_Chuang_ChengShun_HW5.pdf`
+1. **Final project due** — submit `VVSC_Chuang_ChengShun_Project.pdf` (11 pages, clean compile)
 2. Implementation sprint review (Construction.AI backend/frontend)
-- Script: `hw4_solution_verification.py` ✅
-- Report: `hw4_report/VVSC_Chuang_ChengShun_HW4.pdf` ✅ (9 pp, inline figs, formal p_th derivation)
 
 ## Repository Relationship
 
