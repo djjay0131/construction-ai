@@ -250,6 +250,16 @@ pretrained/
 datascience/runs/
 datascience/*.pth
 
+# Model cache (downloaded from GCS at runtime)
+ml/models/
+
+# Terraform state and secrets
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
+infra/*.json
+
 # IDE
 .vscode/
 .idea/

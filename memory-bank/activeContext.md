@@ -16,9 +16,15 @@ Euler-Bernoulli FD beam solver (residential wood header use case).
 | File | HW | Status |
 |------|----|--------|
 | `backend/app/core/structural/beam_solver.py` | — | Base solver (float64 dense LU) |
-| `backend/app/core/structural/hw3_verification.py` | HW3 | ✅ Complete |
-| `backend/app/core/structural/hw4_solution_verification.py` | HW4 | ✅ Complete |
-| `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex` | HW4 Report | ✅ Complete (9 pages, inline figures, formal p_th=2 derivation) |
+| `backend/app/core/structural/verification_exact_solution.py` | Code verification (exact solution) | ✅ Complete |
+| `backend/app/core/structural/verification_gci.py` | Solution verification (GCI/U_NUM) | ✅ Complete |
+
+**HW Reports & Figures → Proposal Repo:**
+
+| File | Location |
+|------|----------|
+| HW3 figures | `construction-ai-proposal/CS6444/HW3/figures/` |
+| HW4 report + figures | `construction-ai-proposal/CS6444/HW4/` |
 
 **HW4 Key Facts (for next steps / HW5 UQ):**
 - Reliable SRQ for UQ: **w_max** (p_obs ≈ 2.00, Fs = 1.25, asymptotic)
@@ -38,15 +44,15 @@ Euler-Bernoulli FD beam solver (residential wood header use case).
 2. Implementation sprint review (Construction.AI backend/frontend)
 
 **HW4 fully complete** (2026-04-01):
-- Script: `hw4_solution_verification.py` ✅
-- Report: `hw4_report/VVSC_Chuang_ChengShun_HW4.pdf` ✅ (9 pp, inline figs, formal p_th derivation)
+- Script: `backend/app/core/structural/hw4_solution_verification.py` ✅
+- Report: `construction-ai-proposal/CS6444/HW4/VVSC_Chuang_ChengShun_HW4.pdf` ✅ (9 pp, inline figs, formal p_th derivation)
 
 ## Repository Relationship
 
 | Repository | Purpose | Status |
 | ---------- | ------- | ------ |
-| construction-ai | Implementation code + VVSC studies | Active |
-| construction-ai-proposal | Research proposal | VVUQ integration ongoing |
+| construction-ai | Implementation code only (Python scripts, solvers) | Active |
+| construction-ai-proposal | Research proposal + HW reports/PDFs/figures (`CS6444/`) | Active |
 
 2. Map current implementation to proposal architecture
 3. Identify implementation gaps

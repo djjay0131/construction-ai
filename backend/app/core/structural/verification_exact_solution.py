@@ -1,5 +1,5 @@
 """
-hw3_verification.py — Code Verification for the Euler-Bernoulli FD Beam Solver
+verification_exact_solution.py — Code Verification for the Euler-Bernoulli FD Beam Solver
 
 AOE/CS/ME 6444 — Verification and Validation in Scientific Computing
 Homework #3 | Spring 2026 | Dr. Chris Roy
@@ -11,17 +11,19 @@ Approach: Option 2 — Exact Solution
 Outputs:
     - Convergence table (console)
     - SRQ table (console)
-    - hw3_figures/fig1_convergence_loglog.{pdf,png}
-    - hw3_figures/fig2_local_error_N160.{pdf,png}
-    - hw3_figures/fig3_srq_convergence.{pdf,png}
+    - Figures (written to OUTPUT_DIR):
+        fig1_convergence_loglog.{pdf,png}
+        fig2_local_error_N160.{pdf,png}
+        fig3_srq_convergence.{pdf,png}
 
 Run:
     cd construction-ai/backend/app/core/structural
-    python hw3_verification.py
+    python verification_exact_solution.py [--output-dir /path/to/figures]
 """
 
 from __future__ import annotations
 
+import argparse
 import math
 import os
 import sys
@@ -65,7 +67,13 @@ SIG_MAX_EXACT = M_MAX_EXACT / GEO.section_modulus  # 650.1587 psi
 
 GRID_LEVELS = [10, 20, 40, 80, 160]
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "hw3_figures")
+# Default output: proposal repo CS6444/HW3/figures
+_DEFAULT_OUTPUT_DIR = os.path.normpath(
+    os.path.join(os.path.dirname(__file__),
+                 "..", "..", "..", "..", "..",
+                 "construction-ai-proposal", "CS6444", "HW3", "figures")
+)
+OUTPUT_DIR = os.environ.get("VERIFICATION_EXACT_OUTPUT_DIR", _DEFAULT_OUTPUT_DIR)
 
 # ---------------------------------------------------------------------------
 # Helper functions
@@ -334,6 +342,13 @@ def verify_convergence_rates(results: dict) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    global OUTPUT_DIR
+    parser = argparse.ArgumentParser(description="Code verification (exact solution) for EB FD beam solver")
+    parser.add_argument("--output-dir", default=OUTPUT_DIR,
+                        help="Directory for figure output (default: proposal repo CS6444/HW3/figures)")
+    args = parser.parse_args()
+    OUTPUT_DIR = args.output_dir
+
     print(f"\nTest case: {L_FT}-ft LVL header, b={B} in, d={D} in, "
           f"E={E_PSI:,} psi, q0={Q0_LBFT:.0f} lb/ft")
     print(f"EI = {EI:.4e} lb·in², L = {L:.1f} in")

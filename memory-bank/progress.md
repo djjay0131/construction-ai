@@ -13,7 +13,7 @@ completed for the Euler-Bernoulli FD beam solver.
 
 ### HW3 — Code Verification (Option 2: Exact Solution)
 
-**File:** `backend/app/core/structural/hw3_verification.py`
+**File:** `backend/app/core/structural/verification_exact_solution.py`
 
 **What:** Code verification of the FD Euler-Bernoulli beam solver using the
 closed-form exact solution.
@@ -24,13 +24,13 @@ closed-form exact solution.
 - w_max error at N=160: ~3.9×10⁻³ %
 - M_max, σ_max: converge to machine precision (FD formula is exact for polynomial load)
 - Figures: fig1 log-log convergence, fig2 local error N=160, fig3 SRQ convergence
-- Output dir: `backend/app/core/structural/hw3_figures/`
+- Figures dir: `construction-ai-proposal/CS6444/HW3/figures/`
 
 ---
 
 ### HW4 — Solution Verification (GCI + U_NUM Budget)
 
-**File:** `backend/app/core/structural/hw4_solution_verification.py`
+**File:** `backend/app/core/structural/verification_gci.py`
 
 **Physical case:** 8-ft LVL residential header, b=3.5 in, d=11.25 in,
 E=1,600,000 psi, q₀=500 lb/ft, simply-supported.
@@ -60,14 +60,14 @@ U_NUM = U_DE + U_IT + U_RO (additive, each a positive quantity).
 **Outputs:**
 - Tables 1–5 to console (GCI triplets, asymptotic check, round-off, U_NUM fine/param, U_NUM all grids)
 - Figures fig1–fig5: convergence+GCI bands, p_obs bars, GCI% bar, U_NUM budget, U_NUM vs h log-log
-- Output dir: `backend/app/core/structural/hw4_figures/`
+- Figures dir: `construction-ai-proposal/CS6444/HW4/figures/`
 
 ---
 
 ### HW4 Report — LaTeX Technical Report (VVSC_Chuang_ChengShun_HW4)
 
-**File:** `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex`
-**PDF:** `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.pdf`
+**File:** `construction-ai-proposal/CS6444/HW4/VVSC_Chuang_ChengShun_HW4.tex`
+**PDF:** `construction-ai-proposal/CS6444/HW4/VVSC_Chuang_ChengShun_HW4.pdf`
 **Completed:** 2026-04-01
 
 **What:** Formal LaTeX technical report for HW4 solution verification study.

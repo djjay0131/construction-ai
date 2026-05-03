@@ -1,5 +1,5 @@
 """
-hw4_solution_verification.py — Solution Verification for the EB FD Beam Solver
+verification_gci.py — Solution Verification for the EB FD Beam Solver
 
 AOE/CS/ME 6444 — Verification and Validation in Scientific Computing
 Homework #4 | Spring 2026 | Dr. Chris Roy
@@ -7,7 +7,7 @@ Authors: Jason Cusati & Cheng-Shun Chuang
 
 Physical Case:
     8-ft simply-supported LVL residential header under uniform distributed load.
-    Same case used for HW3 code verification (now using it as the "real" UQ case).
+    Same case used for code verification (now using it as the "real" UQ case).
 
 Numerical Model:
     Finite-difference Euler-Bernoulli beam (4th-order BVP), O(h²) scheme.
@@ -36,13 +36,13 @@ One-sided note:
     U_DE therefore acts as a one-sided lower bound:  w_true ≥ w_FD − U_DE.
     Both one-sided and symmetric GCI values are reported in the tables.
 
-Outputs (console + figures written to ./hw4_figures/):
+Outputs:
     Console:
         Table 1  — GCI analysis (all triplets, all SRQs)
         Table 2  — Asymptotic convergence check  (GCI_ratio ≈ 1)
         Table 3  — Round-off error  (float64 vs float32)
         Table 4  — U_NUM budget summary  (fine grid vs parametric grid)
-    Figures:
+    Figures (written to OUTPUT_DIR):
         fig1_convergence_gci.{pdf,png}   — SRQ convergence with GCI bands
         fig2_pobs_triplets.{pdf,png}     — Observed order vs triplet
         fig3_gci_bar.{pdf,png}           — GCI% for fine & parametric grids
@@ -50,11 +50,12 @@ Outputs (console + figures written to ./hw4_figures/):
 
 Run:
     cd construction-ai/backend/app/core/structural
-    python hw4_solution_verification.py
+    python verification_gci.py [--output-dir /path/to/figures]
 """
 
 from __future__ import annotations
 
+import argparse
 import math
 import os
 import sys
@@ -70,7 +71,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from beam_solver import BeamGeometry, BeamMaterial, solve_simply_supported
 
 # ============================================================
-# Physical Setup  (identical to HW3 – same 8-ft LVL header)
+# Physical Setup  (identical to verification_exact_solution – same 8-ft LVL header)
 # ============================================================
 L_FT         = 8.0
 L            = L_FT * 12.0       #  96.0  in   (beam span)
@@ -86,7 +87,7 @@ GEO  = BeamGeometry(span_in=L, width_in=B, depth_in=D)
 MAT  = BeamMaterial(E_psi=E_PSI, Fb_psi=FB, Fv_psi=FV)
 EI   = E_PSI * GEO.moment_of_inertia   # lb·in²
 
-# Closed-form reference values (validated against analytical solution in HW3)
+# Closed-form reference values (validated against analytical solution)
 W_MAX_EXACT   = 5.0 * Q0 * L**4 / (384.0 * EI)       # ≈ 0.06935 in
 M_MAX_EXACT   = Q0 * L**2 / 8.0                       # = 48000.00 lb·in
 SIG_MAX_EXACT = M_MAX_EXACT / GEO.section_modulus      # ≈ 650.16  psi
@@ -100,7 +101,13 @@ P_THEORETICAL   : float     = 2.0                      # O(h²) FD scheme
 FINE_GRID       : int       = 160                      # high-fidelity grid
 PARAMETRIC_GRID : int       = 20                       # coarse parametric grid
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "hw4_figures")
+# Default output: proposal repo CS6444/HW4/figures
+_DEFAULT_OUTPUT_DIR = os.path.normpath(
+    os.path.join(os.path.dirname(__file__),
+                 "..", "..", "..", "..", "..",
+                 "construction-ai-proposal", "CS6444", "HW4", "figures")
+)
+OUTPUT_DIR = os.environ.get("VERIFICATION_GCI_OUTPUT_DIR", _DEFAULT_OUTPUT_DIR)
 
 STYLE = dict(
     font_size=10, axes_labelsize=10, axes_titlesize=11,
@@ -955,6 +962,13 @@ def fig5_unum_vs_h(all_unum: Dict[int, Dict]) -> None:
 # ============================================================
 
 def main() -> None:
+    global OUTPUT_DIR
+    parser = argparse.ArgumentParser(description="GCI solution verification for EB FD beam solver")
+    parser.add_argument("--output-dir", default=OUTPUT_DIR,
+                        help="Directory for figure output (default: proposal repo CS6444/HW4/figures)")
+    args = parser.parse_args()
+    OUTPUT_DIR = args.output_dir
+
     print("\n" + "=" * 72)
     print("  HW4 — Solution Verification: EB FD Beam Solver")
     print("  AOE/CS/ME 6444 | Spring 2026 | Dr. Chris Roy")
