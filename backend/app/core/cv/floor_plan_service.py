@@ -62,9 +62,15 @@ class FloorPlanAnalysisService:
 
     def __init__(self):
         """Initialize models and OCR reader"""
-        # Load YOLO models
-        self.boundary_model = YOLO(settings.YOLO_BOUNDARY_MODEL_PATH)
-        self.object_model = YOLO(settings.YOLO_OBJECT_MODEL_PATH)
+        # Load YOLO models — prefer registry, fall back to legacy config
+        try:
+            from app.core.ml.model_registry import get_model_registry
+            registry = get_model_registry()
+            self.boundary_model = registry.get_loaded_model("yolo-boundary")
+            self.object_model = registry.get_loaded_model("yolo-objects")
+        except Exception:
+            self.boundary_model = YOLO(settings.YOLO_BOUNDARY_MODEL_PATH)
+            self.object_model = YOLO(settings.YOLO_OBJECT_MODEL_PATH)
 
         # Initialize EasyOCR
         self.ocr_reader = easyocr.Reader(['en'], gpu=True)

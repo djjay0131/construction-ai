@@ -1,0 +1,56 @@
+# Model Registry Manifest
+# This is the single source of truth for model versions.
+# Models are stored in GCS and cached locally under ml/models/
+
+bucket: "construction-ai-models"
+local_cache: "ml/models"
+
+models:
+  yolo-boundary:
+    description: "Floor plan boundary detection"
+    current_version: "v2"
+    versions:
+      v1:
+        gcs_path: "yolo-boundary/v1/best.pt"
+        gcs_generation: 1775272476915196
+        trained_at: "2026-01-14"
+        dataset: "floorplan_boundary_exp1"
+        metrics:
+          mAP50: 0.82
+          mAP50-95: 0.61
+      v2:
+        gcs_path: "yolo-boundary/v2/best.pt"
+        gcs_generation: 1775272481964809
+        trained_at: "2026-03-20"
+        dataset: "floorplan_boundary_exp2"
+        metrics:
+          mAP50: 0.91
+          mAP50-95: 0.72
+
+  yolo-objects:
+    description: "Floor plan object detection (walls, doors, windows, columns)"
+    current_version: "v3"
+    versions:
+      v1:
+        gcs_path: "yolo-objects/v1/best.pt"
+        gcs_generation: 1775272487674340
+        trained_at: "2026-01-14"
+        dataset: "yolo12x_exp1"
+      v3:
+        gcs_path: "yolo-objects/v3/best.pt"
+        gcs_generation: 1775272497906839
+        trained_at: "2026-03-15"
+        dataset: "yolo12x_exp3"
+        metrics:
+          mAP50: 0.87
+
+  yolo-detection:
+    description: "General construction object detection"
+    current_version: "v1"
+    versions:
+      v1:
+        gcs_path: "yolo-detection/v1/best.pt"
+        gcs_generation: 1775272501016390
+        trained_at: "2026-01-14"
+        dataset: "original_training"
+        notes: "Migrated from backend/app/core/cv/best.pt"

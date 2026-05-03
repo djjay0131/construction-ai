@@ -37,7 +37,11 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
 
-    # YOLO Models
+    # Model Registry
+    MODEL_MANIFEST_PATH: str = "ml/models.yaml"
+
+    # Legacy YOLO paths (deprecated — use MODEL_MANIFEST_PATH instead)
+    # Kept temporarily for backwards compatibility during migration
     YOLO_MODEL_PATH: str = "./ml/yolo/models/best.pt"
     YOLO_BOUNDARY_MODEL_PATH: str = "../datascience/runs/yolo12xtrain_floorplan_boundary/yolo12x_floorplan_boundary_exp2/weights/best.pt"
     YOLO_OBJECT_MODEL_PATH: str = "../datascience/runs/yolo12xtrain/yolo12x_exp3/weights/best.pt"
@@ -55,6 +59,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"
 
 
 # Global settings instance

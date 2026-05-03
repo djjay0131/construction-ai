@@ -209,8 +209,30 @@ _detection_service: Optional[DetectionService] = None
 
 
 def get_detection_service() -> DetectionService:
-    """Get or create detection service instance"""
+    """Get or create detection service instance.
+
+    Tries to use the model registry first. Falls back to legacy path
+    if the registry is not configured.
+    """
     global _detection_service
     if _detection_service is None:
-        _detection_service = DetectionService()
+        try:
+            from app.core.ml.model_registry import get_model_registry
+            registry = get_model_registry()
+            model = registry.get_loaded_model("yolo-detection")
+            service = DetectionService.__new__(DetectionService)
+            service.model = model
+            service.model_path = "registry:yolo-detection"
+            service.available_labels = [
+                "Column", "Curtain Wall", "Dimension", "Door",
+                "Railing", "Sliding Door", "Stair Case", "Wall", "Window",
+            ]
+            _detection_service = service
+            logger.info("DetectionService initialized from model registry")
+        except Exception as e:
+            logger.warning(
+                f"Model registry not available ({e}), "
+                "falling back to legacy model path"
+            )
+            _detection_service = DetectionService()
     return _detection_service

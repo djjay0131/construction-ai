@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 import logging
 
 # Import API routers
-from app.api import upload, takeoff, detection, floor_plan
+from app.api import upload, takeoff, detection, floor_plan, models
 from app.db.database import init_db
 
 # Configure logging
@@ -94,6 +94,7 @@ app.include_router(upload.router, prefix="/api/upload", tags=["Upload"])
 app.include_router(takeoff.router, prefix="/api/takeoff", tags=["Takeoff"])
 app.include_router(detection.router, prefix="/api/detection", tags=["Object Detection"])
 app.include_router(floor_plan.router, prefix="/api/floor-plan", tags=["Floor Plan Analysis"])
+app.include_router(models.router, prefix="/api/models", tags=["Model Management"])
 
 
 if __name__ == "__main__":
