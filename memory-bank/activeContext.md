@@ -1,14 +1,17 @@
 # Active Context
 
-**Last Updated:** 2026-04-28 (Final Project report complete)
+**Last Updated:** 2026-05-03 (audit-and-enhance spec implemented)
 
 ## Current Work Phase
 
 **VVSC Final Project — AOE/CS/ME 6444, Spring 2026, Dr. Chris Roy**
 
-All homework studies complete. Final project conference-paper report finished,
-including Predictive UQ (p-box, nested sampling, model-form extrapolation, total
-uncertainty budget) and a Future Work section with literature-backed extensions.
+Pre-submission audit-and-enhance pass complete. Spec
+`construction/design/final-report-audit-and-enhancement.md` (status:
+IMPLEMENTED, commit 9ca7300) closed the HW2 instructor-spec gap
+(sensitivity analysis was missing) plus 7 prose strengthenings.
+Submission deadline: **2026-05-06 22:00 EST**. Pre-submission Canvas-draft
+rehearsal target: **2026-05-06 10:00 EST**.
 
 ## Current State
 
@@ -22,8 +25,11 @@ uncertainty budget) and a Future Work section with literature-backed extensions.
 | `backend/app/core/structural/hw4_report/VVSC_Chuang_ChengShun_HW4.tex` | HW4 Report | ✅ Complete (9 pages) |
 | `backend/app/core/structural/hw5_validation_metric.py` | HW5 | ✅ Complete |
 | `backend/app/core/structural/hw5_report/VVSC_Chuang_ChengShun_HW5.tex` | HW5 Report | ✅ Complete (9 pages) |
-| `backend/app/core/structural/project_prediction_uq.py` | Final Project | ✅ Complete |
-| `backend/app/core/structural/project_report/VVSC_Chuang_ChengShun_Project.tex` | Final Report | ✅ Complete (11 pages) |
+| `backend/app/core/structural/project_prediction_uq.py` | Final Project | ✅ Complete (Sobol §7 + RD-5 snapshot, 21 pytest tests) |
+| `backend/app/core/structural/project_report/VVSC_Cusati_Chuang_Project.tex` | Final Report | ✅ Complete (13 pages, audit-and-enhanced) |
+| `construction/design/final-report-audit-and-enhancement.md` | Audit spec | IMPLEMENTED |
+| `construction/design/final-report-numeric-reconciliation.md` | RD-6 reconciliation | RECONCILED |
+| `backend/tests/test_project_prediction_uq.py` | RD-2 / RD-5 tests | 21/21 pass |
 
 **HW5 Key Facts:**
 - SRQ: **w_max** (same as HW4 — p_obs ≈ 2.00, asymptotic, U_NUM = 0.063% at N=20)
