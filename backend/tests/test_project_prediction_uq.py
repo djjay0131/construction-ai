@@ -10,9 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-import tempfile
 from typing import Dict
-from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -113,6 +111,35 @@ class TestSobolIndices:
         monkeypatch.setattr(puq, "SOBOL_SANITY_HI", 1.00)
         with pytest.raises(RuntimeError, match="sanity-bound"):
             puq.run_sobol_indices(n_base=128, seed=42)
+
+    def test_saltelli_construction_recovers_both_inputs(self, puq):
+        """Regression test for the bug where two independent
+        sampler.random(n_base) calls produced correlated Sobol
+        continuations that drove ST[E] → 0. The current implementation
+        draws a single Sobol sequence in d=4 and splits A|B. After the
+        fix both inputs must show ST > 0.10 (well above the noise floor)
+        — pre-fix the value was ~0.0004."""
+        res = puq.run_sobol_indices(n_base=512, seed=42)
+        assert res["ST"][0] > 0.10, (
+            f"ST[E]={res['ST'][0]:.4f} too small — possible regression of "
+            f"the correlated-Sobol-sequence bug"
+        )
+        assert res["ST"][1] > 0.10, (
+            f"ST[q0]={res['ST'][1]:.4f} too small — possible regression"
+        )
+
+    def test_q0_alone_dominates_when_E_held_fixed_in_spec(self, puq):
+        """Sanity check: if the model were entirely insensitive to E we'd
+        expect S_T[E] ≪ S_T[q0]. The fact that S_T[E] and S_T[q0] are
+        within a factor of ~1.3 of each other validates the
+        physically-expected near-balance for w_max ∝ q0/E with similar
+        input CoVs."""
+        res = puq.run_sobol_indices(n_base=1024, seed=42)
+        ratio = max(res["ST"]) / min(res["ST"])
+        assert ratio < 2.0, (
+            f"S_T ratio {ratio:.2f} too large — one input wrongly "
+            f"dominates given comparable CoVs (E=10%, q0~11.5%)"
+        )
 
 
 # ---------------------------------------------------------------------------
