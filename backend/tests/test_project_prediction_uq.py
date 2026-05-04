@@ -209,6 +209,85 @@ class TestSnapshot:
                                       "schema_version": 99},
                                      path=str(path), atol=1e-5)
 
+    def test_compare_caps_output_at_20_drifts(self, puq, tmp_path):
+        """When >20 fields drift, the error message should list only
+        the first 20 followed by an '... and N more.' summary line."""
+        path = tmp_path / "snapshot.json"
+        prior = {f"k{i:03d}": float(i) for i in range(30)}
+        now   = {f"k{i:03d}": float(i) + 1.0 for i in range(30)}  # all drift by 1
+        with open(path, "w") as f:
+            json.dump(prior, f)
+        with pytest.raises(RuntimeError, match=r"and 10 more\."):
+            puq.compare_against_snapshot(now, path=str(path), atol=1e-5)
+
+
+class TestBuildSnapshot:
+    """Tests for build_snapshot — RD-5 invariants packaging."""
+
+    @staticmethod
+    def _mk_results_dict() -> Dict[int, Dict]:
+        """Synthetic minimal results_dict with the keys build_snapshot reads."""
+        y = np.linspace(0.04, 0.10, 11)
+        # Monotone increasing CDFs from 0 to 1
+        pbox_lo = np.linspace(0.0, 1.0, 11)
+        pbox_hi = np.linspace(0.0, 1.0, 11)
+        w_ens = [np.full(20, 0.07), np.full(20, 0.075), np.full(20, 0.08)]
+        return {
+            5:  dict(y_grid=y, pbox_lo=pbox_lo, pbox_hi=pbox_hi,
+                    w_ensembles=w_ens, na=100),
+            25: dict(y_grid=y, pbox_lo=pbox_lo, pbox_hi=pbox_hi,
+                    w_ensembles=w_ens, na=100),
+        }
+
+    @staticmethod
+    def _mk_sobol() -> Dict:
+        return {
+            "S1": np.array([0.45, 0.55]), "ST": np.array([0.45, 0.56]),
+            "labels": ["E", "q0"], "n_base": 1024, "n_calls": 4096,
+            "var_y": 1.18e-4, "S1_sum": 1.0, "ST_sum": 1.01,
+            "interaction": 0.01,
+        }
+
+    def test_build_snapshot_keys_present(self, puq):
+        snap = puq.build_snapshot(
+            self._mk_results_dict(),
+            corner_unum={"unum_max": 2.6e-4},
+            mavm_extrap={"U_MF_plus": 2.0e-3, "U_MF_minus": 6.4e-4},
+            total_unc={"U_total_upper": 2.78e-2, "U_total_lower": 2.64e-2},
+            sobol_res=self._mk_sobol(),
+        )
+        for k in ("schema_version", "tolerance", "pbox_quantiles_in",
+                  "u_num_max_in", "U_MF_plus_in", "U_MF_minus_in",
+                  "AVM_base_in", "MAVM_base_in", "total_upper_in",
+                  "total_lower_in", "w_nom_q0_hi_in",
+                  "sobol_S1", "sobol_ST", "sobol_n_calls"):
+            assert k in snap, f"missing key: {k}"
+
+    def test_build_snapshot_handles_alternate_total_keys(self, puq):
+        """build_snapshot tolerates either U_total_upper or u_total_upper."""
+        snap = puq.build_snapshot(
+            self._mk_results_dict(),
+            corner_unum={"unum_max": 2.6e-4},
+            mavm_extrap={"U_MF_plus": 2.0e-3, "U_MF_minus": 6.4e-4},
+            total_unc={"u_total_upper": 2.78e-2, "u_total_lower": 2.64e-2},
+            sobol_res=self._mk_sobol(),
+        )
+        assert snap["total_upper_in"] == 2.78e-2
+        assert snap["total_lower_in"] == 2.64e-2
+
+    def test_build_snapshot_pbox_quantile_shape(self, puq):
+        snap = puq.build_snapshot(
+            self._mk_results_dict(),
+            corner_unum={"unum_max": 2.6e-4},
+            mavm_extrap={"U_MF_plus": 2.0e-3, "U_MF_minus": 6.4e-4},
+            total_unc={"U_total_upper": 0.0, "U_total_lower": 0.0},
+            sobol_res=self._mk_sobol(),
+        )
+        for ne_key, q in snap["pbox_quantiles_in"].items():
+            assert set(q.keys()) == {"5th", "50th", "95th"}
+            for pct, bounds in q.items():
+                assert len(bounds) == 2, f"Ne={ne_key} pct={pct}"
+
 
 # ---------------------------------------------------------------------------
 # fig5_sobol_indices smoke test

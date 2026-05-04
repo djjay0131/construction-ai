@@ -391,9 +391,12 @@ def print_pbox_table(results_dict: Dict[int, Dict]) -> None:
             return y[idx]
         # Lower bound on quantile = from pbox_hi (reaches target sooner)
         # Upper bound on quantile = from pbox_lo (reaches target later)
-        lb5  = interp_y(hi, 0.05);   ub5  = interp_y(lo, 0.05)
-        lb50 = interp_y(hi, 0.50);   ub50 = interp_y(lo, 0.50)
-        lb95 = interp_y(hi, 0.95);   ub95 = interp_y(lo, 0.95)
+        lb5  = interp_y(hi, 0.05)
+        ub5  = interp_y(lo, 0.05)
+        lb50 = interp_y(hi, 0.50)
+        ub50 = interp_y(lo, 0.50)
+        lb95 = interp_y(hi, 0.95)
+        ub95 = interp_y(lo, 0.95)
         width50 = ub50 - lb50
         print(f"  {ne:>4}  {res['na']:>4}"
               f"  [{lb5:.5f}, {ub5:.5f}]"
@@ -418,10 +421,12 @@ def print_corner_unum(corner: Dict) -> None:
 
 def print_mavm_extrap(extrap: Dict) -> None:
     print_header("Table 3 — Model Form Uncertainty Extrapolation (d+, d−, MAVM vs. q₀)")
-    rp = extrap["reg_plus"]; rm = extrap["reg_minus"]; rv = extrap["reg_mavm"]
+    rp = extrap["reg_plus"]
+    rm = extrap["reg_minus"]
+    rv = extrap["reg_mavm"]
     print(f"\n  At q₀=500 lb/ft (HW5): d+ = {D_PLUS_BASE:.4e} in,  "
           f"d− = {D_MINUS_BASE:.4e} in,  MAVM = {MAVM_BASE:.4e} in")
-    print(f"\n  Linear regressions (intercept + slope × q₀):")
+    print("\n  Linear regressions (intercept + slope × q₀):")
     print(f"    d+   : {rp['intercept']:.4e} + {rp['slope']:.4e}·q₀   R²={rp['r_val']**2:.4f}")
     print(f"    d−   : {rm['intercept']:.4e} + {rm['slope']:.4e}·q₀   R²={rm['r_val']**2:.4f}")
     print(f"    MAVM : {rv['intercept']:.4e} + {rv['slope']:.4e}·q₀   R²={rv['r_val']**2:.4f}")
@@ -440,9 +445,11 @@ def print_total_uncertainty(total: Dict, pbox: Dict) -> None:
 
     print(f"\n  Nominal w_max at q₀={Q0_HI:.0f} lb/ft (mean, N={N_GRID}): "
           f"{w_nom:.6f} in")
-    print(f"\n  Uncertainty source               Magnitude [in]   % of w_nom   Side")
+    print("\n  Uncertainty source               Magnitude [in]   % of w_nom   Side")
     print("  " + "-" * 70)
-    y  = pbox["y_grid"]; lo = pbox["pbox_lo"]; hi = pbox["pbox_hi"]
+    y  = pbox["y_grid"]
+    lo = pbox["pbox_lo"]
+    hi = pbox["pbox_hi"]
     def interp_y(env, F_target):
         return y[min(np.searchsorted(env, F_target), len(y) - 1)]
     mid_idx = len(pbox["w_ensembles"]) // 2
@@ -1010,17 +1017,17 @@ def main() -> None:
     uniform_res = run_uniform_epistemic(na=na)
 
     # ── 3. Corner-case U_NUM (HW#4 project requirement) ───────────────────
-    print(f"\n  [3/5] Running 4-corner U_NUM study ...")
+    print("\n  [3/5] Running 4-corner U_NUM study ...")
     corner_unum = run_corner_unum()
     U_NUM_CORNER = corner_unum["unum_max"]
     print(f"    Worst-case U_NUM = {U_NUM_CORNER:.4e} in")
 
     # ── 4. Model form extrapolation (d+ and d- separately) ────────────────
-    print(f"\n  [4/5] Computing model form uncertainty extrapolation (d+, d-) ...")
+    print("\n  [4/5] Computing model form uncertainty extrapolation (d+, d-) ...")
     mavm_extrap = build_mavm_dataset()
 
     # ── 5. Total uncertainty ───────────────────────────────────────────────
-    print(f"\n  [5/5] Assembling total uncertainty budget ...")
+    print("\n  [5/5] Assembling total uncertainty budget ...")
     total_unc = assemble_total_uncertainty(results_dict[25], mavm_extrap, U_NUM_CORNER)
 
     # ── 6. Sobol sensitivity analysis (Saltelli) ─────────────────────────
