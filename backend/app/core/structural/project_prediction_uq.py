@@ -37,10 +37,11 @@ Run:
 
 from __future__ import annotations
 
+import json
 import math
 import os
 import sys
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import matplotlib
@@ -48,7 +49,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from scipy.special import ndtri
 from scipy.stats import t as t_dist, norm as sp_norm
-from scipy.stats import linregress
+from scipy.stats import linregress, qmc
 
 sys.path.insert(0, os.path.dirname(__file__))
 from beam_solver import BeamGeometry, BeamMaterial, solve_simply_supported
@@ -94,7 +95,14 @@ D_PLUS_BASE  = (AVM_BASE + MAVM_BASE) / 2.0   # 1.609e-3 in  (model under-predic
 D_MINUS_BASE = (AVM_BASE - MAVM_BASE) / 2.0   # 0.530e-3 in  (model over-predict area)
 
 LHS_SEED = 42
+SOBOL_N_BASE = 1024                       # → 4096 solver calls (n_base * (d+2))
+SOBOL_SANITY_LO = 0.05                    # RD-2: lower sanity bound on S_T[i]
+SOBOL_SANITY_HI = 0.95                    # RD-2: upper sanity bound on S_T[i]
+
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "project_figures")
+SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__),
+                             "project_results_snapshot.json")
+SNAPSHOT_ATOL = 1e-5                      # RD-5: drift tolerance vs committed snapshot
 
 _RC = {
     "font.size": 10, "axes.labelsize": 10, "axes.titlesize": 11,
@@ -680,6 +688,297 @@ def fig4_total_uncertainty(pbox25: Dict, total: Dict,
 
 
 # ============================================================
+# Sensitivity Analysis (Saltelli/Sobol)
+# ============================================================
+
+def run_sobol_indices(n_base: int = SOBOL_N_BASE,
+                      seed: int = LHS_SEED) -> Dict[str, Any]:
+    """
+    Sobol first-order (S1) and total-effect (ST) indices for w_max(E, q0).
+
+    For the variance decomposition both inputs are treated probabilistically:
+        E  ~ N(MU_E, SIGMA_E)              (LVL grade-1 production scatter)
+        q0 ~ U(Q0_LO, Q0_HI)               (epistemic interval re-cast as uniform)
+
+    This intentionally departs from the p-box framing (where q0 stays
+    epistemic) — variance-based decomposition requires a probability measure
+    on every input. The two analyses answer different questions: the p-box
+    bounds the predictive CDF; Sobol ranks input contributions to total
+    output variance.  See Roy 2011, Section 2-3, for the dual-treatment
+    rationale.
+
+    Saltelli sample design: total solver calls = n_base * (d + 2) where d=2,
+    i.e. 4 * n_base. With n_base=1024 → 4096 FD solves at N=20.
+
+    RD-2 sanity-bound assertion: ST values must lie in
+    [SOBOL_SANITY_LO, SOBOL_SANITY_HI] for both inputs; out-of-range
+    triggers RuntimeError to catch latent RNG-state bugs that could
+    silently produce a numerically-correct-but-visually-broken figure.
+
+    Returns:
+        Dict with keys:
+            S1, ST       : np.ndarray shape (2,)
+            labels       : ["E", "q0"]
+            n_base, n_calls
+            var_y        : float  (total output variance, for sanity)
+            S1_sum, ST_sum
+            interaction  : float  (ST_sum - S1_sum, ≥ 0 theoretically)
+    """
+    # Saltelli construction: draw a single Sobol sequence in 2*d=4
+    # dimensions, then split into A | B halves. This guarantees joint
+    # low-discrepancy coverage; two separate Sobol(d=2) calls produce
+    # correlated continuations of the same sequence and leak ST[i]→0.
+    d = 2
+    sampler = qmc.Sobol(d=2 * d, scramble=True, seed=seed)
+    joint = sampler.random(n_base)
+    A_unit = joint[:, :d]
+    B_unit = joint[:, d:]
+
+    def _rescale(unit_arr: np.ndarray) -> np.ndarray:
+        out = np.empty_like(unit_arr)
+        # column 0 → E ~ N(mu, sigma) via inverse-CDF
+        out[:, 0] = sp_norm.ppf(unit_arr[:, 0], loc=MU_E, scale=SIGMA_E)
+        # column 1 → q0 ~ U(Q0_LO, Q0_HI)
+        out[:, 1] = Q0_LO + (Q0_HI - Q0_LO) * unit_arr[:, 1]
+        return out
+
+    A = _rescale(A_unit)
+    B = _rescale(B_unit)
+
+    f_A = np.array([w_max_solve(E_psi=row[0], q0_lbft=row[1]) for row in A])
+    f_B = np.array([w_max_solve(E_psi=row[0], q0_lbft=row[1]) for row in B])
+
+    f_AB: List[np.ndarray] = []
+    for i in range(2):
+        AB = A.copy()
+        AB[:, i] = B[:, i]
+        f_AB.append(
+            np.array([w_max_solve(E_psi=row[0], q0_lbft=row[1]) for row in AB])
+        )
+
+    var_y = float(np.var(np.concatenate([f_A, f_B]), ddof=1))
+    if var_y <= 0.0:                                              # pragma: no cover
+        # Defensive: w_max(E,q0) is non-degenerate by construction, so this
+        # branch is unreachable in this study.  Kept for diagnostic clarity.
+        raise RuntimeError("Sobol: zero output variance — degenerate inputs?")
+
+    S1 = np.array([np.mean(f_B * (f_AB[i] - f_A)) / var_y for i in range(2)])
+    ST = np.array([0.5 * np.mean((f_A - f_AB[i]) ** 2) / var_y for i in range(2)])
+
+    # RD-2: sanity-bound assertion on total-effect indices
+    for label, st_val in zip(["E", "q0"], ST):
+        if not (SOBOL_SANITY_LO <= st_val <= SOBOL_SANITY_HI):
+            raise RuntimeError(
+                f"Sobol sanity-bound check failed: ST[{label}] = {st_val:.4f} "
+                f"is outside [{SOBOL_SANITY_LO}, {SOBOL_SANITY_HI}]. "
+                f"Expected both inputs to contribute meaningfully to "
+                f"variance of w_max for the LVL beam case."
+            )
+
+    return {
+        "S1": S1,
+        "ST": ST,
+        "labels": ["E", "q0"],
+        "n_base": int(n_base),
+        "n_calls": int(n_base * 4),
+        "var_y": var_y,
+        "S1_sum": float(np.sum(S1)),
+        "ST_sum": float(np.sum(ST)),
+        "interaction": float(np.sum(ST) - np.sum(S1)),
+    }
+
+
+def print_sobol_table(sobol_res: Dict[str, Any]) -> None:
+    print_header("Table 5 — Sobol Sensitivity Indices for w_max (Saltelli)")
+    print(f"\n  Sampling: n_base={sobol_res['n_base']}, "
+          f"n_calls={sobol_res['n_calls']}, var(y)={sobol_res['var_y']:.4e}")
+    print(f"\n  {'Input':>6}  {'S_1 (first-order)':>20}  {'S_T (total-effect)':>20}")
+    print("  " + "-" * 50)
+    for lbl, s1, st in zip(sobol_res["labels"], sobol_res["S1"], sobol_res["ST"]):
+        print(f"  {lbl:>6}  {s1:>20.4f}  {st:>20.4f}")
+    print(f"\n  Σ S_1 = {sobol_res['S1_sum']:.4f}   "
+          f"Σ S_T = {sobol_res['ST_sum']:.4f}   "
+          f"Interaction (Σ S_T − Σ S_1) = {sobol_res['interaction']:.4f}")
+    print()
+
+
+def fig5_sobol_indices(sobol_res: Dict[str, Any]) -> None:
+    """Figure 5 — bar chart of S_1 and S_T for E and q0."""
+    with plt.rc_context(_RC):
+        fig, ax = plt.subplots(figsize=(5.6, 3.8))
+        labels = sobol_res["labels"]
+        x = np.arange(len(labels))
+        w = 0.35
+        ax.bar(x - w / 2, sobol_res["S1"], w,
+               label=r"$S_1$ (first-order)", color="#1f77b4", edgecolor="black", lw=0.5)
+        ax.bar(x + w / 2, sobol_res["ST"], w,
+               label=r"$S_T$ (total-effect)", color="#d62728", edgecolor="black", lw=0.5)
+
+        # Annotate values on top of bars
+        for xi, val in zip(x - w / 2, sobol_res["S1"]):
+            ax.text(xi, val + 0.02, f"{val:.3f}", ha="center", va="bottom", fontsize=8)
+        for xi, val in zip(x + w / 2, sobol_res["ST"]):
+            ax.text(xi, val + 0.02, f"{val:.3f}", ha="center", va="bottom", fontsize=8)
+
+        ax.set_xticks(x)
+        ax.set_xticklabels([r"$E$", r"$q_0$"])
+        ax.set_ylabel("Sobol index")
+        ax.set_ylim(0.0, 1.10)
+        ax.set_title(
+            r"Sobol Sensitivity Indices for $w_{\max}$"
+            "\n"
+            f"$n_{{\\rm calls}}={sobol_res['n_calls']}$, "
+            r"$E\sim\mathcal{N}(\mu_E,\sigma_E)$, $q_0\sim U(400,600)$"
+        )
+        ax.legend(loc="upper right", fontsize=9)
+        ax.grid(True, axis="y", color="gray", alpha=0.3, lw=0.5)
+
+        # Caption-style sum annotation under the title
+        ax.text(0.5,
+                -0.20,
+                f"$\\sum S_1={sobol_res['S1_sum']:.3f}$, "
+                f"$\\sum S_T={sobol_res['ST_sum']:.3f}$, "
+                f"interaction $={sobol_res['interaction']:.3f}$",
+                transform=ax.transAxes, ha="center", va="top", fontsize=8)
+        fig.tight_layout()
+        _save(fig, "fig5_sobol")
+        plt.close(fig)
+
+
+# ============================================================
+# RD-5: Determinism snapshot
+# ============================================================
+
+def build_snapshot(results_dict: Dict[int, Dict],
+                   corner_unum: Dict,
+                   mavm_extrap: Dict,
+                   total_unc: Dict,
+                   sobol_res: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Assemble the invariants we want to lock down across runs (RD-5).
+
+    Stored to 6-decimal precision; subsequent runs assert all values match
+    a committed snapshot to within SNAPSHOT_ATOL absolute tolerance.
+    """
+    def _interp_y(env: np.ndarray, F_target: float, y: np.ndarray) -> float:
+        idx = min(int(np.searchsorted(env, F_target)), len(y) - 1)
+        return float(y[idx])
+
+    pbox_quantiles: Dict[str, Dict[str, List[float]]] = {}
+    for ne, res in sorted(results_dict.items()):
+        y = res["y_grid"]
+        lo = res["pbox_lo"]
+        hi = res["pbox_hi"]
+        pbox_quantiles[str(ne)] = {
+            "5th":  [_interp_y(hi, 0.05, y), _interp_y(lo, 0.05, y)],
+            "50th": [_interp_y(hi, 0.50, y), _interp_y(lo, 0.50, y)],
+            "95th": [_interp_y(hi, 0.95, y), _interp_y(lo, 0.95, y)],
+        }
+
+    pbox_25 = results_dict[25]
+    w_ens_hi = pbox_25["w_ensembles"][-1]
+    w_nom_hi = float(np.mean(w_ens_hi))
+
+    return {
+        "schema_version": 1,
+        "tolerance": SNAPSHOT_ATOL,
+        "pbox_quantiles_in": pbox_quantiles,
+        "u_num_max_in": float(corner_unum["unum_max"]),
+        "U_MF_plus_in": float(mavm_extrap["U_MF_plus"]),
+        "U_MF_minus_in": float(mavm_extrap["U_MF_minus"]),
+        "AVM_base_in": float(AVM_BASE),
+        "MAVM_base_in": float(MAVM_BASE),
+        "d_plus_base_in": float(D_PLUS_BASE),
+        "d_minus_base_in": float(D_MINUS_BASE),
+        "total_upper_in": float(total_unc.get("U_total_upper",
+                                              total_unc.get("u_total_upper", 0.0))),
+        "total_lower_in": float(total_unc.get("U_total_lower",
+                                              total_unc.get("u_total_lower", 0.0))),
+        "w_nom_q0_hi_in": w_nom_hi,
+        "sobol_S1": [float(v) for v in sobol_res["S1"]],
+        "sobol_ST": [float(v) for v in sobol_res["ST"]],
+        "sobol_S1_sum": sobol_res["S1_sum"],
+        "sobol_ST_sum": sobol_res["ST_sum"],
+        "sobol_interaction": sobol_res["interaction"],
+        "sobol_n_calls": sobol_res["n_calls"],
+    }
+
+
+def _flatten(prefix: str, obj: Any, out: Dict[str, float]) -> None:
+    """Flatten a nested dict/list of floats into dotted-key form for diffing."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            _flatten(f"{prefix}.{k}" if prefix else str(k), v, out)
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            _flatten(f"{prefix}[{i}]", v, out)
+    elif isinstance(obj, (int, float)) and not isinstance(obj, bool):
+        out[prefix] = float(obj)
+    # strings and metadata fields are skipped
+
+
+def compare_against_snapshot(snapshot: Dict[str, Any],
+                             path: str = SNAPSHOT_PATH,
+                             atol: float = SNAPSHOT_ATOL) -> None:
+    """
+    RD-5 determinism guard.
+
+    If `path` does not exist, write the snapshot and return ("baseline" mode).
+    If it exists, load and compare every numeric leaf to within `atol`;
+    raise RuntimeError listing all out-of-tolerance fields.
+    """
+    if not os.path.exists(path):
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(snapshot, f, indent=2, sort_keys=True)
+        print(f"  Snapshot baseline written → {os.path.basename(path)}")
+        return
+
+    with open(path, "r", encoding="utf-8") as f:
+        prior = json.load(f)
+
+    flat_now: Dict[str, float] = {}
+    flat_prior: Dict[str, float] = {}
+    _flatten("", snapshot, flat_now)
+    _flatten("", prior, flat_prior)
+
+    # tolerance and schema_version are metadata; skip
+    for k in ("tolerance", "schema_version"):
+        flat_now.pop(k, None)
+        flat_prior.pop(k, None)
+
+    drifts: List[Tuple[str, float, float, float]] = []
+    all_keys = set(flat_now.keys()) | set(flat_prior.keys())
+    for k in sorted(all_keys):
+        a = flat_prior.get(k)
+        b = flat_now.get(k)
+        if a is None or b is None:
+            drifts.append((k, a if a is not None else float("nan"),
+                              b if b is not None else float("nan"),
+                              float("inf")))
+            continue
+        delta = abs(a - b)
+        if delta > atol:
+            drifts.append((k, a, b, delta))
+
+    if drifts:
+        msg_lines = [
+            f"Snapshot determinism check FAILED ({len(drifts)} field(s) "
+            f"exceed atol={atol:g}):"
+        ]
+        for k, a, b, d in drifts[:20]:        # cap output to first 20
+            msg_lines.append(f"  {k:<48s}  prior={a!r:>14s}  now={b!r:>14s}  Δ={d:.3e}")
+        if len(drifts) > 20:
+            msg_lines.append(f"  ... and {len(drifts) - 20} more.")
+        msg_lines.append(
+            f"To refresh: rm {os.path.basename(path)} and re-run."
+        )
+        raise RuntimeError("\n".join(msg_lines))
+
+    print(f"  Snapshot determinism OK (atol={atol:g}, "
+          f"{len(flat_now)} fields checked)")
+
+
+# ============================================================
 # Main
 # ============================================================
 
@@ -724,11 +1023,17 @@ def main() -> None:
     print(f"\n  [5/5] Assembling total uncertainty budget ...")
     total_unc = assemble_total_uncertainty(results_dict[25], mavm_extrap, U_NUM_CORNER)
 
+    # ── 6. Sobol sensitivity analysis (Saltelli) ─────────────────────────
+    print(f"\n  [6/6] Running Sobol sensitivity analysis "
+          f"(n_base={SOBOL_N_BASE}, n_calls={SOBOL_N_BASE * 4}) ...")
+    sobol_res = run_sobol_indices(n_base=SOBOL_N_BASE, seed=LHS_SEED)
+
     # ── Console tables ─────────────────────────────────────────────────────
     print_pbox_table(results_dict)
     print_corner_unum(corner_unum)
     print_mavm_extrap(mavm_extrap)
     print_total_uncertainty(total_unc, results_dict[25])
+    print_sobol_table(sobol_res)
 
     # ── Figures ────────────────────────────────────────────────────────────
     print("  Generating figures ...")
@@ -736,7 +1041,14 @@ def main() -> None:
     fig2_pbox_vs_uniform(results_dict[25], uniform_res)
     fig3_model_form_extrap(mavm_extrap)
     fig4_total_uncertainty(results_dict[25], total_unc, uniform_res)
+    fig5_sobol_indices(sobol_res)
     print(f"\n  Figures saved to: {OUTPUT_DIR}/")
+
+    # ── RD-5: Determinism snapshot check ──────────────────────────────────
+    print("\n  Verifying determinism snapshot ...")
+    snapshot = build_snapshot(results_dict, corner_unum, mavm_extrap,
+                              total_unc, sobol_res)
+    compare_against_snapshot(snapshot)
     print("\nDone.\n")
 
 
