@@ -1,6 +1,6 @@
 # Feature: Final Report Pre-Submission Audit and Enhancement
 
-**Status:** SPECIFIED
+**Status:** FINALIZED (Phase 9 complete; all review decisions logged)
 **Date:** 2026-05-03
 **Author:** Feature Architect (AI-assisted, constellize:feature:specify)
 **Branch:** `Final-report-of-VVUQ` @ 1e03853 (commit hash at audit time)
@@ -310,6 +310,27 @@ contributions to total variance.
   (`fig1_pbox.pdf`, `fig2_pbox_vs_uniform.pdf`, `fig3_model_form_extrap.pdf`,
   `fig4_total_uncertainty.pdf`, `fig5_sobol.pdf`).
 
+### AC-8: Pre-submission rehearsal (per RD-9)
+- **Given** a compiled PDF that satisfies AC-1 through AC-7
+- **When** the time is at most 2026-05-06 10:00 EST (T-12h before deadline)
+- **Then** the PDF has been uploaded to Canvas as a draft submission, and
+  the user has confirmed (i) Canvas accepted the filename, (ii) Canvas
+  server timestamp is consistent with local upload time, (iii) file size
+  matches byte-for-byte, (iv) the draft is visible under the correct
+  assignment slot.
+
+### AC-9: Numerical-consistency reconciliation file (per RD-6)
+- **Given** the source tree pre-submission
+- **When** opening `construction/design/final-report-numeric-reconciliation.md`
+- **Then** every quantity appearing in two or more locations has a row
+  marked "Reconciled? ✓" with matching values.
+
+### AC-10: Determinism snapshot (per RD-5)
+- **Given** the source tree
+- **When** running `python project_prediction_uq.py` twice in succession
+- **Then** both runs produce identical numerical output (asserted against
+  `project_results_snapshot.json` to 1e-5 absolute tolerance).
+
 ## Technical Notes
 
 - **Affected components:**
@@ -344,8 +365,121 @@ contributions to total variance.
   Roy 2011 §2-3, explicitly stating that variance-based decomposition
   requires reversibly recasting epistemic q₀ as probabilistic for the
   decomposition only, and that the p-box prediction representation
-  (Sections 6.2-6.5) is unchanged. This is the option (a) treatment from
-  the review interview.
+  (Sections 6.2-6.5) is unchanged.
+
+- **RD-2 (QA #1a, fig5 sanity bounds):** `run_sobol_indices()` will assert
+  `0.05 ≤ S_T[i] ≤ 0.95` for each input and raise a `RuntimeError` with a
+  clear message if exceeded. The arithmetic-not-rendering check protects
+  against a 1am pre-submission rebuild that produces a numerically-correct-but-
+  visually-broken figure. Manual visual confirmation of fig5 remains a
+  separate AC (AC-2 unchanged).
+
+- **RD-3 (QA #1b + Tech Lead #2, §6.4 circularity, FINAL):** **Option (b) —
+  keep the regression and existing numerical values, rewrite §6.4 prose to
+  defuse circularity through transparency.** Rationale: linear-scaling
+  point estimates differ from the reported 95% PI values by 4% (d⁺) and 1%
+  (d⁻); these deltas are below the headline-precision of Table 4's
+  Total upper/lower (~33%) and the Abstract's "32%". Re-deriving everything
+  invites typo-cascade across Table 4, fig3, fig4, abstract, and conclusions
+  three days from deadline. Re-framing the regression as recovering the
+  correct physical slope (per EB exact solution eq. 2 q₀-linearity) with
+  the PI as a *conservative bound on the extrapolation procedure* (not a
+  measurement-noise estimate) is honest, defensible, and limited to one
+  section. Specific §6.4 prose additions:
+  1. Note explicitly that the five hypothetical validation points were
+     anchored on the validated d⁺(500), d⁻(500) and assumed proportional
+     to q₀.
+  2. Justify the proportionality: under the EB exact solution (eq. 2),
+     w_max is exactly linear in q₀ for fixed E; therefore d⁺(q₀), d⁻(q₀)
+     inherit the same q₀-linearity from the simulation outputs they
+     measure against.
+  3. Frame the 95% PI as a conservative bound on the extrapolation
+     procedure (the choice to fit 5 fabricated points), not a
+     measurement-noise estimate.
+  4. Sanity-check under strict point-scaling: U_MF⁺(600) = 1.2 · d⁺(500) =
+     1.93×10⁻³ in (4% below the regression PI of 2.003×10⁻³ in adopted
+     for the report); U_MF⁻(600) = 1.2 · d⁻(500) = 0.636×10⁻³ in (1%
+     below 0.642×10⁻³ in). Adopting the PI values yields the conservative
+     side of this small ambiguity.
+  No re-run, no Table 4 edits, no fig3/4 edits, no abstract or conclusions
+  edits. Effort: 30-45 min prose only.
+
+- **RD-5 (QA #2a, determinism guard):** Add a regression-snapshot check to
+  `project_prediction_uq.py`. After running the full pipeline, write a
+  `project_results_snapshot.json` containing key invariants to 6 decimal
+  places: p-box 5/50/95-pct bounds at each Nₑ, U_MF⁺/U_MF⁻, AVM/MAVM at
+  validation q₀=500, Sobol S₁/S_T per input, total upper/lower percentages.
+  On subsequent runs, compare against the committed snapshot; raise
+  `RuntimeError` on any field diverging by > 1e-5 absolute (catches RNG
+  ordering changes from the new Sobol code-path). Commit the snapshot
+  alongside the code. Effort: ~30 min including assertion logic.
+
+- **RD-6 (QA #2b, cross-document numerical reconciliation):** Before
+  submission, do a manual diff of every numerical claim that appears in
+  two or more locations. Concretely produce (and commit) a small file
+  `construction/design/final-report-numeric-reconciliation.md` listing:
+  | Quantity | Abstract | Conclusions | Table N | Other locations | Reconciled? |
+  Cover at minimum:
+  - Total upper / total lower percentages (Abstract → Conclusions item 5 → Table 4)
+  - p-box 5th/95th pct at q₀=600 (Abstract → Table 1 row Nₑ=25 → IRC paragraph)
+  - U_NUM at N=20 (Abstract → §4.2 → Table 6 / App. A)
+  - p_obs (Abstract → §3 → Table A.x)
+  - σ_max sanity (G2 IRC paragraph → §2 governing-eq paragraph)
+  - **memory-bank/activeContext.md** Final Project Key Facts block —
+    treat as internal only but reconcile on the same pass to avoid future
+    drift.
+  Sign-off: this file is updated and "all green" before the final PDF is
+  built and submitted.
+
+- **RD-7 (Tech Lead #3, submission/publication path):** **Hybrid (option c).**
+  Pre-deadline: submit local PDF to Canvas only. Do NOT touch
+  `construction-ai-proposal` CI in the pre-deadline window. Post-deadline:
+  copy `.tex` + project_figures into
+  `construction-ai-proposal/CS6444/Project/` mirroring HW3-5; add a
+  Compile CS6444 Project step to `.github/workflows/build-and-publish-pdf.yml`;
+  add an entry to `public/index.html`; push; verify the GitHub Action
+  publishes the PDF; copy the live URL into a follow-up commit on
+  `Final-report-of-VVUQ` for posterity. Rationale: avoids the worst
+  failure mode (CI breaks at 21:00 May 6 blocking submission); preserves
+  HW2-5 pattern consistency as an archive deliverable rather than a
+  hot-path dependency.
+
+- **RD-8 (Tech Lead #3, branch strategy):** **Tag at submission, merge
+  after.** Sequence:
+  1. Pre-deadline work commits land on `Final-report-of-VVUQ`.
+  2. Final compile passes all ACs → `git tag final-project-submitted-2026-05-06`
+     at the exact submitted commit. Push tag to origin.
+  3. Submit PDF to Canvas.
+  4. Wait for Canvas confirmation + screenshot timestamp.
+  5. **Post-submission:** open PR `Final-report-of-VVUQ` → `master`,
+     merge after review.
+  6. Post-deadline mirror to `construction-ai-proposal` per RD-7.
+  Rationale: tag captures immutable submission state; no pre-deadline
+  merge-conflict risk; master eventually reflects canonical history;
+  branch + tag preserve the submission snapshot regardless of subsequent
+  evolution.
+
+- **RD-9 (QA #3, pre-submission rehearsal):** **Add pre-submission rehearsal
+  to acceptance criteria** (option a). Upload the compiled PDF to Canvas as
+  a *draft submission* by 2026-05-06 10:00 EST (12 hours before the 22:00
+  EST cliff). Verify: (i) Canvas accepts the filename without rejection,
+  (ii) Canvas reports a server-side timestamp consistent with the local
+  upload time (catches time-zone confusion), (iii) the uploaded file size
+  matches the local file size byte-for-byte, (iv) the draft is visible in
+  Canvas under the correct assignment. Replace with the final-final upload
+  closer to deadline if any post-rehearsal edits land. Belt-and-suspenders
+  against last-hour failure modes.
+
+- **RD-4 (numerical-claim hygiene, surfaced 2026-05-03):** During Phase 5
+  sample-implementation drafting, an arithmetic error appeared in a stated
+  σ_max sanity-check value (487.6 psi). Recomputed:
+  M_max(q₀=600 lb/ft) = q₀ L² / 8 = 50 · 96² / 8 = **57,600 lb·in**;
+  S = bd²/6 = 3.5 · 11.25² / 6 = **73.83 in³**;
+  σ_max = M/S = 57,600 / 73.83 = **780.2 psi** (still well under NDS-2018
+  Grade-1 LVL Fb ≈ 2,400 psi). G2 paragraph copy must use 780.2 psi, not
+  487.6. Lesson: every numerical claim added during Track A prose edits
+  must be recomputed independently before draft, not copied from spec
+  prose blindly.
 
 ## Open Questions
 
