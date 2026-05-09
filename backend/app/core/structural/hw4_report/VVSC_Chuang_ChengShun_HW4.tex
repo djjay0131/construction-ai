@@ -314,24 +314,55 @@ $\sigma_{\max}$ follows the same pattern as $M_{\max}$ (it is a linear
 scaling thereof), so its table is omitted for brevity.
 
 \paragraph{Interpretation.}
-The \emph{negative} $\pobs$ and asymptotic ratios $\ll1$ indicate that the
-SRQ differences between grids are controlled by \emph{round-off}, not
-discretization.  The cause is the central-difference formula for moment:
+The \emph{negative} $\pobs$ and asymptotic ratios $\ll1$ arise from two
+combined effects, \emph{not} from the linear-solve round-off ($\URO$)
+discussed in Section~\ref{sec:ro}.
+
+\textbf{(1) Near-exact accuracy of $M_{\max}$ on all grids.}
+The 5-point FD stencil for $\EI w'''' = q_0$ is formally exact when applied
+to the degree-4 polynomial exact solution (all derivatives of order $\ge 5$
+vanish identically), so $w_{\mathrm{FD},i}\approx w_{\mathrm{exact}}(x_i)$
+to near-floating-point precision on every grid.  As a result the systematic
+discretization error in $M_{\max}$ is negligible: all five grids yield
+$M_{\max}$ within $10^{-6}$\,lb$\cdot$in of the closed-form value of
+$48\,000$\,lb$\cdot$in (compare rows of Table~\ref{tab:gci}).
+
+\textbf{(2) Growing stencil noise in the post-processing step.}
+Despite excellent solve accuracy, computing
 \begin{equation}
-  M_i = -\EI\,\frac{w_{i-1}-2w_i+w_{i+1}}{h^2}.
+  M_i = -\EI\,\frac{w_{i-1}-2w_i+w_{i+1}}{h^2}
   \label{eq:mfd}
 \end{equation}
-The amplification factor $\EI/h^2\approx2.88\times10^7$ (at $N=20$)
-magnifies float rounding errors in the stencil terms by seven orders of magnitude,
-causing \emph{catastrophic cancellation}.  As a result, the FD differences between
-consecutive grid solutions are noise-dominated. Since $F_s=3.00$ applies
-(unreliable estimate), the GCI for $M_{\max}$ and $\sigma_{\max}$ must be
-interpreted with caution.
+introduces floating-point noise via \emph{catastrophic cancellation}:
+the stencil numerator subtracts nearly equal values of magnitude
+$|w|\approx0.069$\,in to obtain a result of only
+$h^2|w''|\approx h^2 q_0/(8\EI)L^2\cdot(\text{factor})\ll|w|$,
+losing approximately $\log_{10}(|w|/h^2|w''|)$ significant digits.
+After multiplication by $\EI/h^2 \propto N^2$, the residual noise scales as
+\begin{equation}
+  \delta M_{\mathrm{stencil}} \;\sim\; \frac{\EI}{h^2}\,
+  \varepsilon_{\mathrm{f64}}\,|w| \;\propto\; N^2,
+  \label{eq:mnoise}
+\end{equation}
+\emph{growing} with refinement: $\approx4\times10^{-10}$\,lb$\cdot$in
+at $N=10$, rising to $\approx10^{-6}$\,lb$\cdot$in at $N=160$.
+This stencil noise is completely independent of, and much larger than,
+the linear-solve $\URO$ measured by the float32/float64 comparison in
+Section~\ref{sec:ro}; the solve itself is accurate at all grid levels.
 
-Practically, because the exact values of $M_{\max}=q_0L^2/8$ and
-$\sigma_{\max}=M_{\max}/S$ are obtained directly from closed-form
-formulae (not from the FD derivative), the round-off contamination in
-Eq.~\eqref{eq:mfd} does not affect the structural assessment.
+Because the systematic truncation error in $M$ is near zero while the
+stencil noise grows as $N^2$, the Richardson-extrapolation premise---that
+consecutive differences reflect structured convergence, $|e_1|/|e_2|\approx
+r^p$---is violated.  The differences are incoherent noise: at $N=160$ the
+noise ($\approx1.2\times10^{-6}$\,lb$\cdot$in) exceeds that at $N=80$
+($\approx7\times10^{-8}$\,lb$\cdot$in), so $|f_2-f_1|>|f_3-f_2|$ and
+$\pobs<0$.  Since $F_s=3.00$ applies (unreliable regime), the GCI for
+$M_{\max}$ and $\sigma_{\max}$ is unreliable and must be interpreted with
+caution.
+
+Practically, $M_{\max}=q_0L^2/8$ and $\sigma_{\max}=M_{\max}/S$ are
+available from closed-form formulae; the structural assessment uses these
+exact values directly and is unaffected by the stencil noise.
 
 \begin{figure}[ht]
   \centering
@@ -429,7 +460,16 @@ float32 grid} is $h^*\propto\varepsilon^{1/6}$, which is approximately
 $N=20$--$40$ for this problem.
 
 In float64, $\varepsilon_{\mathrm{f64}}\kappa\le2.4\times10^{-8}$ at $N=160$,
-so round-off is entirely negligible and float64 remains safe.
+so the linear-solve round-off is entirely negligible and float64 remains safe.
+
+\textbf{Important scope note.}  The $\URO$ values above quantify only the
+accuracy of the \emph{linear solve} for deflection $w$.  They do \emph{not}
+capture the separate floating-point noise that arises when the post-processing
+stencil $M_i = -\EI(w_{i-1}-2w_i+w_{i+1})/h^2$ is evaluated in
+Eq.~\eqref{eq:mfd}.  That stencil noise scales as
+$\EI/h^2 \cdot \varepsilon_{\mathrm{f64}} \cdot |w| \propto N^2$ (growing
+with refinement), which is the mechanism responsible for the noise-dominated
+OOA of $M_{\max}$ as explained in Section~\ref{sec:gci}.
 
 Figure~\ref{fig:pobs} shows $\pobs$ across all triplets and SRQs, clearly
 illustrating the asymptotic $\pobs\approx2$ for $w_{\max}$ and the
