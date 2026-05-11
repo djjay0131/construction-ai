@@ -1,8 +1,8 @@
 # Final Report — Cross-Document Numerical Reconciliation
 
-**Status:** RECONCILED (Microllam 2.0E)
+**Status:** RECONCILED (Microllam 2.0E) + BIBLIOGRAPHY VERIFIED
 **Date:** 2026-05-11
-**Branch:** `Final-report-of-VVUQ` @ commit af261bd
+**Branch:** `Final-report-of-VVUQ` @ commit 3f32c51 (numbers) + post-3f32c51 (bib fixes)
 **Material:** Weyerhaeuser 2.0E Microllam LVL (ESR-1387)
 **Prior basis (pre-2026-05-11):** Douglas-Fir-No.2 sawn-lumber (E=1.6M psi);
 the as-submitted HW3/HW4/HW5 PDFs reflect that earlier baseline and are
@@ -95,3 +95,46 @@ respective contexts.
   against the values listed in this table and update both this table and the
   affected `.tex` locations atomically.
 - This file is checked manually before each Canvas upload (per AC-9).
+
+## Bibliography Verification (2026-05-11)
+
+Citation graph audit: **25 cited keys, 25 defined bibitems, zero
+undefined refs, zero dead refs.** Citation completeness clean.
+
+Each `\bibitem{}` web-verified against canonical metadata:
+
+| Cite key | Authors+Title (verified) | Year | Journal/Source | Vol/Pages | Status |
+|---|---|---|---|---|---|
+| asme2009 | ASME V&V 20 Standard | 2009 | ASME | — | ✓ Real |
+| roy2011 | Roy & Oberkampf, "A comprehensive framework for VV&UQ..." | 2011 | CMAME | 200:2131–2144 | ✓ Real |
+| roache1994 | Roache, "Perspective: A method for uniform reporting..." | 1994 | ASME JFE | 116:405–413 | ✓ Real |
+| celik2008 | Celik+5, "Procedure for estimation and reporting of uncertainty..." | 2008 | ASME JFE | 130:078001 | ✓ Real |
+| ferson2008 | Ferson, Oberkampf, Ginzburg, "Model validation thermal challenge" | 2008 | CMAME | 197:2408–2430 | ✓ Real |
+| ferson2004 | Ferson & Tucker, "Sensitivity analysis using probability bounding" | **2006** (key says 2004 — cosmetic mismatch only) | RESS | 91:1435–1442 | ⚠️ Key/body year mismatch — content correct |
+| nds2018 | AWC, NDS for Wood Construction | 2018 | AWC | — | ✓ Real |
+| ibc2021 | ICC, International Building Code | 2021 | ICC | — | ✓ Real |
+| rahman2020 | Rahman, Ashraf, Ghabraie, Subhani, "Evaluating Timoshenko... CLT" | 2020 | Buildings | 10(10):184 | ✓ Real (note: paper is on CLT, cited here for shear-deformation analogy with LVL) |
+| sofi2015 | Sofi, Muscolino, Elishakoff, "Static response bounds Timoshenko beams" | 2015 | Acta Mechanica | 226:3737–3748 | ✓ Real |
+| gilbert2019 | Gilbert, Zhang, Bailleres, "Reliability of LVL beams... plantation logs" | 2019 | Structural Safety | 78:88–**99** (was 88–98 — **fixed**) | ✓ Real after fix |
+| mishra2017 | Mishra, Vanli, Alduse, Jung, "Hurricane loss estimation... Bayesian" | 2017 | Engineering Structures | 135:81–94 | ✓ Real |
+| chocholaty2023 | Chocholaty, Eser, Hoppe, Wang, "Vibration response hybrid steel–timber..." | 2023 (online; print 2024) | Archives of Civil and Mechanical Engineering | 23: Article 116 | ✓ Real |
+| novak2018 | Novák & Novák, "Polynomial chaos expansion for surrogate modelling..." | 2018 | Beton- und Stahlbetonbau | 113:27–32 | ✓ Real |
+| lim2023 | Lim, Manuel, Persson, Andersen, "Uncertainty quantification of wood floor..." | 2023 | Structures | 55:1839–1850 | ✓ Real (confirmed at ScienceDirect S2352012423005842) |
+| musselman2018 | Musselman, Dinehart, Walker, **Mancini**, "...creep behavior... LVL beams" | 2018 | Construction and Building Materials | **180:167–176** (was 187:195–204 — **fixed**) | ✓ Real after fix (4th author Mancini added) |
+| granello2019 | Granello & Palermo, "Creep in timber: research overview..." | 2019 | NZ Timber Design Journal | 27(1):21–34 | ✓ Real |
+| jiang2018 | Jiang, Zheng, Han, "Probability-interval hybrid uncertainty..." | 2018 | SMO | 57:2485–2502 | ✓ Real |
+| du2023 | Du & Xu, "Structural reliability analysis... AK-MCS..." | 2023 | Disaster Prevention and Resilience | 2: Article 18 | ✓ Real |
+| leichsenring2018 | Leichsenring, Jenkel, Graf, Kaliske, "Numerical simulation wooden... polymorphic" | 2018 | IJ Reliability and Safety | 12(1/2):**24–45** (was 1–23 — **fixed**) | ✓ Real after fix |
+| saltelli2010 | Saltelli, Annoni, Azzini, Campolongo, Ratto, Tarantola, "Variance based sens. analysis..." | 2010 | Computer Physics Communications | 181(2):259–270 | ✓ Real |
+| iooss2015 | Iooss & Lemaître, "A review on global sensitivity analysis methods" | 2015 | Springer (chapter in Uncertainty Management in Simulation-Opt.) | 101–122 | ✓ Real |
+| astmD5456 | ASTM D5456 — Standard Specification for Evaluation of SCL | 2021 | ASTM | — | ✓ Real |
+| astmD5457 | ASTM D5457 — Computing Reference Resistance for LRFD | 2019 | ASTM | — | ✓ Real |
+| esr1387 | ICC-ES ESR-1387 — Trus Joist Microllam LVL | latest | ICC-ES | — | ✓ Real (confirmed by manufacturer contact) |
+
+**Summary of fixes applied** (post-3f32c51, this audit):
+1. `gilbert2019`: page range `88--98` → `88--99` (final page corrected)
+2. `musselman2018`: added 4th author `M.~L.~Mancini`; volume `187`→`180`; pages `195--204`→`167--176`
+3. `leichsenring2018`: added `No.~1/2,` issue identifier; pages `1--23`→`24--45`
+
+**Cosmetic-only note (not fixed):**
+- `ferson2004` cite key vs body year mismatch — citation key says "2004" but the entry body correctly cites Vol.91, **2006**, pp.1435–1442. The paper itself is from 2006. Renaming the cite key would touch every `\cite{ferson2004}` site (lots) and provides no semantic value since BibTeX/thebibliography both render the body year correctly. Left as-is.
