@@ -55,9 +55,10 @@
 
 This report presents a code verification study for the \textbf{Euler--Bernoulli (EB)
 finite-difference beam solver} described in Homework~2.  The solver is applied to the
-8-ft LVL residential header case (Option~2: exact solution comparison).
-The governing equation, spatial discretization, and physical parameters are identical
-to those documented in HW\,2.
+8-ft Weyerhaeuser 2.0E Microllam LVL residential header case (Option~2: exact
+solution comparison) — $E=2{,}000{,}000$~psi per ESR-1387, $b=3.5$~in,
+$d=11.25$~in, $L=96$~in, $q_0=500$~lb/ft.
+The governing equation and spatial discretization are identical to those documented in HW\,2.
 
 % =============================================================
 \section{Exact Solution (Option 2)}
@@ -72,8 +73,8 @@ the exact deflection field is:
 \end{equation}
 The corresponding System Response Quantities (SRQs) are:
 \[
-  w_{\max}^{\mathrm{exact}} = 0.06935026\;\text{in},\quad
-  M_{\max}^{\mathrm{exact}} = 48{,}000.00\;\text{lb\cdot in},\quad
+  w_{\max}^{\mathrm{exact}} = 0.05548021\;\text{in},\quad
+  M_{\max}^{\mathrm{exact}} = 48{,}000.00\;\text{lb}\cdot\text{in},\quad
   \sigma_{\max}^{\mathrm{exact}} = 650.1587\;\text{psi}.
 \]
 The exact solution covers the full interior domain of the PDE and both boundary
@@ -98,11 +99,11 @@ discretization error field in deflection [in].}
   \toprule
   $N$ & $h$ [in] & $e_{L_2}$ [in] & $e_{L_\infty}$ [in] & $\pobs_{L_2}$ & $\pobs_{L_\infty}$ \\
   \midrule
-  10  & 9.6000 & $3.970\times10^{-3}$ & $5.548\times10^{-4}$ & ---   & ---   \\
-  20  & 4.8000 & $9.925\times10^{-4}$ & $1.387\times10^{-4}$ & 2.000 & 2.000 \\
-  40  & 2.4000 & $2.481\times10^{-4}$ & $3.468\times10^{-5}$ & 2.000 & 2.000 \\
-  80  & 1.2000 & $6.203\times10^{-5}$ & $8.669\times10^{-6}$ & 2.000 & 2.000 \\
-  160 & 0.6000 & $1.551\times10^{-5}$ & $2.167\times10^{-6}$ & 2.000 & 2.000 \\
+  10  & 9.6000 & $3.176\times10^{-3}$ & $4.438\times10^{-4}$ & ---   & ---   \\
+  20  & 4.8000 & $7.940\times10^{-4}$ & $1.110\times10^{-4}$ & 2.000 & 2.000 \\
+  40  & 2.4000 & $1.985\times10^{-4}$ & $2.774\times10^{-5}$ & 2.000 & 2.000 \\
+  80  & 1.2000 & $4.962\times10^{-5}$ & $6.935\times10^{-6}$ & 2.000 & 2.000 \\
+  160 & 0.6000 & $1.241\times10^{-5}$ & $1.734\times10^{-6}$ & 2.000 & 2.000 \\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -138,7 +139,7 @@ Table~\ref{tab:srq} reports the SRQ values at the coarsest ($N=10$) and finest
   \toprule
   SRQ & Exact & $N=10$ & $N=160$ & Error at $N=160$ \\
   \midrule
-  $w_{\max}$ [in]          & 0.0693503 & 0.0699051 & 0.0693524 & 0.0031\% \\
+  $w_{\max}$ [in]          & 0.0554802 & 0.0559241 & 0.0554819 & 0.0031\% \\
   $M_{\max}$ [lb$\cdot$in] & 48000.00  & 48000.00  & 48000.00  & 0.0000\% \\
   $\sigma_{\max}$ [psi]    & 650.159   & 650.159   & 650.159   & 0.0000\% \\
   \bottomrule
@@ -188,11 +189,11 @@ for the grids studied.
   \toprule
   $N$ & $h$ [in] & $\kappa(K)$ & $\varepsilon\kappa$ & Round-off [in] & $e_{L_\infty}$ [in] \\
   \midrule
-  10  & 9.600 & $1.59\times10^{3}$ & $3.53\times10^{-13}$ & $2.45\times10^{-14}$ & $5.55\times10^{-4}$ \\
-  20  & 4.800 & $2.61\times10^{4}$ & $5.79\times10^{-12}$ & $4.01\times10^{-13}$ & $1.39\times10^{-4}$ \\
-  40  & 2.400 & $4.20\times10^{5}$ & $9.32\times10^{-11}$ & $6.46\times10^{-12}$ & $3.47\times10^{-5}$ \\
-  80  & 1.200 & $6.72\times10^{6}$ & $1.49\times10^{-9}$  & $1.04\times10^{-10}$ & $8.67\times10^{-6}$ \\
-  160 & 0.600 & $1.08\times10^{8}$ & $2.39\times10^{-8}$  & $1.66\times10^{-9}$  & $2.17\times10^{-6}$ \\
+  10  & 9.600 & $1.59\times10^{3}$ & $3.53\times10^{-13}$ & $1.96\times10^{-14}$ & $4.44\times10^{-4}$ \\
+  20  & 4.800 & $2.61\times10^{4}$ & $5.79\times10^{-12}$ & $3.21\times10^{-13}$ & $1.11\times10^{-4}$ \\
+  40  & 2.400 & $4.20\times10^{5}$ & $9.32\times10^{-11}$ & $5.17\times10^{-12}$ & $2.77\times10^{-5}$ \\
+  80  & 1.200 & $6.72\times10^{6}$ & $1.49\times10^{-9}$  & $8.28\times10^{-11}$ & $6.94\times10^{-6}$ \\
+  160 & 0.600 & $1.08\times10^{8}$ & $2.39\times10^{-8}$  & $1.33\times10^{-9}$  & $1.73\times10^{-6}$ \\
   \bottomrule
 \end{tabular}
 \end{table}
