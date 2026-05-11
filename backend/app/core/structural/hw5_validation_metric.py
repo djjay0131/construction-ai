@@ -84,26 +84,28 @@ from beam_solver import BeamGeometry, BeamMaterial, solve_simply_supported
 # ============================================================
 L_FT     = 8.0
 L        = L_FT * 12.0       # 96.0 in
-B        = 3.5                # 3.5 in (width)
+B        = 3.5                # 3.5 in (width, double-ply 1-3/4" LVL)
 D        = 11.25              # 11.25 in (depth)
-E_NOM    = 1_600_000.0        # nominal E [psi]
+E_NOM    = 2_000_000.0        # nominal E [psi] — Weyerhaeuser 2.0E Microllam LVL (ESR-1387)
 Q0_LBFT  = 500.0              # 500 lb/ft
 Q0       = Q0_LBFT / 12.0    # 41.6667 lb/in
-FB       = 900.0              # allowable bending stress [psi]
-FV       = 180.0              # allowable shear stress [psi]
+FB       = 2_600.0            # allowable bending stress [psi] — Microllam 2.0E
+FV       = 285.0              # allowable shear stress [psi]   — Microllam 2.0E
 
 GEO  = BeamGeometry(span_in=L, width_in=B, depth_in=D)
 I    = GEO.moment_of_inertia  # 415.2832 in^4
 
 # Closed-form reference (w_max = 5 q L^4 / 384 EI); used for checks only
 EI_NOM        = E_NOM * I
-W_MAX_EXACT   = 5.0 * Q0 * L**4 / (384.0 * EI_NOM)   # ≈ 0.06935 in
+W_MAX_EXACT   = 5.0 * Q0 * L**4 / (384.0 * EI_NOM)   # ≈ 0.05548 in (at E=2.0e6)
 
 # ============================================================
 # Aleatory Uncertain Input:  E ~ N(µ_E, σ_E)
+#   µ_E = ESR-1387 mean E for 2.0E Microllam
+#   σ_E = ASTM D5457 CoV bound (≤10%) via D5456 QC chain
 # ============================================================
-MU_E    = 1_600_000.0   # [psi]  same as nominal
-SIGMA_E = 160_000.0     # [psi]  10 % CoV — representative LVL variability
+MU_E    = 2_000_000.0   # [psi]  same as nominal — Microllam 2.0E
+SIGMA_E = 200_000.0     # [psi]  10 % CoV per D5457 / D5456 QC
 
 # Parametric grid (validated in HW4: U_NUM = 0.0625 % for w_max at N=20)
 N_GRID  = 20

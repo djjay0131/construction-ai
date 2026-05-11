@@ -55,18 +55,21 @@ sys.path.insert(0, os.path.dirname(__file__))
 from beam_solver import BeamGeometry, BeamMaterial, solve_simply_supported
 
 # ============================================================
-# Physical Setup
+# Physical Setup — Weyerhaeuser 2.0E Microllam LVL (ESR-1387)
+#   E  = 2,000,000 psi     Fb = 2,600 psi     Fv = 285 psi
 # ============================================================
 L_FT     = 8.0
 L        = L_FT * 12.0
-B        = 3.5
+B        = 3.5                          # in  (double-ply 1-3/4" LVL)
 D        = 11.25
-FB       = 900.0
-FV       = 180.0
+FB       = 2_600.0                      # allowable bending [psi] — Microllam 2.0E
+FV       = 285.0                        # allowable shear   [psi] — Microllam 2.0E
 
 # Aleatory uncertain input: E ~ N(µ_E, σ_E)
-MU_E    = 1_600_000.0
-SIGMA_E = 160_000.0
+#   µ_E  = ESR-1387 mean E for 2.0E Microllam
+#   σ_E  = ASTM D5457 CoV bound (≤10%) enforced via D5456 QC chain
+MU_E    = 2_000_000.0
+SIGMA_E = 200_000.0
 
 # Epistemic uncertain input: q0 ∈ [q_lo, q_hi]  (lb/ft)
 Q0_NOM  = 500.0          # nominal
@@ -86,13 +89,14 @@ UNUM_WMAX_N20 = 1.962e-4   # [in]  (U_DE + U_RO at N=20, nominal q0,E)
 UNUM_WMAX_CORNER = 2.91e-4  # [in]  conservative estimate (q0_hi, E-2sigma)
 
 # HW5 validation metric results (AVM/MAVM at q0_nom, from hw5 script):
-#   Dataset 2, n_sim=100 LHS: AVM = 0.002139, MAVM = 0.001079  [in]
+#   Material: Weyerhaeuser 2.0E Microllam LVL (E=2.0e6 psi, σ=200,000 psi)
+#   Dataset 2, n_sim=100 LHS: AVM = 0.003893, MAVM = 0.003735  [in]
 #   MAVM = d+ - d-,  AVM = d+ + d-
 #   (MAVM > 0 → model under-predicts; conservative for deflection limit state)
-AVM_BASE  = 0.002139   # [in]
-MAVM_BASE = 0.001079   # [in]
-D_PLUS_BASE  = (AVM_BASE + MAVM_BASE) / 2.0   # 1.609e-3 in  (model under-predict area)
-D_MINUS_BASE = (AVM_BASE - MAVM_BASE) / 2.0   # 0.530e-3 in  (model over-predict area)
+AVM_BASE  = 0.003893   # [in]
+MAVM_BASE = 0.003735   # [in]
+D_PLUS_BASE  = (AVM_BASE + MAVM_BASE) / 2.0   # 3.814e-3 in  (model under-predict area)
+D_MINUS_BASE = (AVM_BASE - MAVM_BASE) / 2.0   # 0.079e-3 in  (model over-predict area)
 
 LHS_SEED = 42
 SOBOL_N_BASE = 1024                       # → 4096 solver calls (n_base * (d+2))

@@ -75,23 +75,29 @@ from beam_solver import BeamGeometry, BeamMaterial, solve_simply_supported
 
 # ============================================================
 # Physical Setup  (identical to HW3 – same 8-ft LVL header)
+#
+# Material: Weyerhaeuser 2.0E Microllam LVL (ESR-1387)
+#   E  = 2,000,000 psi    Fb = 2,600 psi    Fv = 285 psi
+#
+# Previous sawn-lumber values (Douglas Fir No. 2) kept for reference:
+#   E  = 1,600,000 psi    Fb = 900 psi      Fv = 180 psi
 # ============================================================
 L_FT         = 8.0
 L            = L_FT * 12.0       #  96.0  in   (beam span)
-B            = 3.5                #   3.5  in   (beam width)
+B            = 3.5                #   3.5  in   (beam width, double-ply 1-3/4" LVL)
 D            = 11.25              #  11.25 in   (beam depth)
-E_PSI        = 1_600_000.0        #   E    [psi]
+E_PSI        = 2_000_000.0        #   E    [psi] — Weyerhaeuser 2.0E Microllam LVL
 Q0_LBFT      = 500.0              # 500    lb/ft (uniform distributed load)
 Q0           = Q0_LBFT / 12.0    #  41.667 lb/in
-FB           = 900.0              # allowable bending stress [psi]
-FV           = 180.0              # allowable shear stress  [psi]
+FB           = 2_600.0            # allowable bending stress [psi] — Microllam 2.0E (12" ref depth)
+FV           = 285.0              # allowable shear stress  [psi]  — Microllam 2.0E
 
 GEO  = BeamGeometry(span_in=L, width_in=B, depth_in=D)
 MAT  = BeamMaterial(E_psi=E_PSI, Fb_psi=FB, Fv_psi=FV)
 EI   = E_PSI * GEO.moment_of_inertia   # lb·in²
 
 # Closed-form reference values (validated against analytical solution in HW3)
-W_MAX_EXACT   = 5.0 * Q0 * L**4 / (384.0 * EI)       # ≈ 0.06935 in
+W_MAX_EXACT   = 5.0 * Q0 * L**4 / (384.0 * EI)       # ≈ 0.05548 in
 M_MAX_EXACT   = Q0 * L**2 / 8.0                       # = 48000.00 lb·in
 SIG_MAX_EXACT = M_MAX_EXACT / GEO.section_modulus      # ≈ 650.16  psi
 
