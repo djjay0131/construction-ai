@@ -82,9 +82,9 @@ distributed load representative of residential roof framing:
   Span            & $L$      & 96.0   & in \\
   Width           & $b$      & 3.5    & in \\
   Depth           & $d$      & 11.25  & in \\
-  Elastic modulus & $E$      & 1,600,000 & psi \\
+  Elastic modulus & $E$      & 2,000,000 & psi \;(Microllam 2.0E, ESR-1387) \\
   Uniform load    & $q_0$    & 500    & lb/ft \;(= 41.667 lb/in) \\
-  Flexural rigidity & $\EI$ & $6.6445\times10^8$ & lb$\cdot$in$^2$ \\
+  Flexural rigidity & $\EI$ & $8.3057\times10^8$ & lb$\cdot$in$^2$ \\
   \bottomrule
 \end{tabular}
 \end{center}
@@ -161,7 +161,7 @@ The exact solution for uniform load on a simply-supported beam is:
 yielding the reference SRQ values used only to interpret results (not used
 in the GCI analysis):
 \[
-  w_{\max}^{\mathrm{exact}}=0.06935026\ \text{in},\quad
+  w_{\max}^{\mathrm{exact}}=0.05548021\ \text{in},\quad
   M_{\max}^{\mathrm{exact}}=48000.00\ \text{lb}\cdot\text{in},\quad
   \sigma_{\max}^{\mathrm{exact}}=650.1587\ \text{psi}.
 \]
@@ -178,13 +178,13 @@ $r=h_{\mathrm{coarse}}/h_{\mathrm{fine}}=2$:
   \toprule
   Level & $N$ & $h$ [in] & $w_{\max}$ [in] & $M_{\max}$ [lb$\cdot$in] & $\sigma_{\max}$ [psi] \\
   \midrule
-  1 (coarsest) & 10  & 9.600 & 0.0699051 & 48000 & 650.159 \\
-  2            & 20  & 4.800 & 0.0694890 & 48000 & 650.159 \\
-  3            & 40  & 2.400 & 0.0693849 & 48000 & 650.159 \\
-  4            & 80  & 1.200 & 0.0693589 & 48000 & 650.159 \\
-  5 (finest)   & 160 & 0.600 & 0.0693524 & 48000 & 650.159 \\
+  1 (coarsest) & 10  & 9.600 & 0.0559241 & 48000 & 650.159 \\
+  2            & 20  & 4.800 & 0.0555912 & 48000 & 650.159 \\
+  3            & 40  & 2.400 & 0.0555079 & 48000 & 650.159 \\
+  4            & 80  & 1.200 & 0.0554871 & 48000 & 650.159 \\
+  5 (finest)   & 160 & 0.600 & 0.0554819 & 48000 & 650.159 \\
   \midrule
-  Exact        & $\infty$ & 0 & 0.0693503 & 48000.00 & 650.1587 \\
+  Exact        & $\infty$ & 0 & 0.0554802 & 48000.00 & 650.1587 \\
   \bottomrule
 \end{tabular}
 \end{center}
@@ -252,16 +252,16 @@ operating in its asymptotic regime.  Consequently $F_s=1.25$ applies throughout.
 
 \begin{table}[h!]
 \centering
-\caption{GCI analysis for $w_{\max}$ [in]. Exact $= 0.0693503$~in.}
+\caption{GCI analysis for $w_{\max}$ [in]. Exact $= 0.0554802$~in.}
 \label{tab:gci_w}
 \small
 \begin{tabular}{lrrrrrrrrr}
   \toprule
   Triplet & $\pobs$ & $F_s$ & $\fRE$ & $\GCI_{12}$ & $\GCI_{23}$ & $\GCI_{12}\%$ & $\GCI_{23}\%$ & Ratio & Type \\
   \midrule
-  T0: (160,80,40)  & 2.000 & 1.25 & 0.069355 & $2.71\times10^{-6}$ & $1.08\times10^{-5}$ & 0.0039\% & 0.0156\% & 1.000 & mono. \\
-  T1: (80,40,20)   & 2.000 & 1.25 & 0.069368 & $1.08\times10^{-5}$ & $4.33\times10^{-5}$ & 0.0156\% & 0.0625\% & 1.000 & mono. \\
-  T2: (40,20,10)   & 2.000 & 1.25 & 0.069420 & $4.33\times10^{-5}$ & $1.73\times10^{-4}$ & 0.0625\% & 0.2495\% & 1.000 & mono. \\
+  T0: (160,80,40)  & 2.000 & 1.25 & 0.055484 & $2.17\times10^{-6}$ & $8.64\times10^{-6}$ & 0.0039\% & 0.0156\% & 1.000 & mono. \\
+  T1: (80,40,20)   & 2.000 & 1.25 & 0.055495 & $8.64\times10^{-6}$ & $3.47\times10^{-5}$ & 0.0156\% & 0.0625\% & 1.000 & mono. \\
+  T2: (40,20,10)   & 2.000 & 1.25 & 0.055536 & $3.47\times10^{-5}$ & $1.39\times10^{-4}$ & 0.0625\% & 0.2495\% & 1.000 & mono. \\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -303,9 +303,9 @@ confirmation that the solution is well within the asymptotic convergence range.
   \toprule
   Triplet & $\pobs$ & $F_s$ & $\GCI_{12}$ & $\GCI_{23}$ & $\GCI_{12}\%$ & Ratio & Type \\
   \midrule
-  T0: (160,80,40) & $-6.760$ & 3.00 & $4.49\times10^{-3}$ & $4.14\times10^{-5}$ & $\approx0\%$ & 0.0092 & mono. \\
-  T1: (80,40,20)  & $-3.152$ & 3.00 & $4.14\times10^{-5}$ & $4.66\times10^{-6}$ & $\approx0\%$ & 0.1117 & osc. \\
-  T2: (40,20,10)  & $-1.850$ & 3.00 & $4.66\times10^{-6}$ & $1.29\times10^{-6}$ & $\approx0\%$ & 0.2755 & mono. \\
+  T0: (160,80,40) & $+0.009$ & 3.00 & $2.05\times10^{-4}$ & $2.07\times10^{-4}$ & $\approx0\%$ & 0.9994 & mono. \\
+  T1: (80,40,20)  & $-2.173$ & 3.00 & $2.07\times10^{-4}$ & $4.59\times10^{-5}$ & $\approx0\%$ & 0.2203 & mono. \\
+  T2: (40,20,10)  & $-3.023$ & 3.00 & $4.59\times10^{-5}$ & $5.64\times10^{-6}$ & $\approx0\%$ & 0.1221 & osc. \\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -522,9 +522,9 @@ Two grids are reported:
   \toprule
   SRQ & $f(h)$ & $\UDE$ & $\UIT$ & $\URO$ & $\UNUM$ (\%) \\
   \midrule
-  $w_{\max}$ [in]          & 0.06935243 & $2.71\times10^{-6}$ & 0 & $1.66\times10^{-9}$ & $2.71\times10^{-6}$ \;(0.0039\%) \\
-  $M_{\max}$ [lb$\cdot$in] & 48000.0    & $4.49\times10^{-3}$ & 0 & $1.15\times10^{-3}$ & $5.64\times10^{-3}$ \;($\approx0\%$) \\
-  $\sigma_{\max}$ [psi]    & 650.159    & $6.08\times10^{-5}$ & 0 & $1.55\times10^{-5}$ & $7.64\times10^{-5}$ \;($\approx0\%$) \\
+  $w_{\max}$ [in]          & 0.05548195 & $2.17\times10^{-6}$ & 0 & $1.33\times10^{-9}$ & $2.17\times10^{-6}$ \;(0.0039\%) \\
+  $M_{\max}$ [lb$\cdot$in] & 48000.0    & $2.05\times10^{-4}$ & 0 & $1.15\times10^{-3}$ & $1.35\times10^{-3}$ \;($\approx0\%$) \\
+  $\sigma_{\max}$ [psi]    & 650.159    & $2.78\times10^{-6}$ & 0 & $1.55\times10^{-5}$ & $1.83\times10^{-5}$ \;($\approx0\%$) \\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -544,9 +544,9 @@ extremely small; the total numerical uncertainty in $w_{\max}$ is
   \toprule
   SRQ & $f(h)$ & $\UDE$ & $\UIT$ & $\URO$ & $\UNUM$ (\%) \\
   \midrule
-  $w_{\max}$ [in]          & 0.069489 & $1.73\times10^{-4}$ & 0 & $2.28\times10^{-5}$ & $1.96\times10^{-4}$ \;(0.282\%) \\
-  $M_{\max}$ [lb$\cdot$in] & 48000.0  & $1.29\times10^{-6}$ & 0 & $1.66\times10^{1}$  & $1.66\times10^{1}$  \;(0.035\%) \\
-  $\sigma_{\max}$ [psi]    & 650.159  & $1.76\times10^{-8}$ & 0 & $2.25\times10^{-1}$ & $2.25\times10^{-1}$ \;(0.035\%) \\
+  $w_{\max}$ [in]          & 0.055591 & $1.39\times10^{-4}$ & 0 & $2.94\times10^{-5}$ & $1.68\times10^{-4}$ \;(0.302\%) \\
+  $M_{\max}$ [lb$\cdot$in] & 48000.0  & $5.64\times10^{-6}$ & 0 & $2.63\times10^{1}$  & $2.63\times10^{1}$  \;(0.055\%) \\
+  $\sigma_{\max}$ [psi]    & 650.159  & $7.64\times10^{-8}$ & 0 & $3.56\times10^{-1}$ & $3.56\times10^{-1}$ \;(0.055\%) \\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -573,11 +573,11 @@ $\UIT=0$ throughout. N/A for $N=10$: no coarser triplet available for GCI.}
   \toprule
   $N$ & $h$ [in] & $w_{\max}$ [in] & $\UDE$ [in] & $\URO$ [in] & $\UNUM$ [in] (\%) \\
   \midrule
-  10  & 9.600 & 0.069905 & N/A             & $1.39\times10^{-6}$ & N/A \\
-  20  & 4.800 & 0.069489 & $1.73\times10^{-4}$ & $2.28\times10^{-5}$ & $1.96\times10^{-4}$ (0.282\%) \\
-  40  & 2.400 & 0.069385 & $4.33\times10^{-5}$ & $3.68\times10^{-4}$ & $4.11\times10^{-4}$ (0.592\%) \\
-  80  & 1.200 & 0.069359 & $1.08\times10^{-5}$ & $6.38\times10^{-3}$ & $6.40\times10^{-3}$ (9.22\%) \\
-  160 & 0.600 & 0.069352 & $2.71\times10^{-6}$ & $1.66\times10^{-9}$ & $2.71\times10^{-6}$ (0.004\%) \\
+  10  & 9.600 & 0.055924 & N/A                 & $1.85\times10^{-6}$ & N/A \\
+  20  & 4.800 & 0.055591 & $1.39\times10^{-4}$ & $2.94\times10^{-5}$ & $1.68\times10^{-4}$ (0.302\%) \\
+  40  & 2.400 & 0.055508 & $3.47\times10^{-5}$ & $4.72\times10^{-4}$ & $5.07\times10^{-4}$ (0.913\%) \\
+  80  & 1.200 & 0.055487 & $8.67\times10^{-6}$ & $8.65\times10^{-3}$ & $8.66\times10^{-3}$ (15.6\%) \\
+  160 & 0.600 & 0.055482 & $2.17\times10^{-6}$ & $1.33\times10^{-9}$ & $2.17\times10^{-6}$ (0.004\%) \\
   \bottomrule
 \end{tabular}
 \end{table}
@@ -629,8 +629,8 @@ For structural design this is \emph{conservative}: the FD solver
 over-predicts deflection, so it never underestimates the structural demand.
 No upper GCI bound is needed in the direction of overestimation.
 
-Fine grid:      $w_{\mathrm{FD}}(N=160)=0.06935243$~in $\ge$ $w_{\mathrm{true}}=0.06935026$~in.\\
-Parametric:     $w_{\mathrm{FD}}(N=20)=0.06948897$~in $\ge$ $w_{\mathrm{true}}=0.06935026$~in.
+Fine grid:      $w_{\mathrm{FD}}(N=160)=0.05548195$~in $\ge$ $w_{\mathrm{true}}=0.05548021$~in.\\
+Parametric:     $w_{\mathrm{FD}}(N=20)=0.05559117$~in $\ge$ $w_{\mathrm{true}}=0.05548021$~in.
 
 % =============================================================
 \section{Summary and Conclusions}
@@ -647,8 +647,8 @@ for the two target grids.
   \toprule
   Grid & $N$ & $h$ [in] & $w_{\max}$ [in] & $\UDE$ & $\URO$ & $\UNUM$ (\%) \\
   \midrule
-  Fine grid      & 160 & 0.600 & 0.06935243 & $2.71\times10^{-6}$ & $1.66\times10^{-9}$ & $2.71\times10^{-6}$ (0.0039\%) \\
-  Parametric     &  20 & 4.800 & 0.06948897 & $1.73\times10^{-4}$ & $2.28\times10^{-5}$ & $1.96\times10^{-4}$ (0.282\%) \\
+  Fine grid      & 160 & 0.600 & 0.05548195 & $2.17\times10^{-6}$ & $1.33\times10^{-9}$ & $2.17\times10^{-6}$ (0.0039\%) \\
+  Parametric     &  20 & 4.800 & 0.05559117 & $1.39\times10^{-4}$ & $2.94\times10^{-5}$ & $1.68\times10^{-4}$ (0.302\%) \\
   \bottomrule
 \end{tabular}
 \end{table}
