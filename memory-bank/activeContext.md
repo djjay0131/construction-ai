@@ -1,6 +1,6 @@
 # Active Context
 
-**Last Updated:** 2026-05-04 (audit-and-enhance spec VERIFIED — all four gates pass)
+**Last Updated:** 2026-05-11 (material switched to Microllam 2.0E; numbers propagated)
 
 ## Current Work Phase
 

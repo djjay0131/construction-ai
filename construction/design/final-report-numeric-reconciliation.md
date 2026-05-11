@@ -1,8 +1,13 @@
 # Final Report — Cross-Document Numerical Reconciliation
 
-**Status:** RECONCILED (all green)
-**Date:** 2026-05-03
-**Branch:** `Final-report-of-VVUQ` @ commit 9ca7300
+**Status:** RECONCILED (Microllam 2.0E)
+**Date:** 2026-05-11
+**Branch:** `Final-report-of-VVUQ` @ commit af261bd
+**Material:** Weyerhaeuser 2.0E Microllam LVL (ESR-1387)
+**Prior basis (pre-2026-05-11):** Douglas-Fir-No.2 sawn-lumber (E=1.6M psi);
+the as-submitted HW3/HW4/HW5 PDFs reflect that earlier baseline and are
+NOT reconciled against this table — see "HW reports left at submitted
+state" note below.
 **Spec:** `construction/design/final-report-audit-and-enhancement.md` (RD-6, AC-9)
 
 This file enforces RD-6: every numerical claim that appears in two or more
@@ -27,27 +32,32 @@ the formula stated in the report's §2.
 
 | Quantity | Source-of-truth value | Abstract | Conclusions | Table 4 (budget) | Table 1 (p-box) | §2 / §6 / §7 | activeContext.md | Reconciled? |
 |---|---|---|---|---|---|---|---|---|
-| Total upper (% of w_nom)         | 32.98% | "32% of w_nom" (rounded) | "31–33%" item 5 (rounded) | 32.98% | — | — | "total upper bound = 33%" | ✓ |
-| Total lower (% of w_nom)         | 31.36% | (subsumed in 32%)        | "31–33%" item 5 (rounded) | 31.36% | — | — | "total lower = 31%"       | ✓ |
-| p-box 5th pct at q₀=600 (lower)  | 0.0475 in | "0.047" (Abstract) | — | — | Table 1 row Nₑ=25 | §6.5 / §7.4 | "[0.047, 0.099]" | ✓ |
-| p-box 95th pct at q₀=600 (upper) | 0.0997 in | "0.099" (Abstract) | item 6 cites 0.099 in | — | Table 1 row Nₑ=25 | §7.4 | "[0.047, 0.099]" | ✓ |
-| U_NUM at N=20 (% of w_nom)       | 0.28% | "0.28%" Abstract | item 2 "0.28%" | — | — | §4.2 / App. A | "U_NUM=0.063% at N=20" mismatch — see Note 1 | ⚠️ |
-| U_NUM_max (corner)               | 2.601e-4 in (0.31%) | — | item 4 "0.31%" | "2.601e-4 / 0.31%" | — | §6.5 paragraph | — | ✓ |
+| Material grade                   | Weyerhaeuser 2.0E Microllam LVL (ESR-1387) | Microllam 2.0E LVL named | "8-ft Microllam 2.0E LVL header" (item 6) | — | — | §2.1, §5.1, §7.4 | "Weyerhaeuser 2.0E Microllam LVL (ESR-1387)" | ✓ |
+| Mean E                           | 2,000,000 psi (ESR-1387) | E~N(2.0×10⁶, 2.0×10⁵) | — | — | — | §2.1, §5.1 paragraph, §6.1 | "E=2.0Mpsi" | ✓ |
+| σ_E                              | 200,000 psi (10% CoV, D5457 bound) | — | — | — | — | §5.1 paragraph, §6.1 | "σ_E=200,000 psi" | ✓ |
+| w_nom at q₀=600 lb/ft            | 0.0673 in | — | — | Table 4 caption | — | §6.5 paragraph | "w_nom=0.0673" | ✓ |
+| Total upper (% of w_nom)         | 37.65% | "approximately 37%" | "31–38%" item 5; "upper side 38%" | 37.65% | — | — | "total upper bound ≈ 38%" | ✓ |
+| Total lower (% of w_nom)         | 30.74% | (subsumed)        | "31–38%" item 5; "lower side 31%" | 30.74% | — | — | "total lower ≈ 31%" | ✓ |
+| p-box 5th pct at q₀=600 (lower)  | 0.038 in | "0.038" Abstract | — | — | Table 1 row Nₑ=25 | §6.5 / §7.4 | "[0.038, 0.079]" | ✓ |
+| p-box 95th pct at q₀=600 (upper) | 0.079 in | "0.079" Abstract | item 6 cites 0.079 in | — | Table 1 row Nₑ=25 | §7.4 | "[0.038, 0.079]" | ✓ |
+| U_NUM at N=20 (% of w_nom)       | 0.28% | "0.28%" Abstract | item 2 "0.28%" | — | — | §4.2 / App. A | (was 0.063% at HW5 era — see Note 1) | ⚠️ |
+| U_NUM_max (corner)               | 2.081e-4 in (0.31%) | — | item 4 "0.31%" | "2.081e-4 / 0.31%" | — | §6.5 paragraph | — | ✓ |
 | p_obs                            | 2.000 | "p_obs=2.000" | item 1 "p_obs=2.000" | — | — | §3 | — | ✓ |
 | σ_max at q₀=600 lb/ft            | 780 psi | — | — | — | — | §7.4 IRC paragraph | — | ✓ |
 | M_max at q₀=600 lb/ft            | 57,600 lb·in | — | — | — | — | §7.4 IRC paragraph | — | ✓ |
 | S = bd²/6                        | 73.83 in³ | — | — | — | — | §7.4 IRC paragraph + §2 | — | ✓ |
-| Fb (NDS Grade-1 LVL allowable)   | 2,400 psi | — | — | — | — | §7.4 IRC paragraph | — | ✓ |
+| Fb (ESR-1387 Microllam 2.0E)     | 2,600 psi | — | — | — | — | §2, §7.4 IRC paragraph | — | ✓ |
+| Fv (ESR-1387 Microllam 2.0E)     | 285 psi | — | — | — | — | §2 | — | ✓ |
 | L/240 (8-ft span)                | 0.400 in | — | — | — | — | §7.4 IRC paragraph | — | ✓ |
 | L/360 (8-ft span)                | 0.267 in | — | — | — | — | §7.4 IRC paragraph + §7.3 | — | ✓ |
-| AVM at q₀=500 (validation, n=100)| 2.139e-3 in | — | — | — | — | §6.4 | "AVM (n=100): Dataset 1 = 7.59e-3" (DIFFERENT — Dataset 1 ≠ project's experimental CDF) — see Note 2 | ✓ |
-| MAVM at q₀=500 (validation, n=100)| 1.079e-3 in | — | — | — | — | §6.4 | "MAVM (n=100): Dataset 1 = 7.29e-3" (DIFFERENT — Dataset 1 ≠ project's) — see Note 2 | ✓ |
-| d⁺(500) = (AVM+MAVM)/2           | 1.609e-3 in | — | — | — | — | §6.4 eq. + Table 4 row | — | ✓ |
-| d⁻(500) = (AVM−MAVM)/2           | 0.530e-3 in | — | — | — | — | §6.4 eq. + Table 4 row | — | ✓ |
-| U_MF⁺(600) at 95% PI             | 2.003e-3 in | — | — | "U_MF⁺ 2.003e-3" | — | §6.4 + §7.1 dominance | "U_MF⁺=2.003e-3" | ✓ |
-| U_MF⁻(600) at 95% PI             | 0.642e-3 in | — | — | "U_MF⁻ 6.42e-4" | — | §6.4 + §7.1 | "U_MF⁻=0.642e-3" | ✓ |
-| U_MF⁺(600) point-scaled          | 1.93e-3 in | — | — | — | — | §6.4 RD-3 paragraph | — | ✓ |
-| U_MF⁻(600) point-scaled          | 0.636e-3 in | — | — | — | — | §6.4 RD-3 paragraph | — | ✓ |
+| AVM at q₀=500 (validation, n=100)| 3.893e-3 in | — | — | — | — | §6.4 | "AVM (Dataset 2, n=100) = 3.89e-3" | ✓ |
+| MAVM at q₀=500 (validation, n=100)| 3.735e-3 in | — | — | — | — | §6.4 | "MAVM (Dataset 2, n=100) = 3.74e-3" | ✓ |
+| d⁺(500) = (AVM+MAVM)/2           | 3.814e-3 in | — | — | — | — | §6.4 eq. + Table 4 row | — | ✓ |
+| d⁻(500) = (AVM−MAVM)/2           | 0.079e-3 in | — | — | — | — | §6.4 eq. + Table 4 row | — | ✓ |
+| U_MF⁺(600) at 95% PI             | 4.749e-3 in (7.05%) | — | — | "U_MF⁺ 4.749e-3" | — | §6.4 + §7.1 dominance | "U_MF⁺=4.75e-3" | ✓ |
+| U_MF⁻(600) at 95% PI             | 0.0957e-3 in (0.14%) | — | — | "U_MF⁻ 9.57e-5" | — | §6.4 + §7.1 | "U_MF⁻=9.6e-5" | ✓ |
+| U_MF⁺(600) point-scaled          | 4.58e-3 in | — | — | — | — | §6.4 RD-3 paragraph | — | ✓ |
+| U_MF⁻(600) point-scaled          | 0.095e-3 in | — | — | — | — | §6.4 RD-3 paragraph | — | ✓ |
 | Sobol S₁[E]                      | 0.449 | — | — | — | Table 5 | §7.2 paragraph | — | ✓ |
 | Sobol S₁[q₀]                     | 0.551 | — | — | — | Table 5 | §7.2 paragraph | — | ✓ |
 | Sobol S_T[E]                     | 0.449 | — | — | — | Table 5 | §7.2 paragraph | — | ✓ |
