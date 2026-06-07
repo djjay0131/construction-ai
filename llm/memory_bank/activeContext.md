@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 2026-04-03
+Last updated: 2026-06-06
 
 ## Current State
 
@@ -8,6 +8,14 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-06**: Sprint 0 of 2026 Product Roadmap IMPLEMENTED — memory-bank refresh
+  in both repos. Spec at `llm/features/sprint-0-memory-bank-refresh.md` (status:
+  IMPLEMENTED). Pivots from CS6444 (submitted 2026-05-11) back to product work.
+  Canonical roadmap: `../construction-ai-proposal/construction/design/2026-product-roadmap.md`
+  (committed ae095ae). Pointer: `llm/features/ROADMAP.md` (06d7e0e).
+- **2026-05-11**: CS6444 Final Project SUBMITTED at tag
+  `final-project-submitted-2026-05-11` (master @ 63f3d7a). Microllam 2.0E baseline.
+  HW2–5 + Final Project all live on Pages. 25 bibliography entries web-verified.
 - **2026-04-03**: YOLO Model Storage feature VERIFIED — GCS bucket, model registry with hot-swap, publish CLI, 53 tests at 100% coverage. Terraform infrastructure deployed to `vt-gcp-00042` GCP project.
 - **2026-04-01**: Specified 3 features via adversarial interview process:
   - Raster/Scanned Drawing Support (`llm/features/raster-scanned-drawing-support.md`) — SPECIFIED
@@ -54,10 +62,18 @@ Feature specification and implementation cycle. The model registry is the first 
 
 ## Immediate Next Steps
 
-1. Implement **Raster/Scanned Drawing Support** (`/constellize:feature:implement raster-scanned-drawing-support`)
-2. Implement **OCR Dimension Extraction** (`/constellize:feature:implement ocr-dimension-extraction`)
-3. Specify and implement **Neo4j Setup** (`llm/features/neo4j-setup.md` exists but may need updating)
-4. Specify and implement **Cut List Optimization** (OR-Tools, high user value)
+Per the 2026 Product Roadmap (sprint sequence locked 2026-06-06):
+
+1. **Sprint 1** — VVUQ Phase 3 closeout (proposal repo; 4 slides + 10–15 citations + final review)
+2. **Sprint 2** — Implement Neo4j Setup (`/constellize:feature:implement neo4j-setup`)
+   - Pre-requisites: provision AuraDB Free (prod + ci-test), update spec date if needed
+   - Includes CI/CD bootstrap and Terraform extensions
+3. **Sprint 3** — Implement Raster/Scanned Drawing Support (`/constellize:feature:implement raster-scanned-drawing-support`)
+4. **Sprint 4** — Implement OCR Dimension Extraction (`/constellize:feature:implement ocr-dimension-extraction`)
+5. **Sprint 5** — Phase 1 integration smoke test against 2–3 plan sets
+
+Source of truth: `../construction-ai-proposal/construction/design/2026-product-roadmap.md`
+(also pointed to from `llm/features/ROADMAP.md`).
 
 ## Reference
 

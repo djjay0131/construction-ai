@@ -1,17 +1,36 @@
 # Active Context
 
-**Last Updated:** 2026-05-11 (material switched to Microllam 2.0E; numbers propagated)
+**Last Updated:** 2026-06-06 (CS6444 submitted; pivoting to product roadmap)
 
 ## Current Work Phase
 
-**VVSC Final Project — AOE/CS/ME 6444, Spring 2026, Dr. Chris Roy**
+**Pivot from CS6444 (SUBMITTED) to 2026 Product Roadmap execution**
 
-Pre-submission audit-and-enhance pass complete. Spec
-`construction/design/final-report-audit-and-enhancement.md` (status:
-IMPLEMENTED, commit 9ca7300) closed the HW2 instructor-spec gap
-(sensitivity analysis was missing) plus 7 prose strengthenings.
-Submission deadline: **2026-05-06 22:00 EST**. Pre-submission Canvas-draft
-rehearsal target: **2026-05-06 10:00 EST**.
+CS6444 V&V semester project SUBMITTED 2026-05-11 at tag
+`final-project-submitted-2026-05-11` (master @ 63f3d7a). All HW2–5 + Final
+Project complete and live on GitHub Pages. The pre-submission audit-and-enhance
+work (`construction/design/final-report-audit-and-enhancement.md`, IMPLEMENTED,
+commit 9ca7300) is closed.
+
+**Next:** Execute the 6-sprint product roadmap at
+`../construction-ai-proposal/construction/design/2026-product-roadmap.md`
+(committed 2026-06-06, proposal-repo commit ae095ae). The roadmap is also
+pointed to from `llm/features/ROADMAP.md` (commit 06d7e0e). Sprint 0
+(memory-bank refresh, this work) is the active sprint.
+
+**Sprint sequence:**
+- Sprint 0 — Memory-bank refresh (both repos) — in-progress
+- Sprint 1 — VVUQ Phase 3 closeout (proposal repo)
+- Sprint 2 — Neo4j Setup on GCP + CI/CD bootstrap (implements
+  `llm/features/neo4j-setup.md`)
+- Sprint 3 — Raster/Scanned Drawing Support (implements
+  `llm/features/raster-scanned-drawing-support.md`)
+- Sprint 4 — OCR Dimension Extraction (implements
+  `llm/features/ocr-dimension-extraction.md`)
+- Sprint 5 — Phase 1 integration smoke test against 2–3 plan sets
+
+Burst/opportunistic cadence; each sprint is self-contained. GCP-first deploy
+(Cloud Run + AuraDB Free). No local docker stack — memory-constrained dev.
 
 ## Current State
 
@@ -87,10 +106,23 @@ rehearsal target: **2026-05-06 10:00 EST**.
 
 ## Immediate Next Steps
 
-1. **Submission-ready** — `VVSC_Cusati_Chuang_Project.pdf` (13 pages, clean compile,
-   audit + verify gates pass, bibliography verified, Microllam 2.0E baseline)
-2. Live at https://djjay0131.github.io/construction-ai-proposal/VVSC_Cusati_Chuang_Project.pdf
-3. Implementation sprint review (Construction.AI backend/frontend)
+Sprint 0 (this work) is in-progress. After it completes:
+
+1. **Sprint 1** — VVUQ Phase 3 closeout in proposal repo (4 slides + 10–15
+   structural-mechanics citations + final review).
+2. **Sprint 2** — Implement `llm/features/neo4j-setup.md` (SPECIFIED, 10 ACs).
+   Includes CI/CD bootstrap (item 11.3 in BACKLOG.md) and Terraform extensions
+   for Cloud Run + Artifact Registry + Secret Manager. Provision AuraDB Free
+   instance (prod + ci-test) before kicking off.
+3. **Sprint 3** — Implement `llm/features/raster-scanned-drawing-support.md`.
+4. **Sprint 4** — Implement `llm/features/ocr-dimension-extraction.md`.
+5. **Sprint 5** — End-to-end integration smoke test against 2–3 plan sets
+   (DXF, vector PDF, scanned PDF). Validate proposal §8 Phase 1 success
+   criteria (BOM accuracy >90%, KG query <100ms, full provenance).
+
+Source of truth for next work:
+`../construction-ai-proposal/construction/design/2026-product-roadmap.md`
+(also pointed to from `llm/features/ROADMAP.md`).
 
 ## Repository Relationship
 
@@ -99,16 +131,12 @@ rehearsal target: **2026-05-06 10:00 EST**.
 | construction-ai | Implementation code + VVSC studies | Active |
 | construction-ai-proposal | Research proposal + Pages mirror (CS6444/{HW3,HW4,HW5,Project}/) | Active |
 
-2. Map current implementation to proposal architecture
-3. Identify implementation gaps
-4. Create implementation sprint plan
+**Proposal architecture this repo implements (reference):**
 
-**From Proposal (reference):**
-
-- Knowledge Graph schema (Neo4j)
-- Agent workflow implementation
-- Cut optimization with OR-Tools
-- Code compliance checking
+- Knowledge Graph (Neo4j) — Sprint 2
+- Multi-agent workflow — Phase 2 (future, after roadmap Phase 1 completes)
+- Cut optimization with OR-Tools — Phase 2 (future)
+- Code compliance checking — Phase 3 (future)
 
 ## Key Decisions
 
