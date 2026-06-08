@@ -8,10 +8,14 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-07**: Sprint 0 of 2026 Product Roadmap VERIFIED — four quality gates
+  pass (adapted for markdown feature: AC grep coverage, cross-ref resolution,
+  commit+push to origin, format consistency). Gate 2 caught two residual stale
+  "PR #7 pending merge" phrases in proposal `progress.md`; fixed in commit 0f58f50.
 - **2026-06-06**: Sprint 0 of 2026 Product Roadmap IMPLEMENTED — memory-bank refresh
-  in both repos. Spec at `llm/features/sprint-0-memory-bank-refresh.md` (status:
-  IMPLEMENTED). Pivots from CS6444 (submitted 2026-05-11) back to product work.
-  Canonical roadmap: `../construction-ai-proposal/construction/design/2026-product-roadmap.md`
+  in both repos. Spec at `llm/features/sprint-0-memory-bank-refresh.md`. Pivots
+  from CS6444 (submitted 2026-05-11) back to product work. Canonical roadmap:
+  `../construction-ai-proposal/construction/design/2026-product-roadmap.md`
   (committed ae095ae). Pointer: `llm/features/ROADMAP.md` (06d7e0e).
 - **2026-05-11**: CS6444 Final Project SUBMITTED at tag
   `final-project-submitted-2026-05-11` (master @ 63f3d7a). Microllam 2.0E baseline.
