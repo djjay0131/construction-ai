@@ -8,14 +8,15 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
-- **2026-06-08** (later): Sprint 1b (VVUQ presentation slides) IMPLEMENTED —
-  new `\section{Structural Hypothesis Evaluation}` added to
-  `proposal/presentation.tex` between Agentic Workflow and Technology Stack,
-  with 4 new frames (Structural Challenge, Hypothesis Generation, PDE Evaluation,
-  Verification Validation and Uncertainty Quantification). Deck grew 21→25
-  slides. Compile clean. Out-of-scope discovery: existing "5 Specialized Agents"
+- **2026-06-08** (later): Sprint 1b (VVUQ presentation slides) VERIFIED — all
+  four quality gates pass (Gate 1 AC grep coverage, Gate 2 clean rebuild with
+  0 errors and 0 Missing-$ warnings, Gate 3 in sync with origin/master, Gate 4
+  no rogue colors/fonts, no new packages). New `\section{Structural Hypothesis
+  Evaluation}` with 4 frames (Structural Challenge, Hypothesis Generation, PDE
+  Evaluation, Verification Validation and Uncertainty Quantification) lives in
+  `proposal/presentation.tex` between Agentic Workflow and Technology Stack;
+  deck is now 25 slides. Out-of-scope discovery: existing "5 Specialized Agents"
   frame is stale (paper says 6 after VVUQ PR #6); flagged for future cleanup.
-  Spec at `llm/features/sprint-1b-vvuq-presentation-slides.md` (IMPLEMENTED).
 - **2026-06-08**: Sprint 1a (VVUQ structural-mechanics citations) VERIFIED — all
   four quality gates pass (Gate 1 AC grep coverage, Gate 2 clean recompile with
   0 final-pass citation warnings, Gate 3 in sync with origin/master, Gate 4
