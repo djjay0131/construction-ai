@@ -8,6 +8,14 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-08** (later): Sprint 1b (VVUQ presentation slides) IMPLEMENTED —
+  new `\section{Structural Hypothesis Evaluation}` added to
+  `proposal/presentation.tex` between Agentic Workflow and Technology Stack,
+  with 4 new frames (Structural Challenge, Hypothesis Generation, PDE Evaluation,
+  Verification Validation and Uncertainty Quantification). Deck grew 21→25
+  slides. Compile clean. Out-of-scope discovery: existing "5 Specialized Agents"
+  frame is stale (paper says 6 after VVUQ PR #6); flagged for future cleanup.
+  Spec at `llm/features/sprint-1b-vvuq-presentation-slides.md` (IMPLEMENTED).
 - **2026-06-08**: Sprint 1a (VVUQ structural-mechanics citations) VERIFIED — all
   four quality gates pass (Gate 1 AC grep coverage, Gate 2 clean recompile with
   0 final-pass citation warnings, Gate 3 in sync with origin/master, Gate 4
@@ -15,7 +23,7 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
   with `\cite{}` anchors wired into `proposal/sections/05a-verification-validation.tex`.
   All web-verified (zero hallucinations; 3 metadata corrections logged in spec).
   Pre-existing "empty journal" warnings in anthropic2024claude, chase2022langchain,
-  jocher2023yolov8 noted but out of scope. Next: Sprint 1b (presentation slides).
+  jocher2023yolov8 noted but out of scope.
 - **2026-06-07**: Sprint 0 of 2026 Product Roadmap VERIFIED — four quality gates
   pass (adapted for markdown feature: AC grep coverage, cross-ref resolution,
   commit+push to origin, format consistency). Gate 2 caught two residual stale
