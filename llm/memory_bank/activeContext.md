@@ -9,15 +9,18 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 ## Recent Significant Changes
 
 - **2026-06-08** (latest): Sprint 1c (VVUQ Phase 3 final review + 5→6 fix)
-  IMPLEMENTED. Cleaned up the stale "5 Specialized Agents" frame from Sprint 1b
+  VERIFIED. All four quality gates pass (Gate 1 AC grep coverage, Gate 2
+  clean rebuild of both PDFs, Gate 3 in sync with origin/master and Pages
+  Last-Modified 2026-06-09 03:58 UTC right after push, Gate 4 no rogue TikZ
+  style). Cleaned up the stale "5 Specialized Agents" frame from Sprint 1b
   out-of-scope flag: now "6 Specialized Agents" with Structural in the ring;
   added structural agent node + arrows to the block-diagram frame too. Both
   PDFs recompiled clean (main 14 pp / 0 cite warnings; presentation 25 pp / 0
-  errors). Final review record written to
+  errors). Final review record at
   `construction-ai-proposal/construction/design/vvuq-phase3-final-review.md`.
-  Roadmap doc Appendix B updated: Sprint 0 + Sprint 1 marked DONE. Spec at
-  `llm/features/sprint-1c-vvuq-paper-final-review.md` (IMPLEMENTED). Next:
-  verify gates, then VVUQ Phase 3 CLOSED.
+  Roadmap doc Appendix B updated: Sprint 0 + Sprint 1 marked DONE.
+  **VVUQ Phase 3 — CLOSED 2026-06-08.** Sprint 1 of the 2026 Product Roadmap
+  is complete. Next sprint: Sprint 2 — Neo4j Setup on GCP + CI/CD bootstrap.
 - **2026-06-08** (later): Sprint 1b (VVUQ presentation slides) VERIFIED — all
   four quality gates pass (Gate 1 AC grep coverage, Gate 2 clean rebuild with
   0 errors and 0 Missing-$ warnings, Gate 3 in sync with origin/master, Gate 4
