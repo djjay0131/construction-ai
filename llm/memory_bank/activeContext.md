@@ -8,14 +8,14 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
-- **2026-06-08**: Sprint 1a (VVUQ structural-mechanics citations) IMPLEMENTED —
-  14 new bibitems added to `proposal/references.bib` (V&V, ASME standards, GCI,
-  beam theory, FEM, MC, LHS, UQ, reliability, MOO) with `\cite{}` anchors wired
-  into `proposal/sections/05a-verification-validation.tex`. All 14 web-verified
-  (zero hallucinations; 3 metadata corrections logged in spec). `main.pdf`
-  compiles to 14 pages with 0 undefined-citation warnings. Spec at
-  `llm/features/sprint-1a-vvuq-structural-mechanics-citations.md` (status:
-  IMPLEMENTED). Next: verify gates, then Sprint 1b (presentation slides).
+- **2026-06-08**: Sprint 1a (VVUQ structural-mechanics citations) VERIFIED — all
+  four quality gates pass (Gate 1 AC grep coverage, Gate 2 clean recompile with
+  0 final-pass citation warnings, Gate 3 in sync with origin/master, Gate 4
+  bibtex style matches stars). 14 new bibitems live in `proposal/references.bib`
+  with `\cite{}` anchors wired into `proposal/sections/05a-verification-validation.tex`.
+  All web-verified (zero hallucinations; 3 metadata corrections logged in spec).
+  Pre-existing "empty journal" warnings in anthropic2024claude, chase2022langchain,
+  jocher2023yolov8 noted but out of scope. Next: Sprint 1b (presentation slides).
 - **2026-06-07**: Sprint 0 of 2026 Product Roadmap VERIFIED — four quality gates
   pass (adapted for markdown feature: AC grep coverage, cross-ref resolution,
   commit+push to origin, format consistency). Gate 2 caught two residual stale
