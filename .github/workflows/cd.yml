@@ -75,7 +75,22 @@ jobs:
             --quiet
 
       - name: Show service URL
+        id: url
         run: |
-          gcloud run services describe "${SERVICE}" \
+          URL=$(gcloud run services describe "${SERVICE}" \
             --region="${REGION}" \
-            --format='value(status.url)'
+            --format='value(status.url)')
+          echo "Service URL: $URL"
+          echo "service_url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Set up Python for smoke test
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install smoke test dependencies
+        run: pip install httpx
+
+      - name: Smoke-test the deployed revision
+        run: |
+          python backend/scripts/smoke_test.py --url "${{ steps.url.outputs.service_url }}"

@@ -8,6 +8,22 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-10** (latest): Sprint 2c (Aura deploy + smoke test) IMPLEMENTED.
+  Added `/api/health/kg` endpoint (returns kg_status + lumber_specs_loaded;
+  always HTTP 200 so Cloud Run doesn't quarantine the revision),
+  `backend/scripts/smoke_test.py` CLI (argparse + httpx; exit 0/1 with
+  clear PASS/FAIL summary line), and 4-step smoke-test stanza in
+  `.github/workflows/cd.yml` that runs after `gcloud run deploy` and fails
+  CD when the new revision isn't `ready`. README sections added for
+  AuraDB Free provisioning + first live smoke test. 17 new tests pass +
+  100% coverage on both new modules; 30 Sprint 2a tests still pass
+  (47/47 combined). Adversarial review caught the FastAPI heavy-import
+  chain → restructured health test to use stub `app.main` via
+  `sys.modules`. Spec at `llm/features/sprint-2c-aura-deploy-smoke-test.md`
+  (IMPLEMENTED). **Sprint 2 is now fully implemented (2a + 2b + 2c).**
+  Live verification of the smoke-test against a real Cloud Run URL waits
+  on the user's manual setup (enable APIs, terraform apply, Aura
+  provisioning, populate Secret Manager, set GH secrets).
 - **2026-06-10** (later): Sprint 2b (CI/CD bootstrap + Terraform GCP) VERIFIED.
   All four quality gates pass after one Gate 1 fix (added `pytest`,
   `pytest-cov`, `pytest-asyncio`, `httpx`, `PyYAML` to `backend/requirements.txt`

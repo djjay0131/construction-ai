@@ -91,10 +91,26 @@ gh run list --limit 3
 CI runs ~2 min (Python install + pytest). CD runs ~5 min (Docker build +
 push + Cloud Run deploy).
 
-### 7. (Sprint 2c) Populate Neo4j Aura credentials
+### 7. AuraDB Free Provisioning
 
-After provisioning AuraDB Free (a separate manual step done via the
-[Aura web console](https://console.neo4j.io/)), populate the three secrets:
+Aura Free has no Terraform provider, so this is a one-time manual web flow:
+
+1. Go to <https://console.neo4j.io/> and sign up / sign in.
+2. Click **New Instance** → **AuraDB Free**.
+3. Choose region closest to `us-east4` (e.g. `aws-us-east-1`).
+4. Aura generates a password. **Copy it now** — you won't see it again.
+5. Wait ~1 minute for the instance to provision.
+6. Copy the connection URI from the instance details page. Format:
+   `bolt+s://xxxxxxxx.databases.neo4j.io`.
+
+You now have three values to feed to GCP Secret Manager:
+- **URI:** `bolt+s://xxxxxxxx.databases.neo4j.io`
+- **User:** `neo4j` (Aura's default; don't change)
+- **Password:** the value Aura generated in step 4
+
+### 8. Populate Neo4j Aura credentials in Secret Manager
+
+Run from any shell authenticated to `vt-gcp-00042`:
 
 ```bash
 echo -n "bolt+s://xxxxxxxx.databases.neo4j.io" \
@@ -115,6 +131,39 @@ gcloud run services update construction-ai-backend \
 ```
 
 (Or just push any commit to master; the CD workflow forces a new revision.)
+
+### 9. First Live Smoke Test
+
+After the secrets are populated and a new Cloud Run revision picks them up,
+run the smoke test from your laptop:
+
+```bash
+URL=$(gcloud run services describe construction-ai-backend \
+  --region us-east4 --format='value(status.url)')
+
+python backend/scripts/smoke_test.py --url "$URL"
+```
+
+Expected output (last line):
+```
+PASS: kg_status=ready, lumber_specs_loaded=6
+```
+
+If `kg_status` is `error`, check Cloud Run logs:
+```bash
+gcloud run services logs read construction-ai-backend --region us-east4 --limit 50
+```
+
+If you haven't populated Secret Manager yet and want to confirm Cloud Run
+itself is reachable, pass `--allow-disabled`:
+
+```bash
+python backend/scripts/smoke_test.py --url "$URL" --allow-disabled
+```
+
+The CD workflow runs this smoke test automatically on every master push
+(without `--allow-disabled`), so any production-bound revision must report
+`ready`.
 
 ## Day-to-Day
 
