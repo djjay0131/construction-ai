@@ -8,6 +8,20 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-10** (latest): Sprint 2c (Aura deploy + smoke test) VERIFIED. All
+  four gates pass: Gate 1 (47/47 tests, 100% coverage on both new modules),
+  Gate 2 (no bare excepts, argparse validates --url, 5 distinct FAIL
+  messages, endpoint always 200 for graceful degradation), Gate 3 (CI run
+  #27300909633 green after a fix that added the new test files to the CI
+  workflow; CD fails at auth as expected pre-Sprint-2c-live-step), Gate 4
+  (all files compile, docstrings present, cd.yml parses with 12 steps).
+  Sprint 2 of the 2026 Product Roadmap is now CODE-COMPLETE (2a + 2b + 2c
+  all VERIFIED). **Next step is yours: enable GCP APIs, run
+  `terraform apply`, capture WIF_PROVIDER + CI_SA_EMAIL outputs into GH
+  secrets, provision AuraDB Free, populate the 3 Secret Manager secrets,
+  push a commit; the next CD run will then run the live smoke test
+  against the deployed Cloud Run URL.** Operator runbook at
+  `infra/README.md`.
 - **2026-06-10** (latest): Sprint 2c (Aura deploy + smoke test) IMPLEMENTED.
   Added `/api/health/kg` endpoint (returns kg_status + lumber_specs_loaded;
   always HTTP 200 so Cloud Run doesn't quarantine the revision),
