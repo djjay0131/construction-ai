@@ -8,6 +8,21 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-10**: Sprint 2b (CI/CD bootstrap + Terraform GCP) IMPLEMENTED.
+  Added `.github/workflows/{ci,cd}.yml` (pytest with coverage on PR/master;
+  WIF-auth build/push/deploy to Cloud Run on master). Extended `infra/main.tf`
+  with Artifact Registry, Cloud Run v2 service, 3 Secret Manager secrets,
+  Workload Identity Federation pool + provider, Cloud Run runtime SA, CI
+  deployer SA with least-privilege IAM (AR writer + run.developer +
+  iam.serviceAccountUser only). Added `infra/outputs.tf` and
+  `infra/README.md` operator runbook. Backend Dockerfile updated so all
+  three CMDs honor `$PORT`. Adversarial review caught Cloud Run
+  chicken-and-egg → initial image now points at `cloudrun/container/hello`
+  with `ignore_changes` on the image field. `terraform validate` Success;
+  `terraform plan` 20 to add / 0 to change / 0 to destroy. 30/30 Sprint 2a
+  tests still pass. Spec at `llm/features/sprint-2b-cicd-bootstrap-gcp.md`
+  (IMPLEMENTED). Next: verify gates → user runs `terraform apply` →
+  Sprint 2c (Aura provision + live deploy + smoke test).
 - **2026-06-09**: Sprint 2a (Neo4j KG Foundation) VERIFIED. All four quality
   gates pass: Gate 1 30/30 tests + 100% line coverage on `app/core/kg/`
   (spec target 80%), Gate 2 defensive programming (no bare excepts, URI in

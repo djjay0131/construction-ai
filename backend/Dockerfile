@@ -43,17 +43,17 @@ COPY ./app ./app
 # Create upload directory
 RUN mkdir -p /app/data/uploads
 
-# Expose port
-EXPOSE 8000
+# Expose port (Cloud Run sets $PORT, defaults to 8080)
+EXPOSE 8080
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application. $PORT honored for Cloud Run; defaults to 8080 locally.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
 
 
 # Development stage with hot reload
 FROM base as development
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --reload"]
 
 
 # Production stage
@@ -63,4 +63,4 @@ FROM base as production
 # COPY ./static ./static
 
 # Run with production settings
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --workers 4"]

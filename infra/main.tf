@@ -103,3 +103,210 @@ output "service_account_key" {
   description = "Service account JSON key (save to a file, set GOOGLE_APPLICATION_CREDENTIALS)"
   sensitive   = true
 }
+
+# =============================================================================
+# Sprint 2b additions: Artifact Registry + Cloud Run + Secret Manager + WIF
+# Required APIs (the operator enables these manually once before the first
+# apply; see infra/README.md): artifactregistry.googleapis.com,
+# run.googleapis.com, secretmanager.googleapis.com, iamcredentials.googleapis.com
+# =============================================================================
+
+variable "github_repo" {
+  description = "GitHub repository allowed to impersonate the CI deployer SA (format: owner/name)"
+  type        = string
+  default     = "djjay0131/construction-ai"
+}
+
+# ─── Artifact Registry for backend container images ─────────────────────────
+
+resource "google_artifact_registry_repository" "backend" {
+  location      = var.region
+  repository_id = "construction-ai"
+  description   = "Docker images for the Construction AI backend (Cloud Run target)"
+  format        = "DOCKER"
+}
+
+# ─── Secret Manager: Neo4j Aura credentials ──────────────────────────────────
+# The resources here only create the secret containers; the operator populates
+# the values via `gcloud secrets versions add` after provisioning AuraDB Free
+# (Sprint 2c). Until then, Cloud Run startup logs the missing-credential case
+# and falls back to DEFAULT_LUMBER_SPECS.
+
+resource "google_secret_manager_secret" "neo4j_uri" {
+  secret_id = "neo4j-uri"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret" "neo4j_user" {
+  secret_id = "neo4j-user"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret" "neo4j_password" {
+  secret_id = "neo4j-password"
+  replication {
+    auto {}
+  }
+}
+
+# ─── Cloud Run runtime service account ───────────────────────────────────────
+# Distinct from the CI deployer SA below. This SA is what the Cloud Run
+# container runs *as*; it needs read access to the three secrets.
+
+resource "google_service_account" "cloud_run_runtime" {
+  account_id   = "cr-backend-runtime"
+  display_name = "Construction AI backend Cloud Run runtime SA"
+  description  = "Identity the backend container runs as on Cloud Run; reads Neo4j creds from Secret Manager."
+}
+
+resource "google_secret_manager_secret_iam_member" "runtime_uri_access" {
+  secret_id = google_secret_manager_secret.neo4j_uri.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run_runtime.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "runtime_user_access" {
+  secret_id = google_secret_manager_secret.neo4j_user.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run_runtime.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "runtime_password_access" {
+  secret_id = google_secret_manager_secret.neo4j_password.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run_runtime.email}"
+}
+
+# ─── Cloud Run backend service ───────────────────────────────────────────────
+# First-time apply creates a placeholder service whose image points at the
+# Artifact Registry path the CD workflow will push to. Cloud Run will fail
+# the initial readiness probe until the CI pipeline pushes the first image;
+# that's expected, and resolves automatically on the first CD run.
+
+resource "google_cloud_run_v2_service" "backend" {
+  name     = "construction-ai-backend"
+  location = var.region
+
+  template {
+    service_account = google_service_account.cloud_run_runtime.email
+
+    containers {
+      # Initial revision uses GCP's public hello-world image so that the first
+      # `terraform apply` can succeed before CI/CD has ever pushed an image.
+      # The CD workflow replaces this with the real backend image on the first
+      # master push. lifecycle.ignore_changes (below) prevents Terraform from
+      # reverting that on subsequent applies.
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+
+      ports {
+        container_port = 8080
+      }
+
+      env {
+        name = "NEO4J_URI"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.neo4j_uri.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "NEO4J_USER"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.neo4j_user.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "NEO4J_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.neo4j_password.secret_id
+            version = "latest"
+          }
+        }
+      }
+    }
+  }
+
+  # Allow CD to update without forcing every revision to take 100% traffic
+  # before the rollout completes.
+  lifecycle {
+    ignore_changes = [
+      # The CD workflow re-tags `:latest`; without this, Terraform would
+      # show a perpetual diff. The image is owned by CD, not Terraform.
+      template[0].containers[0].image,
+    ]
+  }
+}
+
+# ─── Workload Identity Federation for GitHub Actions ────────────────────────
+
+resource "google_iam_workload_identity_pool" "github" {
+  workload_identity_pool_id = "github-actions"
+  display_name              = "GitHub Actions"
+  description               = "Pool for GitHub Actions OIDC tokens"
+}
+
+resource "google_iam_workload_identity_pool_provider" "github" {
+  workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
+  workload_identity_pool_provider_id = "github"
+  display_name                       = "GitHub OIDC provider"
+
+  attribute_mapping = {
+    "google.subject"       = "assertion.sub"
+    "attribute.repository" = "assertion.repository"
+    "attribute.ref"        = "assertion.ref"
+  }
+
+  # Restrict to a single repo so a misconfigured provider doesn't accept
+  # tokens from any GitHub org.
+  attribute_condition = "assertion.repository == \"${var.github_repo}\""
+
+  oidc {
+    issuer_uri = "https://token.actions.githubusercontent.com"
+  }
+}
+
+# ─── CI deployer SA (impersonated by GitHub Actions via WIF) ────────────────
+
+resource "google_service_account" "ci_deployer" {
+  account_id   = "ci-deployer"
+  display_name = "GitHub Actions CI/CD deployer"
+  description  = "Pushes images to Artifact Registry and deploys to Cloud Run."
+}
+
+# Least-privilege roles for the CI deployer SA. Intentionally NOT
+# roles/owner or roles/editor.
+
+resource "google_project_iam_member" "ci_deployer_ar_writer" {
+  project = var.project_id
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.ci_deployer.email}"
+}
+
+resource "google_project_iam_member" "ci_deployer_run_developer" {
+  project = var.project_id
+  role    = "roles/run.developer"
+  member  = "serviceAccount:${google_service_account.ci_deployer.email}"
+}
+
+resource "google_service_account_iam_member" "ci_deployer_act_as_runtime" {
+  service_account_id = google_service_account.cloud_run_runtime.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.ci_deployer.email}"
+}
+
+# Allow the GitHub repo (via WIF) to impersonate the CI deployer SA.
+resource "google_service_account_iam_member" "gh_actions_impersonates_ci_deployer" {
+  service_account_id = google_service_account.ci_deployer.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository/${var.github_repo}"
+}

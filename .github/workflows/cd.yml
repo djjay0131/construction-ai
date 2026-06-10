@@ -1,0 +1,81 @@
+name: CD
+
+on:
+  push:
+    branches: [master]
+
+# Workload Identity Federation needs id-token: write to mint the OIDC token
+# GitHub sends to GCP STS in exchange for a short-lived access token.
+permissions:
+  id-token: write
+  contents: read
+
+# Serialise deploys — last one wins. Avoids two runners racing to update the
+# same Cloud Run service.
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      PROJECT_ID: vt-gcp-00042
+      REGION: us-east4
+      REPO: construction-ai
+      IMAGE_NAME: backend
+      SERVICE: construction-ai-backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.CI_SA_EMAIL }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Compute image tag
+        id: tag
+        run: |
+          SHA_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}"
+          echo "image_sha=${IMAGE}:${SHA_SHORT}" >> $GITHUB_OUTPUT
+          echo "image_latest=${IMAGE}:latest" >> $GITHUB_OUTPUT
+
+      - name: Build container
+        working-directory: backend
+        run: |
+          docker build \
+            -t "${{ steps.tag.outputs.image_sha }}" \
+            -t "${{ steps.tag.outputs.image_latest }}" \
+            --target production \
+            .
+
+      - name: Push container
+        run: |
+          docker push "${{ steps.tag.outputs.image_sha }}"
+          docker push "${{ steps.tag.outputs.image_latest }}"
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "${SERVICE}" \
+            --image="${{ steps.tag.outputs.image_sha }}" \
+            --region="${REGION}" \
+            --platform=managed \
+            --quiet
+
+      - name: Show service URL
+        run: |
+          gcloud run services describe "${SERVICE}" \
+            --region="${REGION}" \
+            --format='value(status.url)'
