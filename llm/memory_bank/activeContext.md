@@ -8,6 +8,18 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-10** (later): Sprint 2b (CI/CD bootstrap + Terraform GCP) VERIFIED.
+  All four quality gates pass after one Gate 1 fix (added `pytest`,
+  `pytest-cov`, `pytest-asyncio`, `httpx`, `PyYAML` to `backend/requirements.txt`
+  because CI builds a fresh venv and the local venv had them as side-effects
+  of YOLO registry work). First successful CI run #27295044885 — install
+  2m21s, tests 33s, all 30 pass, coverage uploaded. CD fails at auth step
+  as expected (WIF_PROVIDER / CI_SA_EMAIL secrets not set yet; that's
+  Sprint 2c). `terraform fmt -check` empty; HCL section dividers consistent
+  with stars. Spec at `llm/features/sprint-2b-cicd-bootstrap-gcp.md`
+  (VERIFIED). Sprint 2 progress: 2 of 3 sub-sprints complete. **Next: user
+  enables GCP APIs + runs `terraform apply` + populates GH secrets + Aura
+  Free; then Sprint 2c (live deploy + smoke test).**
 - **2026-06-10**: Sprint 2b (CI/CD bootstrap + Terraform GCP) IMPLEMENTED.
   Added `.github/workflows/{ci,cd}.yml` (pytest with coverage on PR/master;
   WIF-auth build/push/deploy to Cloud Run on master). Extended `infra/main.tf`
