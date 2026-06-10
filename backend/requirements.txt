@@ -91,3 +91,13 @@ httpx==0.25.2
 neo4j>=5.0,<6.0
 testcontainers[neo4j]>=4.0,<5.0
 
+# ==========================================
+# Test framework (used by both local dev and CI)
+# Sprint 2b: lifted these from techContext.md into requirements so CI installs them
+# ==========================================
+pytest>=7.4
+pytest-asyncio>=0.21
+pytest-cov>=4.1
+httpx>=0.25
+PyYAML>=6.0
+
