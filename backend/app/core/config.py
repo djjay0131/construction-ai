@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./construction_ai.db"
 
+    # Neo4j Knowledge Graph (Sprint 2a)
+    # AuraDB Free for prod (bolt+s://...). Empty values disable KG startup;
+    # tests inject a testcontainer URI directly via the Neo4jClient constructor.
+    NEO4J_URI: str = ""
+    NEO4J_USER: str = "neo4j"
+    NEO4J_PASSWORD: str = ""
+
     # Redis & Celery
     REDIS_URL: str = "redis://localhost:6379/0"
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"

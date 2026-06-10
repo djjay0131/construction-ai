@@ -39,39 +39,61 @@ class FramingConfig:
     plate_size: Tuple[int, int] = (2, 4)  # 2x4
 
 
+DEFAULT_LUMBER_SPECS: Dict[Tuple[int, int], LumberSpecification] = {
+    (2, 4): LumberSpecification(
+        nominal_width=2, nominal_height=4, actual_width=1.5, actual_height=3.5, grade=LumberGrade.STUD
+    ),
+    (2, 6): LumberSpecification(
+        nominal_width=2, nominal_height=6, actual_width=1.5, actual_height=5.5, grade=LumberGrade.STUD
+    ),
+    (2, 8): LumberSpecification(
+        nominal_width=2, nominal_height=8, actual_width=1.5, actual_height=7.25, grade=LumberGrade.STUD
+    ),
+    (2, 10): LumberSpecification(
+        nominal_width=2, nominal_height=10, actual_width=1.5, actual_height=9.25, grade=LumberGrade.STUD
+    ),
+    (2, 12): LumberSpecification(
+        nominal_width=2, nominal_height=12, actual_width=1.5, actual_height=11.25, grade=LumberGrade.STUD
+    ),
+    (4, 4): LumberSpecification(
+        nominal_width=4, nominal_height=4, actual_width=3.5, actual_height=3.5, grade=LumberGrade.NO2
+    ),
+}
+"""Fallback specs used only when no KG-backed dict is injected.
+
+The canonical source of truth is Neo4j (see ``app.core.kg.seed.LUMBER_SPECS``).
+``DEFAULT_LUMBER_SPECS`` exists so unit tests of LumberCalculator stay
+independent of Neo4j and so the calculator degrades gracefully when run
+without KG bootstrap (e.g., in a one-off script). The KG seed values must
+match these for round-trip parity (AC-4)."""
+
+
 class LumberCalculator:
-    """Calculator for lumber material takeoff."""
+    """Calculator for lumber material takeoff.
 
-    # Standard lumber specifications (nominal vs actual dimensions)
-    LUMBER_SPECS = {
-        (2, 4): LumberSpecification(
-            nominal_width=2, nominal_height=4, actual_width=1.5, actual_height=3.5, grade=LumberGrade.STUD
-        ),
-        (2, 6): LumberSpecification(
-            nominal_width=2, nominal_height=6, actual_width=1.5, actual_height=5.5, grade=LumberGrade.STUD
-        ),
-        (2, 8): LumberSpecification(
-            nominal_width=2, nominal_height=8, actual_width=1.5, actual_height=7.25, grade=LumberGrade.STUD
-        ),
-        (2, 10): LumberSpecification(
-            nominal_width=2, nominal_height=10, actual_width=1.5, actual_height=9.25, grade=LumberGrade.STUD
-        ),
-        (2, 12): LumberSpecification(
-            nominal_width=2, nominal_height=12, actual_width=1.5, actual_height=11.25, grade=LumberGrade.STUD
-        ),
-        (4, 4): LumberSpecification(
-            nominal_width=4, nominal_height=4, actual_width=3.5, actual_height=3.5, grade=LumberGrade.NO2
-        ),
-    }
+    Takes a ``lumber_specs`` dict at construction (loaded from the Knowledge
+    Graph at FastAPI startup; see :func:`app.core.kg.loader.load_lumber_specs`).
+    The dict is treated as a read-only runtime cache for O(1) lookups during
+    request handling.
+    """
 
-    def __init__(self, config: Optional[FramingConfig] = None):
-        """
-        Initialize lumber calculator.
+    def __init__(
+        self,
+        config: Optional[FramingConfig] = None,
+        lumber_specs: Optional[Dict[Tuple[int, int], LumberSpecification]] = None,
+    ):
+        """Initialize the lumber calculator.
 
         Args:
-            config: Framing configuration
+            config: Framing configuration.
+            lumber_specs: ``{(nominal_width, nominal_height): LumberSpecification}``,
+                loaded from Neo4j at startup. Defaults to
+                :data:`DEFAULT_LUMBER_SPECS` so callers that don't have KG
+                wiring set up (scripts, unit tests of other modules) keep
+                working unchanged.
         """
         self.config = config or FramingConfig()
+        self.lumber_specs = lumber_specs if lumber_specs is not None else DEFAULT_LUMBER_SPECS
 
     def calculate_studs_for_wall(self, wall: WallElement) -> int:
         """
@@ -161,7 +183,7 @@ class LumberCalculator:
         materials: List[LumberMaterialItem] = []
 
         # Studs
-        stud_spec = self.LUMBER_SPECS[self.config.stud_size]
+        stud_spec = self.lumber_specs[self.config.stud_size]
         stud_height_feet = self.config.wall_height_inches / 12.0
 
         studs_material = LumberMaterialItem(
@@ -182,7 +204,7 @@ class LumberCalculator:
 
         # Plates
         if total_plate_length > 0:
-            plate_spec = self.LUMBER_SPECS[self.config.plate_size]
+            plate_spec = self.lumber_specs[self.config.plate_size]
 
             # Count number of plates
             num_plate_runs = 1  # bottom plate

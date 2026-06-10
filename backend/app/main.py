@@ -41,6 +41,22 @@ app.add_middleware(
 )
 
 
+# Knowledge Graph client + loaded specs cache (populated at startup, read-only thereafter).
+# These module-level singletons let request handlers fetch the loaded specs dict in O(1)
+# without going through FastAPI dependency injection for every takeoff call.
+_kg_client = None
+_lumber_specs_cache: dict = {}
+
+
+def get_lumber_specs() -> dict:
+    """Return the in-memory lumber-specs dict loaded from the KG at startup.
+
+    Returns the empty dict when the KG isn't configured (NEO4J_URI unset) —
+    consumers should fall back to ``DEFAULT_LUMBER_SPECS`` in that case.
+    """
+    return _lumber_specs_cache
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize application on startup."""
@@ -51,6 +67,33 @@ async def startup_event():
         logger.info("Database initialized successfully")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
+
+    # Initialize Knowledge Graph (Sprint 2a) — only if NEO4J_URI is set.
+    # Leaving NEO4J_URI empty in .env disables KG startup, which is the
+    # supported posture for early dev before AuraDB is provisioned.
+    from app.core.config import settings
+    if settings.NEO4J_URI:
+        global _kg_client, _lumber_specs_cache
+        try:
+            from app.core.kg.client import Neo4jClient
+            from app.core.kg.loader import load_lumber_specs
+            from app.core.kg.seed import seed_kg
+
+            _kg_client = Neo4jClient(
+                settings.NEO4J_URI, settings.NEO4J_USER, settings.NEO4J_PASSWORD
+            )
+            _kg_client.verify()
+            with _kg_client.session() as s:
+                seed_kg(s)
+                _lumber_specs_cache = load_lumber_specs(s)
+            logger.info(
+                f"Knowledge Graph initialized: {len(_lumber_specs_cache)} lumber specs loaded"
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize Knowledge Graph: {e}")
+    else:
+        logger.info("NEO4J_URI empty — skipping KG startup (using DEFAULT_LUMBER_SPECS)")
+
     # TODO: Load ML models
     logger.info("Construction AI API started successfully")
 
@@ -59,6 +102,13 @@ async def startup_event():
 async def shutdown_event():
     """Cleanup on application shutdown."""
     logger.info("Shutting down Construction AI API...")
+    global _kg_client
+    if _kg_client is not None:
+        try:
+            _kg_client.close()
+            logger.info("Knowledge Graph driver closed")
+        except Exception as e:
+            logger.warning(f"Error closing Knowledge Graph driver: {e}")
     # TODO: Close database connections
     # TODO: Cleanup resources
 

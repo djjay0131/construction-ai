@@ -8,6 +8,17 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-09**: Sprint 2a (Neo4j KG Foundation) IMPLEMENTED. Created
+  `backend/app/core/kg/` package (client, provenance, seed, loader) +
+  refactored `lumber_calculator.py` to accept a dict instead of holding a
+  class-level `LUMBER_SPECS`. 30 tests pass with **100% line coverage** on the
+  new package (8 integration tests use an ephemeral `neo4j:5-community`
+  testcontainer). FastAPI startup hook (`app/main.py`) verifies Aura connection,
+  seeds, and loads specs into a module-level cache; `takeoff.py` sources from
+  the cache and falls back to `DEFAULT_LUMBER_SPECS` when `NEO4J_URI` is unset.
+  Spec at `llm/features/sprint-2a-neo4j-kg-foundation.md` (IMPLEMENTED). Next:
+  verify gates, then Sprint 2b (CI/CD + Terraform Cloud Run + AR + Secret
+  Manager), then Sprint 2c (live Aura deploy + smoke test).
 - **2026-06-08** (latest): Sprint 1c (VVUQ Phase 3 final review + 5→6 fix)
   VERIFIED. All four quality gates pass (Gate 1 AC grep coverage, Gate 2
   clean rebuild of both PDFs, Gate 3 in sync with origin/master and Pages

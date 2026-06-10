@@ -126,8 +126,12 @@ def process_drawing_takeoff(
             include_double_top_plate=True,
         )
 
-        # Calculate lumber
-        calculator = LumberCalculator(framing_config)
+        # Calculate lumber. Source the lumber specs from the KG-backed cache when
+        # available (loaded once at startup, see app.main.startup_event); fall back
+        # to DEFAULT_LUMBER_SPECS if NEO4J_URI was unset and KG never started.
+        from app.main import get_lumber_specs
+        kg_specs = get_lumber_specs()
+        calculator = LumberCalculator(framing_config, lumber_specs=kg_specs or None)
         lumber_materials = calculator.calculate_all_walls(walls)
 
         # Get summary stats
