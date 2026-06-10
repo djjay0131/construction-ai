@@ -27,7 +27,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Sprint 2a kg + lumber refactor tests with coverage
+      - name: Run Sprint 2a + 2c tests with coverage
         working-directory: backend
         run: |
           pytest \
@@ -36,7 +36,11 @@ jobs:
             tests/test_kg_loader.py \
             tests/test_kg_integration.py \
             tests/test_lumber_calculator_refactor.py \
+            tests/test_health_endpoint.py \
+            tests/test_smoke_test_script.py \
             --cov=app.core.kg \
+            --cov=app.api.health \
+            --cov=scripts.smoke_test \
             --cov-report=term \
             --cov-report=xml \
             -q
