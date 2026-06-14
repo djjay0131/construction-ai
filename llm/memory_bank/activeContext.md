@@ -4,6 +4,27 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 3b (raster wall extraction + parser + API routing) IMPLEMENTED.
+Three new modules:
+* `backend/app/core/cv/wall_line_extractor.py` — YOLO-constrained Hough
+  (Protocol-based detector DI so tests don't load torch/ultralytics);
+  68 stmts, 100% covered, 14 unit tests.
+* `backend/app/core/cv/scale_detector.py` — 3-tier cascade (reference →
+  manual → ScaleWarning); 75 stmts, 100% covered, 23 unit tests.
+* `backend/app/core/parsers/raster_parser.py` — orchestrator mirroring
+  DXFParser/PDFParser interface; 49 stmts, 100% covered, 18 unit tests.
+* `backend/app/api/takeoff.py` — drop the JPG/PNG rejection; new branch
+  builds a RasterParser with the real DetectionService and routes
+  manual_scale + reference_measurement through.
+Tests: 55/55 Sprint 3b pass; 121/121 Sprint 2+3a+3b pass. Spec at
+`llm/features/sprint-3b-raster-wall-extraction-api.md` (IMPLEMENTED).
+Deferred to a future sprint: real Gemini Vision auto-detect, real OCR
+scale-bar reading, end-to-end image fixtures, vector-parity smoke
+(parent Sprint 3 ACs 6 + auto-scale path).
+Next: verify gates.
+
+## 2026-06-14 (earlier)
+
 Sprint 3a (CV pipeline foundation) VERIFIED. All four quality gates pass:
 Gate 1 (27/27 tests, 100% line coverage on both new modules), Gate 2 (no
 bare excepts, ctor validation with the offending value in error messages,

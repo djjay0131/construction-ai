@@ -16,6 +16,7 @@ from app.models.project import Drawing, MaterialTakeoffRecord, TakeoffStatus
 from app.schemas.material import MaterialTakeoff, TakeoffJob
 from app.core.parsers.dxf_parser import DXFParser, WallElement
 from app.core.parsers.pdf_parser import PDFParser, PDFWallElement
+from app.core.parsers.raster_parser import RasterParseError, RasterParser
 from app.core.extraction.lumber_calculator import LumberCalculator, FramingConfig, StudSpacing
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,9 @@ def process_drawing_takeoff(
     drawing_id: int,
     db: Session,
     wall_height: float = 96.0,
-    stud_spacing: int = 16
+    stud_spacing: int = 16,
+    manual_scale: Optional[str] = None,
+    reference_measurement: Optional[dict] = None,
 ) -> MaterialTakeoff:
     """
     Process a drawing and generate material takeoff.
@@ -110,6 +113,36 @@ def process_drawing_takeoff(
                 )
                 for w in pdf_walls
             ]
+
+        elif drawing.file_format.value in ['jpg', 'png', 'jpeg']:
+            # Parse raster/scanned drawing (Sprint 3b: real CV pipeline wired,
+            # auto-scale-detection NOT YET — caller must provide manual_scale
+            # or reference_measurement, else takeoff returns scale_warning).
+            # Real YOLO detector lives in DetectionService; deferred import
+            # avoids loading torch + ultralytics when the request is DXF/PDF.
+            from app.core.cv.detection_service import get_detection_service
+            from app.core.cv.wall_line_extractor import WallLineExtractor
+            line_extractor = WallLineExtractor(detector=get_detection_service())
+            raster_parser = RasterParser(
+                drawing.file_path,
+                line_extractor=line_extractor,
+            )
+            if not raster_parser.load():
+                raise Exception(
+                    f"Failed to load {drawing.file_format.value.upper()} image. "
+                    "Please ensure the file is a valid raster image."
+                )
+            try:
+                walls, raster_meta = raster_parser.extract_walls(
+                    manual_scale=manual_scale,
+                    reference_measurement=reference_measurement,
+                )
+            except RasterParseError as exc:
+                raise Exception(str(exc)) from exc
+            if raster_meta.get("scale_warning"):
+                logger.warning(
+                    f"Raster scale detection: {raster_meta['scale_warning']}"
+                )
 
         else:
             raise ValueError(f"Unsupported file format: {drawing.file_format.value}")

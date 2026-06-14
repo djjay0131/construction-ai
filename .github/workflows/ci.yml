@@ -40,11 +40,17 @@ jobs:
             tests/test_smoke_test_script.py \
             tests/test_image_preprocessor.py \
             tests/test_coordinate_converter.py \
+            tests/test_wall_line_extractor.py \
+            tests/test_scale_detector.py \
+            tests/test_raster_parser.py \
             --cov=app.core.kg \
             --cov=app.api.health \
             --cov=scripts.smoke_test \
             --cov=app.core.cv.image_preprocessor \
             --cov=app.core.cv.coordinate_converter \
+            --cov=app.core.cv.wall_line_extractor \
+            --cov=app.core.cv.scale_detector \
+            --cov=app.core.parsers.raster_parser \
             --cov-report=term \
             --cov-report=xml \
             -q
