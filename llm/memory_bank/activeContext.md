@@ -4,6 +4,20 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4b (object catalog foundation) VERIFIED. Four gates pass: Gate 1
+(41/41 tests, 100% line coverage on all 3 new modules — 220 stmts),
+Gate 2 (no bare excepts, 4 raise sites embed offending values,
+CatalogStore propagates FileNotFoundError/JSONDecodeError instead of
+swallowing), Gate 3 (CI run #27515328855 green at 225 tests, 100%
+coverage on 683 stmts across 14 modules), Gate 4 (all files compile,
+module docstrings on all 4 files, primary classes have class-level
+docstrings). Sprint 4 is now CODE-COMPLETE (4a + 4b) for the
+parser + extractor + catalog scope. Deferred to future sprint:
+LumberCalculator integration with catalog, /api/catalog endpoint, real
+EasyOcrReader, optional NetworkxCatalogStore.
+
+## 2026-06-14 (earlier)
+
 Sprint 4b (object catalog foundation) IMPLEMENTED. Three new modules in
 `backend/app/core/catalog/`:
 * `spatial_association.py` (49 stmts, 100% covered) — SpatialAssociator
