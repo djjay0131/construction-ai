@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 5.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -153,6 +157,24 @@ resource "google_secret_manager_secret" "neo4j_password" {
   }
 }
 
+# Secret values are owned by Terraform now that Neo4j runs on a GCE VM we
+# also manage. The URI points at the VM's reserved internal IP; the password
+# comes from random_password (see neo4j_vm.tf).
+resource "google_secret_manager_secret_version" "neo4j_uri" {
+  secret      = google_secret_manager_secret.neo4j_uri.id
+  secret_data = "bolt://${google_compute_address.neo4j_internal.address}:7687"
+}
+
+resource "google_secret_manager_secret_version" "neo4j_user" {
+  secret      = google_secret_manager_secret.neo4j_user.id
+  secret_data = "neo4j"
+}
+
+resource "google_secret_manager_secret_version" "neo4j_password" {
+  secret      = google_secret_manager_secret.neo4j_password.id
+  secret_data = random_password.neo4j.result
+}
+
 # ─── Cloud Run runtime service account ───────────────────────────────────────
 # Distinct from the CI deployer SA below. This SA is what the Cloud Run
 # container runs *as*; it needs read access to the three secrets.
@@ -193,6 +215,12 @@ resource "google_cloud_run_v2_service" "backend" {
 
   template {
     service_account = google_service_account.cloud_run_runtime.email
+
+    # VPC connector so Cloud Run can reach the Neo4j VM's internal IP.
+    vpc_access {
+      connector = google_vpc_access_connector.cloud_run_to_neo4j.id
+      egress    = "PRIVATE_RANGES_ONLY"
+    }
 
     containers {
       # Initial revision uses GCP's public hello-world image so that the first

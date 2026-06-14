@@ -8,6 +8,20 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-14**: Sprint 2 LIVE on GCP. Pivoted Neo4j hosting from AuraDB Free
+  to self-hosted Community Edition on Compute Engine (no third-party SaaS
+  dependency, no console.neo4j.io signup). Terraform additions: `e2-small`
+  VM in us-east4-a + reserved internal IP (10.150.0.2) + dedicated runtime
+  SA + 2 firewall rules (bolt from VPC connector, SSH from IAP) + Serverless
+  VPC Access connector. Cloud Run service got a `vpc_access` block to reach
+  the VM. Secret Manager versions now Terraform-managed (URI =
+  `bolt://10.150.0.2:7687`, password from `random_password.neo4j.result`).
+  Verified end-to-end: `systemctl is-active neo4j` → active; cypher-shell
+  RETURN 1 → 1. Updated cost estimate: ~$25/mo (was ~$10/mo with Aura
+  Free; VPC connector + always-on VM are the deltas). Spec addendum in
+  sprint-2c spec; roadmap Section 2 updated. infra/README.md rewritten
+  with the new operator runbook. Next: push these changes, watch CD run +
+  smoke test the live URL.
 - **2026-06-10** (latest): Sprint 2c (Aura deploy + smoke test) VERIFIED. All
   four gates pass: Gate 1 (47/47 tests, 100% coverage on both new modules),
   Gate 2 (no bare excepts, argparse validates --url, 5 distinct FAIL

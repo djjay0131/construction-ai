@@ -399,6 +399,20 @@ if __name__ == "__main__":
 - Add a ``--timeout`` flag? **Decision:** hardcode 10s for now; bump in a
   follow-up if Cloud Run cold starts ever exceed it.
 
+## Addendum (2026-06-14): Self-host pivot
+
+The "Aura" in this spec's filename and prose is historical. During the live
+deploy, the team pivoted from AuraDB Free to self-hosted Neo4j Community
+Edition on a Compute Engine VM (decision and rationale in
+`construction-ai-proposal/construction/design/2026-product-roadmap.md`
+Section 2). The Sprint 2c smoke test contract is unchanged — the health
+endpoint still reports `kg_status` and the script still exits 0/1 — but the
+"AuraDB Free Provisioning" runbook section is no longer needed because the
+VM is auto-provisioned by Terraform (see `construction-ai/infra/README.md`
+section 3 + 6). The spec's AC-9 wording about console.neo4j.io is therefore
+not a real requirement post-pivot; replaced by the requirement that
+`infra/README.md` documents the GCE setup, which it does.
+
 ## Implementation Log (2026-06-10)
 
 **Files created:**
