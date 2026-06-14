@@ -1,8 +1,9 @@
 # Sprint 3b: Raster Wall Extraction + Parser + API Routing
 
-**Status:** IMPLEMENTED
+**Status:** VERIFIED
 **Date:** 2026-06-14
 **Implemented:** 2026-06-14
+**Verified:** 2026-06-14
 **Author:** Jason Cusati (with AI assistance)
 **Sprint:** 3b of 2 (Sprint 3 — Raster/Scanned Drawing Support)
 **Supersedes:** the "wall extraction + scale + parser + API" slice of

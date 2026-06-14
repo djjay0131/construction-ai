@@ -4,6 +4,18 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 3b (raster wall extraction + parser + API routing) VERIFIED. All
+four gates pass: Gate 1 (55/55 tests, 100% line coverage on all 3 new
+modules), Gate 2 (no bare excepts, 20 raise sites with descriptive
+messages, ScaleDetector error messages embed offending values), Gate 3
+(CI run #27514544379 green at 129 tests, 100% coverage on 375 total
+stmts across 8 modules), Gate 4 (all files compile, every module + every
+class has a docstring, Protocol pattern keeps tests free of heavy deps).
+Sprint 3 is now CODE-COMPLETE pending real Gemini/OCR auto-detect +
+fixture-driven e2e — both intentionally deferred as out-of-scope for 3b.
+
+## 2026-06-14 (earlier)
+
 Sprint 3b (raster wall extraction + parser + API routing) IMPLEMENTED.
 Three new modules:
 * `backend/app/core/cv/wall_line_extractor.py` — YOLO-constrained Hough
