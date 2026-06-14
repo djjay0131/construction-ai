@@ -1,36 +1,54 @@
 # Active Context
 
-**Last Updated:** 2026-06-06 (CS6444 submitted; pivoting to product roadmap)
+**Last Updated:** 2026-06-14
 
 ## Current Work Phase
 
-**Pivot from CS6444 (SUBMITTED) to 2026 Product Roadmap execution**
+**Sprints 0–2 of the 2026 Product Roadmap COMPLETE; backend LIVE on Cloud Run.
+Sprint 3 spec ready to implement.**
 
-CS6444 V&V semester project SUBMITTED 2026-05-11 at tag
-`final-project-submitted-2026-05-11` (master @ 63f3d7a). All HW2–5 + Final
-Project complete and live on GitHub Pages. The pre-submission audit-and-enhance
-work (`construction/design/final-report-audit-and-enhancement.md`, IMPLEMENTED,
-commit 9ca7300) is closed.
+Live deployed service:
+<https://construction-ai-backend-542888988741.us-east4.run.app>
+Smoke test: `PASS: kg_status=ready, lumber_specs_loaded=6`.
 
-**Next:** Execute the 6-sprint product roadmap at
-`../construction-ai-proposal/construction/design/2026-product-roadmap.md`
-(committed 2026-06-06, proposal-repo commit ae095ae). The roadmap is also
-pointed to from `llm/features/ROADMAP.md` (commit 06d7e0e). Sprint 0
-(memory-bank refresh, this work) is the active sprint.
+Stack now running in `vt-gcp-00042`, region `us-east4`:
+- **Cloud Run** `construction-ai-backend` (4 GiB / 2 CPU) — FastAPI backend.
+- **Compute Engine VM** `construction-ai-neo4j` (e2-small) — self-hosted
+  Neo4j Community Edition 5 at private IP `10.150.0.2:7687`. Mid-Sprint-2
+  pivot from AuraDB Free → self-host (eliminates third-party signup).
+- **Serverless VPC Access connector** bridges Cloud Run → Neo4j VM.
+- **Artifact Registry** `us-east4-docker.pkg.dev/vt-gcp-00042/construction-ai`
+  for backend images.
+- **Secret Manager** holds Neo4j URI/user/password (terraform-managed).
+- **Workload Identity Federation** lets GitHub Actions push images + deploy.
 
-**Sprint sequence:**
-- Sprint 0 — Memory-bank refresh (both repos) — in-progress
-- Sprint 1 — VVUQ Phase 3 closeout (proposal repo)
-- Sprint 2 — Neo4j Setup on GCP + CI/CD bootstrap (implements
-  `llm/features/neo4j-setup.md`)
-- Sprint 3 — Raster/Scanned Drawing Support (implements
-  `llm/features/raster-scanned-drawing-support.md`)
-- Sprint 4 — OCR Dimension Extraction (implements
+CI/CD pipeline (`.github/workflows/{ci,cd}.yml`):
+- CI runs pytest on every PR + master push.
+- CD builds container, pushes to AR, deploys to Cloud Run, runs the
+  smoke test against the new revision. **Every future master push
+  auto-deploys with the smoke gate.**
+
+**Sprint sequence + status:**
+- Sprint 0 — Memory-bank refresh (both repos) — VERIFIED 2026-06-07
+- Sprint 1 — VVUQ Phase 3 closeout (proposal repo, 1a+1b+1c) —
+  VERIFIED 2026-06-08; **VVUQ Phase 3 CLOSED**
+- Sprint 2a — Neo4j KG foundation (this repo) — VERIFIED 2026-06-09;
+  30 tests, 100% coverage on `app.core.kg`
+- Sprint 2b — CI/CD + Terraform GCP — VERIFIED 2026-06-10
+- Sprint 2c — Live deploy + smoke test — VERIFIED 2026-06-14;
+  CD run #27512255933 fully green
+- **Sprint 3 — Raster/Scanned Drawing Support — SPECIFIED, ready**
+  (spec at `llm/features/sprint-3-raster-scanned-drawing-support.md`,
+  10 ACs, supersedes 2026-04-01 spec)
+- Sprint 4 — OCR Dimension Extraction — backlog (existing spec at
   `llm/features/ocr-dimension-extraction.md`)
-- Sprint 5 — Phase 1 integration smoke test against 2–3 plan sets
+- Sprint 5 — Phase 1 integration smoke test against 2–3 plan sets — backlog
 
-Burst/opportunistic cadence; each sprint is self-contained. GCP-first deploy
-(Cloud Run + AuraDB Free). No local docker stack — memory-constrained dev.
+GCP-first deploy. Local dev still works (memory-constrained Mac); the
+Sprint 2a testcontainers approach handles integration tests locally.
+
+Estimated cost: ~$28/mo (VM $13 + VPC connector $8.50 + Cloud Run <$2 +
+storage + Secret Manager). All in `vt-gcp-00042`.
 
 ## Current State
 
@@ -106,23 +124,31 @@ Burst/opportunistic cadence; each sprint is self-contained. GCP-first deploy
 
 ## Immediate Next Steps
 
-Sprint 0 (this work) is in-progress. After it completes:
+Sprints 0–2 DONE. Next constellize cycle:
 
-1. **Sprint 1** — VVUQ Phase 3 closeout in proposal repo (4 slides + 10–15
-   structural-mechanics citations + final review).
-2. **Sprint 2** — Implement `llm/features/neo4j-setup.md` (SPECIFIED, 10 ACs).
-   Includes CI/CD bootstrap (item 11.3 in BACKLOG.md) and Terraform extensions
-   for Cloud Run + Artifact Registry + Secret Manager. Provision AuraDB Free
-   instance (prod + ci-test) before kicking off.
-3. **Sprint 3** — Implement `llm/features/raster-scanned-drawing-support.md`.
-4. **Sprint 4** — Implement `llm/features/ocr-dimension-extraction.md`.
-5. **Sprint 5** — End-to-end integration smoke test against 2–3 plan sets
-   (DXF, vector PDF, scanned PDF). Validate proposal §8 Phase 1 success
-   criteria (BOM accuracy >90%, KG query <100ms, full provenance).
+**Sprint 3 — Raster/Scanned Drawing Support.** Spec already drafted
+2026-06-10 at `llm/features/sprint-3-raster-scanned-drawing-support.md`
+(SPECIFIED, 10 ACs). Supersedes the 2026-04-01 spec for the post-Sprint-2
+execution path. Run with
+`constellize:feature:implement sprint-3-raster-scanned-drawing-support`.
+
+Scope: new `RasterParser` + `ImagePreprocessor` (skew detect + reject + CLAHE
+enhance) + `WallLineExtractor` (YOLO-constrained Hough lines) +
+`ScaleDetector` (Gemini → OCR → manual cascade with residential-bounds
+plausibility check) + `CoordinateConverter`. Slots into existing
+`app/api/takeoff.py` routing. The KG-backed `LumberCalculator` from Sprint
+2a consumes its `WallElement[]` output unchanged. YOLO sourcing via the
+verified Model Registry (no re-training in scope).
+
+After Sprint 3: Sprint 4 (OCR Dimension Extraction — existing spec at
+`llm/features/ocr-dimension-extraction.md` from 2026-04-01), then Sprint 5
+(integration smoke test against 2–3 plan sets to validate proposal §8
+Phase 1 success criteria: BOM accuracy >90%, KG query <100ms, full
+provenance).
 
 Source of truth for next work:
 `../construction-ai-proposal/construction/design/2026-product-roadmap.md`
-(also pointed to from `llm/features/ROADMAP.md`).
+(Appendix B sprint tracker current as of 2026-06-14; Sprint 2 marked DONE).
 
 ## Repository Relationship
 

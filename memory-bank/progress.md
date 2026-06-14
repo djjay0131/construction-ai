@@ -1,13 +1,74 @@
 # Progress Tracking
 
-**Last Updated:** 2026-04-28
+**Last Updated:** 2026-06-14
 
-## Project Status: VVSC Homework Studies Active
+## Project Status: Sprints 0–2 of 2026 Product Roadmap COMPLETE; backend LIVE
 
-Documentation infrastructure in place. VVSC (AOE/CS/ME 6444) verification studies
-completed for the Euler-Bernoulli FD beam solver.
+CS6444 V&V semester project SUBMITTED 2026-05-11 (tag
+`final-project-submitted-2026-05-11`). Pivoted to product roadmap
+execution 2026-06-06. As of 2026-06-14: Sprint 2 fully complete and
+deployed; backend live at
+<https://construction-ai-backend-542888988741.us-east4.run.app> serving
+`kg_status=ready, lumber_specs_loaded=6` from a self-hosted Neo4j
+Community Edition VM. CD pipeline fully validated end-to-end.
 
 ---
+
+## Recent Completed Work (2026-06-06 → 2026-06-14)
+
+### Sprint 2c — Aura Deploy + Smoke Test (VERIFIED 2026-06-14)
+
+* `backend/app/api/health.py` — `/api/health/kg` endpoint.
+* `backend/scripts/smoke_test.py` — CLI smoke test with `--allow-disabled`.
+* `.github/workflows/cd.yml` — appended smoke-test step.
+* `infra/README.md` — operator runbook with first-live-smoke-test section.
+* 17 new tests, 100% line coverage on the new modules.
+* Mid-sprint pivot 2026-06-14: Neo4j hosting AuraDB Free → self-host on
+  GCE; added `infra/neo4j_vm.tf`, `infra/scripts/install_neo4j.sh`. CD
+  run #27512255933 succeeded end-to-end (PASS).
+* Dockerfile fixes during live deploy: added `texinfo` (for LibreDWG
+  makeinfo) + `libgl1` + `libglib2.0-0` (for cv2 import).
+* Cloud Run memory bumped 512 MiB → 4 GiB (CPU 1 → 2) after observed
+  startup at 2112 MiB.
+
+### Sprint 2b — CI/CD + Terraform GCP (VERIFIED 2026-06-10)
+
+* `.github/workflows/ci.yml` — pytest with coverage on every PR / master push.
+* `.github/workflows/cd.yml` — WIF auth → build → push to AR → deploy to
+  Cloud Run.
+* `infra/main.tf` — extended with Artifact Registry, Cloud Run v2 service,
+  3 Secret Manager secrets, Workload Identity Federation pool + provider,
+  CI deployer SA with least-privilege bindings.
+* `infra/outputs.tf`, `infra/README.md` — new operator runbook.
+* `backend/Dockerfile` — CMD honors `$PORT`.
+
+### Sprint 2a — Neo4j KG Foundation (VERIFIED 2026-06-09)
+
+* `backend/app/core/kg/` — new package: client (Neo4j driver wrapper),
+  provenance (universal versioning), seed (lumber + IRC R602.3),
+  loader (ACTIVE-version dict).
+* `backend/app/core/extraction/lumber_calculator.py` — refactored from
+  class-attr `LUMBER_SPECS` to injectable dict.
+* `backend/app/main.py` — startup hook verifies KG, seeds, loads
+  in-memory cache.
+* `backend/app/api/takeoff.py` — sources specs from the KG-backed cache.
+* 30 tests, 100% line coverage on `app.core.kg/` (8 integration tests
+  via ephemeral `neo4j:5-community` testcontainer).
+
+### Sprint 1 (proposal repo) — VVUQ Phase 3 closeout
+
+VERIFIED 2026-06-08. VVUQ Phase 3 CLOSED. Touched the proposal repo
+(`construction-ai-proposal`); this repo unaffected.
+
+### Sprint 0 — Memory-Bank Refresh (VERIFIED 2026-06-07)
+
+Refreshed `memory-bank/activeContext.md` and the proposal repo's
+`memory-bank/{activeContext,progress,phases}.md` to reflect post-CS6444
+state. Established the 6-sprint roadmap.
+
+---
+
+## Earlier work (pre 2026-06-06)
 
 ## Completed Work
 
