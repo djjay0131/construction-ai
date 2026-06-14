@@ -230,6 +230,16 @@ resource "google_cloud_run_v2_service" "backend" {
       # reverting that on subsequent applies.
       image = "us-docker.pkg.dev/cloudrun/container/hello"
 
+      # Backend imports torch + ultralytics + cv2 + numpy at startup; the
+      # 512 MiB Cloud Run default isn't enough (observed 2112 MiB cold-start).
+      # Sized to fit comfortably with headroom for request handling.
+      resources {
+        limits = {
+          memory = "4Gi"
+          cpu    = "2"
+        }
+      }
+
       ports {
         container_port = 8080
       }
