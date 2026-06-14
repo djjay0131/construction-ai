@@ -2,6 +2,20 @@
 
 Last updated: 2026-06-14
 
+## 2026-06-14 (latest)
+
+Sprint 3a (CV pipeline foundation) IMPLEMENTED. Two new modules in
+`backend/app/core/cv/`: `image_preprocessor.py` (skew detection + threshold
+rejection + CLAHE enhance + Gaussian denoise; 34 stmts, 100% covered) and
+`coordinate_converter.py` (pixel→inch translation producing
+`WallElement[]`; 19 stmts, 100% covered). 27 unit tests pass; Sprint 2's
+66 tests still green. No new runtime deps in `requirements.txt`; locally
+installed `opencv-python` into the venv so pytest can import cv2.
+Spec at `llm/features/sprint-3a-cv-pipeline-foundation.md` (IMPLEMENTED).
+Next: verify gates, then Sprint 3b (WallLineExtractor + ScaleDetector +
+RasterParser + API routing).
+
+
 ## Current State
 
 The project has a working MVP for basic material takeoff from DXF/PDF floor plans. Recent work has focused on feature specification (3 specs written) and implementing the YOLO model storage/registry system. A test suite has been established for the first time.
