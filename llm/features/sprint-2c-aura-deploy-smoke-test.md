@@ -399,6 +399,25 @@ if __name__ == "__main__":
 - Add a ``--timeout`` flag? **Decision:** hardcode 10s for now; bump in a
   follow-up if Cloud Run cold starts ever exceed it.
 
+## Addendum (2026-06-14): Live deploy COMPLETE
+
+CD run #27512255933 succeeded end-to-end on 2026-06-14:
+
+* WIF auth ✓
+* Container build ✓ (~12 min — first build only; Dockerfile bug fixes added
+  texinfo / libgl1 / libglib2.0-0)
+* Container push to Artifact Registry ✓
+* Deploy to Cloud Run ✓ (revision `00007-pk6`, 4 GiB / 2 CPU after the
+  startup OOM at 512 MiB and 2 GiB defaults)
+* **Smoke test: PASS: kg_status=ready, lumber_specs_loaded=6**
+
+Live service URL:
+`https://construction-ai-backend-542888988741.us-east4.run.app`
+
+`AC-1` (`/api/health/kg` returns 200 + JSON), `AC-3` (ready when fully
+provisioned) — both confirmed against the live URL by the in-CD smoke step
+and by manual curl. Sprint 2c's live-deploy gate is now satisfied.
+
 ## Addendum (2026-06-14): Self-host pivot
 
 The "Aura" in this spec's filename and prose is historical. During the live

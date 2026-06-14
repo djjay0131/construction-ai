@@ -8,6 +8,17 @@ The project has a working MVP for basic material takeoff from DXF/PDF floor plan
 
 ## Recent Significant Changes
 
+- **2026-06-14** (latest): Sprint 2 FULLY DEPLOYED AND CD-VALIDATED. CD run
+  #27512255933 succeeded end-to-end: container built (texinfo + libgl1 +
+  libglib2.0-0 fixes), pushed to AR, deployed to Cloud Run revision
+  `00007-pk6` (4 GiB / 2 CPU after 512 MiB and 2 GiB OOMs), smoke test
+  PASSed against live URL with `kg_status=ready, lumber_specs_loaded=6`.
+  Live URL: https://construction-ai-backend-542888988741.us-east4.run.app.
+  Sprint 2 is COMPLETE end-to-end: code, infra, CI/CD, live deploy.
+  Future master pushes auto-deploy + smoke-test. Final cost ≈ $28/mo
+  (Cloud Run 4 GiB / 2 CPU is +$3-4/mo vs earlier estimate, scales to zero
+  when idle). Next: Sprint 3 (Raster/Scanned Drawing Support — spec
+  already drafted 2026-06-10 at sprint-3-raster-scanned-drawing-support.md).
 - **2026-06-14**: Sprint 2 LIVE on GCP. Pivoted Neo4j hosting from AuraDB Free
   to self-hosted Community Edition on Compute Engine (no third-party SaaS
   dependency, no console.neo4j.io signup). Terraform additions: `e2-small`
