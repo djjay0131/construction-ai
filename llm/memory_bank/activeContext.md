@@ -4,6 +4,18 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 3a (CV pipeline foundation) VERIFIED. All four quality gates pass:
+Gate 1 (27/27 tests, 100% line coverage on both new modules), Gate 2 (no
+bare excepts, ctor validation with the offending value in error messages,
+SkewRejected exception message includes measured angle), Gate 3 after fix
+(CI workflow's explicit test-file list updated to include the new Sprint
+3a tests; CI run #27513482023 green at 74 tests, 100% coverage on 183
+total stmts), Gate 4 (all files compile, both modules + all 3 classes
+have docstrings). Next: Sprint 3b (WallLineExtractor + ScaleDetector +
+RasterParser + API routing + e2e tests).
+
+## 2026-06-14 (earlier)
+
 Sprint 3a (CV pipeline foundation) IMPLEMENTED. Two new modules in
 `backend/app/core/cv/`: `image_preprocessor.py` (skew detection + threshold
 rejection + CLAHE enhance + Gaussian denoise; 34 stmts, 100% covered) and
