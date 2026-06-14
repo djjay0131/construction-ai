@@ -4,6 +4,24 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4a (OCR dimension parser + extractor) IMPLEMENTED. Two new
+modules in `backend/app/core/cv/`:
+* `dimension_parser.py` (55 stmts, 100% covered) — pure regex parser
+  handling imperial ft-in, fractional, inches-only, word-form
+  ("12 ft 6 in"), metric mm/m. `DimensionParser.parse_many` survives
+  partial failures (returns only the parseable entries).
+* `dimension_extractor.py` (33 stmts, 100% covered) — orchestrates a
+  Protocol-typed `OcrReader` (no easyocr loaded at test time); returns
+  `(parsed_dimensions, raw_texts)` so 4b can do room-name detection on
+  the raw side and spatial association on the parsed side.
+55 new tests pass; full 176/176 across Sprints 2+3+4a (8 testcontainer
+tests gated). Spec at `llm/features/sprint-4a-ocr-dimension-parser-extractor.md`
+(IMPLEMENTED). Defers to 4b: ObjectCatalogBuilder, CatalogStore,
+takeoff pipeline integration, `/api/catalog` endpoint, the 7 catalog-
+dependent ACs of the parent Sprint 4 spec. Next: verify gates.
+
+## 2026-06-14 (earlier)
+
 Sprint 3b (raster wall extraction + parser + API routing) VERIFIED. All
 four gates pass: Gate 1 (55/55 tests, 100% line coverage on all 3 new
 modules), Gate 2 (no bare excepts, 20 raise sites with descriptive
