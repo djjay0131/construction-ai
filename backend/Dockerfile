@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     libtool \
     make \
     pkg-config \
+    texinfo \
     && rm -rf /var/lib/apt/lists/*
 
 # Build and install LibreDWG from source
