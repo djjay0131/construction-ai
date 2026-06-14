@@ -4,6 +4,16 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4a (OCR dimension parser + extractor) VERIFIED. Four gates pass:
+Gate 1 (55/55 tests, 100% line coverage on both new modules), Gate 2 (no
+bare excepts, 3 DimensionParseError raise sites all embed offending value
+via `{text!r}`; extractor's try/except is the documented graceful-
+degradation path, not silent swallow), Gate 3 (CI run #27515030465 green
+at 184 tests, 100% coverage on 463 stmts), Gate 4 (all files compile,
+module + every class including the OcrReader Protocol have docstrings).
+
+## 2026-06-14 (earlier)
+
 Sprint 4a (OCR dimension parser + extractor) IMPLEMENTED. Two new
 modules in `backend/app/core/cv/`:
 * `dimension_parser.py` (55 stmts, 100% covered) — pure regex parser

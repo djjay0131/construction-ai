@@ -1,8 +1,9 @@
 # Sprint 4a: OCR Dimension Parser + Extractor
 
-**Status:** IMPLEMENTED
+**Status:** VERIFIED
 **Date:** 2026-06-14
 **Implemented:** 2026-06-14
+**Verified:** 2026-06-14
 **Author:** Jason Cusati (with AI assistance)
 **Sprint:** 4a of 2 (Sprint 4 — OCR Dimension Extraction & Object Catalog)
 **Supersedes:** the "pure parsing + OCR extraction" slice of
