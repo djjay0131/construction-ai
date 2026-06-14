@@ -45,6 +45,9 @@ jobs:
             tests/test_raster_parser.py \
             tests/test_dimension_parser.py \
             tests/test_dimension_extractor.py \
+            tests/test_spatial_association.py \
+            tests/test_catalog_builder.py \
+            tests/test_catalog_store.py \
             --cov=app.core.kg \
             --cov=app.api.health \
             --cov=scripts.smoke_test \
@@ -55,6 +58,7 @@ jobs:
             --cov=app.core.parsers.raster_parser \
             --cov=app.core.cv.dimension_parser \
             --cov=app.core.cv.dimension_extractor \
+            --cov=app.core.catalog \
             --cov-report=term \
             --cov-report=xml \
             -q

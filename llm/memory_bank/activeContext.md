@@ -4,6 +4,29 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4b (object catalog foundation) IMPLEMENTED. Three new modules in
+`backend/app/core/catalog/`:
+* `spatial_association.py` (49 stmts, 100% covered) — SpatialAssociator
+  pairs ParsedDimensions with the nearest CatalogNode by bbox-centroid
+  distance; ties broken by larger bbox area, then lexicographic id.
+* `catalog_builder.py` (130 stmts, 100% covered) — ObjectCatalogBuilder
+  constructs a Catalog (CatalogNode + CatalogEdge dataclasses, plain dict
+  graph — NetworkX deferred per parent spec's "default to JsonCatalogStore"
+  guidance) from wall_segments + detections + dimensions. Wall–wall
+  CONNECTS_TO edges (endpoint proximity), wall–opening CONTAINS edges
+  (centroid in wall bbox), OCR validation (<10% confirmed / 10–15%
+  minor_discrepancy / >15% mismatch + flag).
+* `catalog_store.py` (41 stmts, 100% covered) — JSON save/load with
+  parent-dir creation; round-trip preserves all data; missing-file and
+  corrupt-JSON raise (not swallowed).
+41 new tests; full regression 226/226 + 8 testcontainer-gated skips.
+Spec at `llm/features/sprint-4b-object-catalog-foundation.md`
+(IMPLEMENTED). Defers to a follow-up: takeoff pipeline integration,
+`/api/catalog/{drawing_id}` endpoint, real EasyOcrReader wrapping
+FloorPlanAnalysisService, NetworkxCatalogStore (graph experiment).
+
+## 2026-06-14 (earlier)
+
 Sprint 4a (OCR dimension parser + extractor) VERIFIED. Four gates pass:
 Gate 1 (55/55 tests, 100% line coverage on both new modules), Gate 2 (no
 bare excepts, 3 DimensionParseError raise sites all embed offending value
