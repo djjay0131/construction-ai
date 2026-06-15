@@ -69,6 +69,9 @@ class WallLineExtractor:
         self.hough_threshold = hough_threshold
         self.min_line_length = min_line_length
         self.max_line_gap = max_line_gap
+        # Cache the last extract() detection run so downstream catalog
+        # building (Sprint 4d) can reuse them without re-running YOLO.
+        self.last_detections: list[Detection] = []
 
     def extract(self, image: np.ndarray) -> list[PixelSegment]:
         """Return list of ``((x1, y1), (x2, y2))`` segments in image-px coords."""
@@ -76,6 +79,7 @@ class WallLineExtractor:
             raise ValueError("extract received empty image")
 
         detections = self.detector.detect(image)
+        self.last_detections = list(detections)
         wall_boxes = [d for d in detections if d.label == self.WALL_LABEL]
         opening_boxes = [d for d in detections if d.label in self.OPENING_LABELS]
 

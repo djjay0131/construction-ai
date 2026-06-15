@@ -239,3 +239,45 @@ class TestCatalogEmit:
         )
         assert catalog is not None
         assert "door_0" in catalog.nodes
+
+    def test_catalog_falls_back_to_extractors_last_detections(self):
+        from app.core.catalog.catalog_builder import ObjectCatalogBuilder
+        from app.core.cv.wall_line_extractor import Detection
+
+        parser = _make_parser(
+            extractor_segments=[_seg((0, 0), (100, 10))],
+            scale_value=10.0,
+        )
+        # Pretend the line extractor already cached its YOLO run.
+        parser.line_extractor.last_detections = [
+            Detection(label="door", bbox=(40, 0, 60, 10), confidence=0.9)
+        ]
+        # Caller doesn't pass detections — parser should pick up the cache.
+        _, _, catalog = parser.extract_walls(
+            manual_scale='1/4"=1\'-0"',
+            catalog_builder=ObjectCatalogBuilder(),
+            dimensions=[],
+        )
+        assert catalog is not None
+        assert "door_0" in catalog.nodes
+
+    def test_explicit_detections_override_last_detections(self):
+        from app.core.catalog.catalog_builder import ObjectCatalogBuilder
+        from app.core.cv.wall_line_extractor import Detection
+
+        parser = _make_parser(
+            extractor_segments=[_seg((0, 0), (100, 10))],
+            scale_value=10.0,
+        )
+        parser.line_extractor.last_detections = [
+            Detection(label="door", bbox=(40, 0, 60, 10), confidence=0.9)
+        ]
+        # Caller's explicit list (a window) wins over cache (a door).
+        _, _, catalog = parser.extract_walls(
+            manual_scale='1/4"=1\'-0"',
+            catalog_builder=ObjectCatalogBuilder(),
+            dimensions=[],
+            detections=[Detection(label="window", bbox=(40, 0, 60, 10), confidence=0.9)],
+        )
+        assert "window_0" in catalog.nodes
+        assert "door_0" not in catalog.nodes

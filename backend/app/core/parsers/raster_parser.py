@@ -129,9 +129,19 @@ class RasterParser:
 
         catalog = None
         if catalog_builder is not None and dimensions is not None:
+            # Fall back to the wall extractor's cached detections when the
+            # caller didn't provide an explicit list. The extractor sets
+            # ``last_detections`` during ``extract()``; this avoids the
+            # caller having to thread detections through to a place that
+            # already has them.
+            effective_detections = (
+                list(detections)
+                if detections is not None
+                else list(getattr(self.line_extractor, "last_detections", []) or [])
+            )
             catalog = catalog_builder.build(
                 wall_segments=segments_px,
-                detections=list(detections or []),
+                detections=effective_detections,
                 dimensions=dimensions,
                 scale_px_per_in=scale_px_per_in,
             )

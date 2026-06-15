@@ -4,6 +4,27 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4d (takeoff wiring) IMPLEMENTED. End-to-end JPG/PNG → walls +
+catalog + persistence now wired through the takeoff API.
+* `WallLineExtractor.last_detections` caches each `extract()` run so the
+  catalog builder can reuse them without re-running YOLO.
+* `RasterParser.extract_walls(catalog_builder, dimensions, detections=None)`
+  falls back to `line_extractor.last_detections` when caller omits the
+  list.
+* `backend/app/core/raster_takeoff.py` (33 stmts, 100% covered) — new
+  orchestration helper `run_raster_takeoff_with_catalog()` wires
+  RasterParser + DimensionExtractor + ObjectCatalogBuilder + CatalogStore.
+  Returns a frozen `RasterTakeoffResult` (walls, metadata, summary,
+  catalog_path).
+* `backend/app/api/takeoff.py` JPG/PNG branch calls the helper and
+  appends the validation summary to `MaterialTakeoff.notes`.
+49 new/updated tests (incl. 19 helper-module tests); full regression
+268/268 + 8 testcontainer-gated skips. **Sprint 4 (the whole OCR +
+catalog vertical) is now end-to-end-wired in code.** Spec at
+`llm/features/sprint-4d-takeoff-wiring.md` (IMPLEMENTED).
+
+## 2026-06-14 (earlier)
+
 Sprint 4c (catalog integration) VERIFIED. Four gates pass: Gate 1
 (22/22 catalog-integration tests, 100% line coverage on the 3 new
 modules + extended raster_parser at 100%), Gate 2 (no bare excepts;

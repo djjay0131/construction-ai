@@ -171,6 +171,31 @@ class TestZeroSizeCrop:
         assert ext.extract(_grid_image()) == []
 
 
+class TestLastDetectionsCache:
+    def test_last_detections_starts_empty(self):
+        ext = WallLineExtractor(detector=FakeDetector([]))
+        assert ext.last_detections == []
+
+    def test_extract_populates_last_detections(self):
+        detections = [_det("wall", (0, 0, 400, 400)), _det("door", (100, 100, 150, 150))]
+        ext = WallLineExtractor(detector=FakeDetector(detections))
+        ext.extract(_grid_image())
+        # last_detections is a list copy of what detector returned (both items)
+        assert len(ext.last_detections) == 2
+        assert ext.last_detections[0].label == "wall"
+        assert ext.last_detections[1].label == "door"
+
+    def test_consecutive_extract_calls_replace_cache(self):
+        ext = WallLineExtractor(detector=FakeDetector([_det("wall", (0, 0, 400, 400))]))
+        ext.extract(_grid_image())
+        assert len(ext.last_detections) == 1
+        # Now swap the detector's returned list for a new one (simulates
+        # the next call returning different results)
+        ext.detector = FakeDetector([])  # type: ignore[assignment]
+        ext.extract(_grid_image())
+        assert ext.last_detections == []
+
+
 class TestProtocolConformance:
     def test_fake_detector_satisfies_protocol(self):
         # Static check: FakeDetector implements the YoloDetector contract.

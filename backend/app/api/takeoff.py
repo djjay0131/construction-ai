@@ -115,13 +115,16 @@ def process_drawing_takeoff(
             ]
 
         elif drawing.file_format.value in ['jpg', 'png', 'jpeg']:
-            # Parse raster/scanned drawing (Sprint 3b: real CV pipeline wired,
-            # auto-scale-detection NOT YET — caller must provide manual_scale
-            # or reference_measurement, else takeoff returns scale_warning).
-            # Real YOLO detector lives in DetectionService; deferred import
-            # avoids loading torch + ultralytics when the request is DXF/PDF.
+            # Raster/scanned drawing (Sprint 3b walls + Sprint 4a/b/c/d OCR +
+            # catalog). Real YOLO + EasyOCR are constructed lazily so
+            # DXF/PDF requests don't pay the torch + easyocr startup cost.
             from app.core.cv.detection_service import get_detection_service
+            from app.core.cv.easyocr_reader import EasyOcrReader
             from app.core.cv.wall_line_extractor import WallLineExtractor
+            from app.core.catalog.catalog_builder import ObjectCatalogBuilder
+            from app.core.raster_takeoff import run_raster_takeoff_with_catalog
+            from app.core.config import settings as _settings
+
             line_extractor = WallLineExtractor(detector=get_detection_service())
             raster_parser = RasterParser(
                 drawing.file_path,
@@ -133,15 +136,28 @@ def process_drawing_takeoff(
                     "Please ensure the file is a valid raster image."
                 )
             try:
-                walls, raster_meta = raster_parser.extract_walls(
+                result = run_raster_takeoff_with_catalog(
+                    raster_parser,
+                    ocr_reader=EasyOcrReader(),
+                    takeoff_id=takeoff_record.id,
+                    upload_dir=_settings.UPLOAD_DIR,
                     manual_scale=manual_scale,
                     reference_measurement=reference_measurement,
+                    catalog_builder=ObjectCatalogBuilder(),
                 )
             except RasterParseError as exc:
                 raise Exception(str(exc)) from exc
-            if raster_meta.get("scale_warning"):
+
+            walls = result.walls
+            if result.summary is not None:
+                catalog_note = (
+                    f"\nRaster catalog: {result.summary} "
+                    f"(saved to {result.catalog_path})"
+                )
+                takeoff_record.notes = (takeoff_record.notes or "") + catalog_note
+            if result.metadata.get("scale_warning"):
                 logger.warning(
-                    f"Raster scale detection: {raster_meta['scale_warning']}"
+                    f"Raster scale detection: {result.metadata['scale_warning']}"
                 )
 
         else:
