@@ -3,19 +3,17 @@ Material Takeoff API Endpoints
 Processes architectural drawings and generates material takeoffs
 """
 
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from pathlib import Path
 from datetime import datetime
 from typing import Optional
 import logging
-import traceback
 
 from app.db.database import get_db
 from app.models.project import Drawing, MaterialTakeoffRecord, TakeoffStatus
-from app.schemas.material import MaterialTakeoff, TakeoffJob
+from app.schemas.material import MaterialTakeoff
 from app.core.parsers.dxf_parser import DXFParser, WallElement
-from app.core.parsers.pdf_parser import PDFParser, PDFWallElement
+from app.core.parsers.pdf_parser import PDFParser
 from app.core.parsers.raster_parser import RasterParseError, RasterParser
 from app.core.extraction.lumber_calculator import LumberCalculator, FramingConfig, StudSpacing
 
@@ -93,7 +91,7 @@ def process_drawing_takeoff(
             pdf_parser = PDFParser(drawing.file_path)
 
             if not pdf_parser.load():
-                raise Exception(f"Failed to load PDF file. Please ensure the file is a valid PDF.")
+                raise Exception("Failed to load PDF file. Please ensure the file is a valid PDF.")
 
             # Get PDF info
             pdf_info = pdf_parser.get_drawing_info()
