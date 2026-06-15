@@ -4,6 +4,16 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4c (catalog integration) VERIFIED. Four gates pass: Gate 1
+(22/22 catalog-integration tests, 100% line coverage on the 3 new
+modules + extended raster_parser at 100%), Gate 2 (no bare excepts;
+HTTPException raised with descriptive details on 404 missing and 500
+corrupt JSON), Gate 3 (CI run #27516803665 green at 251 tests, 100%
+coverage on 753 stmts across 17 modules), Gate 4 (all files compile,
+all module docstrings present, primary classes documented).
+
+## 2026-06-14 (earlier)
+
 Sprint 4c (catalog integration) IMPLEMENTED. Three new modules + a
 RasterParser extension:
 * `backend/app/core/cv/easyocr_reader.py` (27 stmts, 100% covered) —
