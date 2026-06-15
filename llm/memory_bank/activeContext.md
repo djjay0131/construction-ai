@@ -4,10 +4,22 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
-Sprint 4d (takeoff wiring) IMPLEMENTED. End-to-end JPG/PNG → walls +
-catalog + persistence now wired through the takeoff API.
-* `WallLineExtractor.last_detections` caches each `extract()` run so the
-  catalog builder can reuse them without re-running YOLO.
+Sprint 4d (takeoff wiring) VERIFIED. All four quality gates pass:
+* Gate 1 (Test Integrity) — 49/49 Sprint 4d tests + 100% line coverage
+  on the 3 affected modules (156 stmts). Full Sprint 2/3/4 CI
+  regression: **259 passing + 8 testcontainer-gated skips, 0 failures**.
+* Gate 2 (Health Check) — `RasterParseError` raised on parser.load()
+  failure, frozen result dataclass, None-guards on optional summary +
+  scale_warning.
+* Gate 3 (Deployment Readiness) — CI workflow updated to include
+  test_raster_takeoff.py and the new cov target.
+* Gate 4 (Maintainability) — ruff clean; 8 pre-existing unused-import
+  cruft items in takeoff.py were swept during verification.
+
+End-to-end JPG/PNG → walls + catalog + persistence is now wired
+through the takeoff API and validated.
+* `WallLineExtractor.last_detections` caches each `extract()` run so
+  the catalog builder can reuse them without re-running YOLO.
 * `RasterParser.extract_walls(catalog_builder, dimensions, detections=None)`
   falls back to `line_extractor.last_detections` when caller omits the
   list.
@@ -18,10 +30,10 @@ catalog + persistence now wired through the takeoff API.
   catalog_path).
 * `backend/app/api/takeoff.py` JPG/PNG branch calls the helper and
   appends the validation summary to `MaterialTakeoff.notes`.
-49 new/updated tests (incl. 19 helper-module tests); full regression
-268/268 + 8 testcontainer-gated skips. **Sprint 4 (the whole OCR +
-catalog vertical) is now end-to-end-wired in code.** Spec at
-`llm/features/sprint-4d-takeoff-wiring.md` (IMPLEMENTED).
+
+Spec at `llm/features/sprint-4d-takeoff-wiring.md` (VERIFIED).
+**Sprint 4 (the whole OCR + Catalog vertical, 4a-4d) is now
+end-to-end-wired and verified in code.**
 
 ## 2026-06-14 (earlier)
 
