@@ -4,6 +4,29 @@ Last updated: 2026-06-14
 
 ## 2026-06-14 (latest)
 
+Sprint 4c (catalog integration) IMPLEMENTED. Three new modules + a
+RasterParser extension:
+* `backend/app/core/cv/easyocr_reader.py` (27 stmts, 100% covered) —
+  lazy-init EasyOCR wrapper satisfying the Sprint 4a OcrReader Protocol;
+  quad-points → axis-aligned bbox.
+* `backend/app/core/catalog/validation_summary.py` (19 stmts, 100%
+  covered) — ValidationSummary frozen dataclass + summarise_validation;
+  counts confirmed / minor_discrepancy / mismatch / unvalidated walls.
+* `backend/app/api/catalog.py` (21 stmts, 100% covered) — GET
+  /api/catalog/{takeoff_id} → catalog JSON; 404 missing, 500 corrupt.
+* `backend/app/core/parsers/raster_parser.py` extended (52 stmts, 100%
+  covered) — `extract_walls()` now returns a 3-tuple
+  `(walls, metadata, catalog)`. When `catalog_builder` AND `dimensions`
+  are both supplied, the parser builds + returns the catalog.
+* `backend/app/main.py` wires the new catalog router.
+38 new/updated tests; full regression 252/252 + 8 testcontainer skips.
+Spec at `llm/features/sprint-4c-catalog-integration.md` (IMPLEMENTED).
+Deferred: takeoff.py JPG/PNG branch persists catalog + writes
+validation summary into MaterialTakeoff.notes (heavy DB wiring; needs
+a dedicated cycle).
+
+## 2026-06-14 (earlier)
+
 Sprint 4b (object catalog foundation) VERIFIED. Four gates pass: Gate 1
 (41/41 tests, 100% line coverage on all 3 new modules — 220 stmts),
 Gate 2 (no bare excepts, 4 raise sites embed offending values,

@@ -133,10 +133,11 @@ class TestExtractWallsScaleHandling:
             extractor_segments=[_seg((0, 0), (100, 0))],
             scale_raises=ScaleWarning("need manual_scale"),
         )
-        walls, meta = parser.extract_walls()
+        walls, meta, catalog = parser.extract_walls()
         assert walls == []
         assert "scale_warning" in meta
         assert "manual_scale" in meta["scale_warning"]
+        assert catalog is None
 
     def test_manual_scale_passed_to_detector(self):
         parser = _make_parser(
@@ -168,9 +169,73 @@ class TestExtractWallsHappyPath:
             ],
             scale_value=10.0,  # 10 px per inch
         )
-        walls, meta = parser.extract_walls(manual_scale='1/4"=1\'-0"')
+        walls, meta, catalog = parser.extract_walls(manual_scale='1/4"=1\'-0"')
         assert meta == {}
         assert len(walls) == 2
         # Each wall length = pixel length / 10
         assert walls[0].length_inches == pytest.approx(10.0)
         assert walls[1].length_inches == pytest.approx(5.0)
+        # No catalog because caller didn't pass a builder + dimensions
+        assert catalog is None
+
+
+class TestCatalogEmit:
+    def test_catalog_is_none_without_builder(self):
+        parser = _make_parser(
+            extractor_segments=[_seg((0, 0), (100, 0))],
+            scale_value=10.0,
+        )
+        _, _, catalog = parser.extract_walls(manual_scale='1/4"=1\'-0"')
+        assert catalog is None
+
+    def test_catalog_is_none_when_dimensions_omitted(self):
+        from app.core.catalog.catalog_builder import ObjectCatalogBuilder
+
+        parser = _make_parser(
+            extractor_segments=[_seg((0, 0), (100, 0))],
+            scale_value=10.0,
+        )
+        # Builder but no dimensions → no catalog (caller signals "skip" by
+        # not providing dimensions).
+        _, _, catalog = parser.extract_walls(
+            manual_scale='1/4"=1\'-0"',
+            catalog_builder=ObjectCatalogBuilder(),
+        )
+        assert catalog is None
+
+    def test_catalog_built_when_both_provided(self):
+        from app.core.catalog.catalog_builder import ObjectCatalogBuilder
+        from app.core.cv.dimension_extractor import ParsedDimension
+
+        parser = _make_parser(
+            extractor_segments=[_seg((0, 0), (100, 0))],
+            scale_value=10.0,
+        )
+        dim = ParsedDimension(text='10"', bbox=(40, 0, 60, 20), inches=10.0, confidence=0.9)
+        _, _, catalog = parser.extract_walls(
+            manual_scale='1/4"=1\'-0"',
+            catalog_builder=ObjectCatalogBuilder(),
+            dimensions=[dim],
+        )
+        assert catalog is not None
+        assert "wall_0" in catalog.nodes
+        # Wall length 10" geometric (100 px / 10 scale); dim 10" → confirmed
+        assert catalog.nodes["wall_0"].ocr_validation == "confirmed"
+
+    def test_catalog_includes_detections_when_supplied(self):
+        from app.core.catalog.catalog_builder import ObjectCatalogBuilder
+        from app.core.cv.wall_line_extractor import Detection
+
+        parser = _make_parser(
+            extractor_segments=[_seg((0, 0), (100, 10))],
+            scale_value=10.0,
+        )
+        det = Detection(label="door", bbox=(40, 0, 60, 10), confidence=0.9)
+        _, _, catalog = parser.extract_walls(
+            manual_scale='1/4"=1\'-0"',
+            catalog_builder=ObjectCatalogBuilder(),
+            dimensions=[],
+            detections=[det],
+        )
+        assert catalog is not None
+        assert "door_0" in catalog.nodes
