@@ -2,7 +2,44 @@
 
 Last updated: 2026-06-14
 
-## 2026-06-14 (latest)
+## 2026-06-19 (latest)
+
+Sprint 4e (scanned-PDF dispatch) IMPLEMENTED. Multi-page PDF takeoff
+with per-page vector OR raster dispatch + page tagging so pages can
+represent floors.
+
+* `backend/app/core/pdf_takeoff.py` (68 stmts, 100% covered, new) —
+  `run_pdf_takeoff()` iterates `PDFParser.doc`, calls vector
+  extraction first; pages with zero vector walls rasterize at
+  `settings.PDF_DPI` and run the Sprint 4d raster pipeline.
+* Walls tagged `metadata["source"]` ∈ {`pdf_vector`, `pdf_raster`}
+  and `metadata["page"]` (0-indexed) regardless of dispatch path.
+* Merged catalog persisted at the canonical Sprint 4d path with
+  page-prefixed node IDs (`page_0/wall_0` etc.).
+* Per-page raster failure (RasterParseError) is logged and tagged
+  `per_page_sources[i] = "raster_failed"`; takeoff still succeeds
+  with whatever other pages produced.
+* `WallLineExtractor` instantiated per scanned page via
+  `line_extractor_factory` callable (avoids `last_detections` leak
+  across pages). `OcrReader` constructed once at the route layer.
+* `app/api/takeoff.py` PDF branch refactored to call the helper;
+  takeoff response shape unchanged.
+
+Deviations from spec: reused existing `settings.PDF_DPI` (default
+300) rather than adding `PDF_RASTERIZE_DPI` — `floor_plan_service`
+already uses it for the same semantic.
+
+16 new tests; full Sprint 2/3/4 regression: **275/275 + 8
+testcontainer-gated skips**. Ruff clean. Spec at
+`llm/features/sprint-4e-scanned-pdf-dispatch.md` (IMPLEMENTED).
+
+Open follow-ups recorded in the spec:
+* Hybrid vector+raster + dedup (Sprint 4f candidate, evidence-driven)
+* PDF vector-parser unit-scaling fix (backlog)
+* Top-level `failed_pages` / `warnings` surfacing (revisit if
+  operators report missing signal)
+
+## 2026-06-14 (earlier)
 
 Sprint 4d (takeoff wiring) VERIFIED. All four quality gates pass:
 * Gate 1 (Test Integrity) — 49/49 Sprint 4d tests + 100% line coverage

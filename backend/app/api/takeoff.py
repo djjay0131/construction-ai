@@ -12,8 +12,7 @@ import logging
 from app.db.database import get_db
 from app.models.project import Drawing, MaterialTakeoffRecord, TakeoffStatus
 from app.schemas.material import MaterialTakeoff
-from app.core.parsers.dxf_parser import DXFParser, WallElement
-from app.core.parsers.pdf_parser import PDFParser
+from app.core.parsers.dxf_parser import DXFParser
 from app.core.parsers.raster_parser import RasterParseError, RasterParser
 from app.core.extraction.lumber_calculator import LumberCalculator, FramingConfig, StudSpacing
 
@@ -87,30 +86,44 @@ def process_drawing_takeoff(
                 walls = parser.extract_walls()
 
         elif drawing.file_format.value == 'pdf':
-            # Parse PDF file
-            pdf_parser = PDFParser(drawing.file_path)
+            # Sprint 4e: per-page vector OR raster dispatch across all pages.
+            # Vector pages use PyMuPDF; pages with zero vector walls rasterize
+            # at settings.PDF_DPI and run the Sprint 4d raster pipeline.
+            # OCR reader + YOLO detector are constructed lazily so DXF
+            # requests don't pay the torch + easyocr startup cost.
+            from app.core.cv.detection_service import get_detection_service
+            from app.core.cv.easyocr_reader import EasyOcrReader
+            from app.core.cv.wall_line_extractor import WallLineExtractor
+            from app.core.pdf_takeoff import run_pdf_takeoff
+            from app.core.config import settings as _settings
 
-            if not pdf_parser.load():
-                raise Exception("Failed to load PDF file. Please ensure the file is a valid PDF.")
-
-            # Get PDF info
-            pdf_info = pdf_parser.get_drawing_info()
-            logger.info(f"PDF info: {pdf_info}")
-
-            # Extract walls from PDF (process first page only for now)
-            pdf_walls = pdf_parser.extract_walls(page_numbers=[0])
-            pdf_parser.close()
-
-            # Convert PDF walls to standard wall format
-            walls = [
-                WallElement(
-                    start_point=w.start_point,
-                    end_point=w.end_point,
-                    layer=f"page_{w.page_number}",
-                    metadata={"source": "pdf", **w.metadata}
+            try:
+                result = run_pdf_takeoff(
+                    drawing.file_path,
+                    takeoff_id=takeoff_record.id,
+                    upload_dir=_settings.UPLOAD_DIR,
+                    ocr_reader=EasyOcrReader(),
+                    line_extractor_factory=lambda: WallLineExtractor(
+                        detector=get_detection_service(),
+                    ),
+                    dpi=_settings.PDF_DPI,
+                    manual_scale=manual_scale,
                 )
-                for w in pdf_walls
-            ]
+            except RuntimeError as exc:
+                raise Exception(str(exc)) from exc
+
+            walls = result.walls
+            if result.summary is not None:
+                catalog_note = (
+                    f"\nPDF catalog: {result.summary} "
+                    f"(saved to {result.catalog_path})"
+                )
+                takeoff_record.notes = (takeoff_record.notes or "") + catalog_note
+            logger.info(
+                "PDF takeoff: %d pages, per_page_sources=%s",
+                result.metadata["page_count"],
+                result.metadata["per_page_sources"],
+            )
 
         elif drawing.file_format.value in ['jpg', 'png', 'jpeg']:
             # Raster/scanned drawing (Sprint 3b walls + Sprint 4a/b/c/d OCR +

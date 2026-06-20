@@ -23,7 +23,6 @@ from app.core.parsers.raster_parser import RasterParseError, RasterParser
 
 if TYPE_CHECKING:  # pragma: no cover - imports kept lazy at runtime
     from app.core.cv.dimension_extractor import OcrReader
-    from app.core.parsers.dxf_parser import WallElement
 
 logger = logging.getLogger(__name__)
 

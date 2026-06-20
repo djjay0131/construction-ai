@@ -5,7 +5,6 @@ Uses fake collaborators for everything that costs real I/O or CV.
 
 from __future__ import annotations
 
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import numpy as np
