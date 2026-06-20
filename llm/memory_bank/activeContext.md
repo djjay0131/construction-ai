@@ -2,7 +2,20 @@
 
 Last updated: 2026-06-14
 
-## 2026-06-19 (latest)
+## 2026-06-20 (latest)
+
+Sprint 4e (scanned-PDF dispatch) VERIFIED. All four quality gates pass:
+* Gate 1 — 16/16 Sprint 4e tests + 100% line coverage on
+  `app.core.pdf_takeoff` (68 stmts). Full Sprint 2/3/4 CI regression:
+  **275 passing + 8 testcontainer-gated skips, 0 failures**.
+* Gate 2 — `RuntimeError` on PDFParser.load failure (file path in
+  message); `try/finally` guarantees `pdf.close()` on partial failures;
+  per-page `RasterParseError` caught + logged + tagged
+  `raster_failed`; no bare excepts, no silent failures.
+* Gate 3 — CI workflow updated (test_pdf_takeoff.py + cov target).
+* Gate 4 — ruff clean.
+
+## 2026-06-19 (earlier)
 
 Sprint 4e (scanned-PDF dispatch) IMPLEMENTED. Multi-page PDF takeoff
 with per-page vector OR raster dispatch + page tagging so pages can
