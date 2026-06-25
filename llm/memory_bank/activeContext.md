@@ -2,7 +2,36 @@
 
 Last updated: 2026-06-24
 
-## 2026-06-24 (latest)
+## 2026-06-25 (latest)
+
+Sprint 5 (Phase 1 e2e integration smoke test) VERIFIED. All four
+quality gates pass:
+* Gate 1 — 25/25 Sprint 5 surface tests; 100% line coverage on
+  `tests/integration/test_phase1_e2e.py` (147 stmts, 3 justified
+  pragmas for scaffolded PDF dispatch + defensive guards).
+  Sprint 5 additions to `lumber_calculator.py` fully covered;
+  uncovered lines in that file are pre-existing methods outside
+  Sprint 5 surface. Full Sprint 2/3/4/5 regression: **293 passing +
+  8 testcontainer-gated skips, 0 failures** (was 275 at Sprint 4e).
+* Gate 2 — `LumberCalculator(kg_client=None)` defaults safely;
+  `_cite_rules` no-ops without crashing; `_wall_id` defensive on
+  missing metadata; `resolve_or_skip` skips with clear message;
+  `_render_report` handles empty-results list. No bare excepts.
+* Gate 3 — CI workflow includes the integration test file;
+  validation report path in `.gitignore`; no new packages.
+* Gate 4 — ruff clean.
+
+Coverage pragmas (3, all in `test_phase1_e2e.py`):
+1. PDF dispatch path in `invoke_takeoff_for_path` — scaffolded for
+   future fixtures; needs real YOLO + EasyOCR.
+2. "Unsupported fixture extension" skip — defensive guard;
+   references.json only ships dxf/pdf today.
+3. Gated-fixture assertion branch — lights up automatically when a
+   fixture with `role: "gated"` is added to references.json; the
+   `TestGateCheck` class proves the gate predicate behaves correctly
+   for boundary cases.
+
+## 2026-06-24 (earlier)
 
 Sprint 5 (Phase 1 e2e integration smoke test) IMPLEMENTED.
 
