@@ -1,0 +1,25 @@
+{
+  "dxf_smoketest_4wall": {
+    "role": "smoke",
+    "kind": "dxf",
+    "total_wall_lf": 64.0,
+    "line_items": {
+      "stud_2x4": 14,
+      "plate_2x4_lf": 192.0
+    },
+    "source_url": null,
+    "license_note": null,
+    "_provenance": "Hand-authored via _build_dxf_fixture.py: 4 walls of 16 LF (192 in) each"
+  },
+  "_deferred_user_fixtures_when_ready": {
+    "_comment": "When you upload hand-counted plans, add entries like:",
+    "_example_gated_dxf": {
+      "role": "gated",
+      "kind": "dxf",
+      "total_wall_lf": 240.0,
+      "line_items": {"stud_2x4": 184, "plate_2x4_lf": 720.0},
+      "source_url": "user-provided",
+      "_provenance": "Hand-counted by JC on YYYY-MM-DD"
+    }
+  }
+}

@@ -81,6 +81,7 @@ class LumberCalculator:
         self,
         config: Optional[FramingConfig] = None,
         lumber_specs: Optional[Dict[Tuple[int, int], LumberSpecification]] = None,
+        kg_client=None,
     ):
         """Initialize the lumber calculator.
 
@@ -91,9 +92,14 @@ class LumberCalculator:
                 :data:`DEFAULT_LUMBER_SPECS` so callers that don't have KG
                 wiring set up (scripts, unit tests of other modules) keep
                 working unchanged.
+            kg_client: Optional Sprint 5 KG client used to populate
+                ``LumberMaterialItem.rule_citations``. Any object with a
+                ``cite_rule_for(lumber_item) -> list[str]`` method works.
+                When ``None``, ``rule_citations`` stays empty.
         """
         self.config = config or FramingConfig()
         self.lumber_specs = lumber_specs if lumber_specs is not None else DEFAULT_LUMBER_SPECS
+        self.kg_client = kg_client
 
     def calculate_studs_for_wall(self, wall: WallElement) -> int:
         """
@@ -159,6 +165,25 @@ class LumberCalculator:
 
         return plates
 
+    def _wall_id(self, wall: WallElement, idx: int) -> str:
+        """Synthesize a stable wall ID for provenance tracking.
+
+        Honors Sprint 4e's ``metadata["page"]`` convention so multi-page
+        plans get ``page_{p}/wall_{idx}``; falls back to ``wall_{idx}``
+        for DXF / single-page sources where no page tag exists.
+        """
+        meta = getattr(wall, "metadata", None) or {}
+        page = meta.get("page")
+        if page is not None:
+            return f"page_{page}/wall_{idx}"
+        return f"wall_{idx}"
+
+    def _cite_rules(self, item: LumberMaterialItem) -> List[str]:
+        """Ask the injected KG client for rule citations. Empty when no client."""
+        if self.kg_client is None:
+            return []
+        return list(self.kg_client.cite_rule_for(item))
+
     def calculate_all_walls(self, walls: List[WallElement]) -> List[LumberMaterialItem]:
         """
         Calculate lumber for all walls.
@@ -171,13 +196,16 @@ class LumberCalculator:
         """
         total_studs = 0
         total_plate_length = 0.0
+        source_walls: List[str] = []
 
-        for wall in walls:
+        for idx, wall in enumerate(walls):
             studs = self.calculate_studs_for_wall(wall)
             total_studs += studs
 
             plates = self.calculate_plates_for_wall(wall)
             total_plate_length += sum(plates.values())
+
+            source_walls.append(self._wall_id(wall, idx))
 
         # Create material items
         materials: List[LumberMaterialItem] = []
@@ -198,8 +226,10 @@ class LumberCalculator:
             metadata={
                 "height_inches": self.config.wall_height_inches,
                 "spacing": self.config.stud_spacing.value,
-            }
+            },
+            source_walls=list(source_walls),
         )
+        studs_material.rule_citations = self._cite_rules(studs_material)
         materials.append(studs_material)
 
         # Plates
@@ -225,8 +255,10 @@ class LumberCalculator:
                 metadata={
                     "num_runs": num_plate_runs,
                     "double_top_plate": self.config.include_double_top_plate,
-                }
+                },
+                source_walls=list(source_walls),
             )
+            plates_material.rule_citations = self._cite_rules(plates_material)
             materials.append(plates_material)
 
         logger.info(

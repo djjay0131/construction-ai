@@ -75,6 +75,13 @@ class LumberMaterialItem(MaterialItem):
     specification: LumberSpecification = Field(..., description="Lumber specifications")
     total_linear_feet: float = Field(..., description="Total linear feet needed")
     cut_lists: Optional[List[CutList]] = Field(None, description="Optimized cut lists")
+    # Sprint 5: provenance fields. ``source_walls`` records which wall IDs
+    # contributed to this lumber line; ``rule_citations`` records IRC rule
+    # references supplied by the KG client (e.g., "R602.3.1"). Both default
+    # to empty so existing callers that don't inject a KG client stay
+    # backwards-compatible.
+    source_walls: List[str] = Field(default_factory=list, description="Wall IDs that contributed to this item")
+    rule_citations: List[str] = Field(default_factory=list, description="IRC rule citations governing this item")
 
 
 class MaterialTakeoff(BaseModel):

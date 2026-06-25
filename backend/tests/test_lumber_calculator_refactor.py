@@ -88,3 +88,83 @@ class TestCalculateAllWallsUsesInjectedSpecs:
         assert len(materials) == 1
         # The materials use specification = marker (same object)
         assert materials[0].specification is marker
+
+
+class TestSprint5ProvenanceFields:
+    """Sprint 5: source_walls + rule_citations on each BOM line."""
+
+    def test_lumber_item_defaults_provenance_fields_to_empty_lists(self):
+        from app.schemas.material import (
+            LumberMaterialItem,
+            LumberSpecification,
+            MaterialType,
+        )
+        spec = LumberSpecification(
+            nominal_width=2, nominal_height=4,
+            actual_width=1.5, actual_height=3.5,
+            grade=LumberGrade.STUD,
+        )
+        item = LumberMaterialItem(
+            material_id="x", material_type=MaterialType.LUMBER,
+            name="2x4 Stud", unit="EA", quantity=1,
+            specification=spec, total_linear_feet=1.0,
+        )
+        assert item.source_walls == []
+        assert item.rule_citations == []
+
+    def test_source_walls_populated_for_every_bom_line(self):
+        calc = LumberCalculator()
+        materials = calc.calculate_all_walls([_wall(120.0), _wall(96.0)])
+        assert materials, "expected at least studs + plates"
+        for m in materials:
+            assert m.source_walls, f"{m.name}: source_walls empty"
+            # Synthetic IDs for DXF (no page tag) → wall_0, wall_1
+            assert m.source_walls == ["wall_0", "wall_1"]
+
+    def test_source_walls_honor_page_tag_when_present(self):
+        """Sprint 4e walls carry metadata['page']; Sprint 5 must use it."""
+        from app.core.parsers.dxf_parser import WallElement
+        walls = [
+            WallElement(
+                start_point=(0, 0), end_point=(120, 0),
+                metadata={"page": 0, "source": "pdf_raster"},
+            ),
+            WallElement(
+                start_point=(0, 0), end_point=(120, 0),
+                metadata={"page": 1, "source": "pdf_raster"},
+            ),
+        ]
+        calc = LumberCalculator()
+        materials = calc.calculate_all_walls(walls)
+        for m in materials:
+            assert m.source_walls == ["page_0/wall_0", "page_1/wall_1"]
+
+    def test_rule_citations_populated_when_kg_client_injected(self):
+        class FakeKg:
+            def cite_rule_for(self, item):
+                return ["R602.3.1"]
+
+        calc = LumberCalculator(kg_client=FakeKg())
+        materials = calc.calculate_all_walls([_wall(120.0)])
+        for m in materials:
+            assert m.rule_citations == ["R602.3.1"]
+
+    def test_rule_citations_empty_when_no_kg_client(self):
+        calc = LumberCalculator()
+        materials = calc.calculate_all_walls([_wall(120.0)])
+        for m in materials:
+            assert m.rule_citations == []
+
+    def test_kg_client_receives_each_lumber_item(self):
+        seen = []
+
+        class CapturingKg:
+            def cite_rule_for(self, item):
+                seen.append(item.name)
+                return [f"rule_for_{item.name}"]
+
+        calc = LumberCalculator(kg_client=CapturingKg())
+        materials = calc.calculate_all_walls([_wall(120.0)])
+        # Studs + plates → 2 items, KG called once per item.
+        assert len(seen) == len(materials)
+        assert seen == [m.name for m in materials]

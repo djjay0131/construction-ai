@@ -231,6 +231,8 @@ data/detections/
 *.pdf
 !backend/app/core/structural/hw4_report/*.pdf
 !backend/app/core/structural/hw4_figures/*.pdf
+!backend/tests/fixtures/**/*.dxf
+!backend/tests/fixtures/**/*.pdf
 
 # LaTeX build artifacts
 *.aux
@@ -275,3 +277,5 @@ poppler-25.12.0/
 data/
 datascience/runs/yolo12xtrain/
 datascience/runs/yolo12xtrain_floorplan_boundary/
+# Sprint 5 — auto-generated, capture intentionally via "git add -f"
+construction/design/phase1-validation-report.md
