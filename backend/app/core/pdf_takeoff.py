@@ -111,7 +111,7 @@ def run_pdf_takeoff(
 
     Raises :class:`RuntimeError` if the PDF cannot be loaded.
     """
-    pdf = PDFParser(file_path)
+    pdf = PDFParser(file_path, manual_scale=manual_scale)
     if not pdf.load():
         raise RuntimeError(f"Failed to load PDF {file_path}")
 

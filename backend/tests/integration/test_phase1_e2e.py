@@ -102,31 +102,39 @@ def resolve_or_skip(fixture_name: str, ref: dict) -> Path:
 
 
 def invoke_takeoff_for_path(path: Path) -> list[WallElement]:
-    """Dispatch by file extension. Returns the WallElement list."""
+    """Dispatch by file extension. Returns the WallElement list.
+
+    Vector PDFs (Sprint 4f-enabled) call PDFParser directly to avoid the
+    YOLO/EasyOCR import chain that only matters for raster fallback.
+    Scanned-PDF fixtures with raster fallback will need to go through
+    ``run_pdf_takeoff`` — deferred until such a fixture lands.
+    """
+    from app.core.parsers.pdf_parser import PDFParser
+
     ext = path.suffix.lower()
     if ext == ".dxf":
         with DXFParser(str(path)) as parser:
             assert parser.load(), f"Failed to load DXF: {path}"
             return parser.extract_walls()
-    if ext == ".pdf":  # pragma: no cover - scaffolded for future fixtures; needs real YOLO + EasyOCR
-        # Future-fixtures path — wires Sprint 4e dispatcher. Lazy-imports
-        # to avoid loading torch / easyocr when no PDF fixture is active.
-        from app.core.cv.detection_service import get_detection_service
-        from app.core.cv.easyocr_reader import EasyOcrReader
-        from app.core.cv.wall_line_extractor import WallLineExtractor
-        from app.core.pdf_takeoff import run_pdf_takeoff
-
-        result = run_pdf_takeoff(
-            str(path),
-            takeoff_id=999,
-            upload_dir=CACHE_DIR,
-            ocr_reader=EasyOcrReader(),
-            line_extractor_factory=lambda: WallLineExtractor(
-                detector=get_detection_service(),
-            ),
-            dpi=200,
-        )
-        return result.walls
+    if ext == ".pdf":
+        pdf = PDFParser(str(path))
+        assert pdf.load(), f"Failed to load PDF: {path}"
+        pdf_walls = pdf.extract_walls()
+        scale = pdf.scale_in_per_pt
+        pdf.close()
+        # Convert PDFWallElement → WallElement so downstream lumber calc
+        # sees a uniform shape. Coordinates are scaled from PDF points to
+        # real-world inches so WallElement.length_inches produces the same
+        # value PDFWallElement.length_inches would.
+        return [
+            WallElement(
+                start_point=(w.start_point[0] * scale, w.start_point[1] * scale),
+                end_point=(w.end_point[0] * scale, w.end_point[1] * scale),
+                layer=f"page_{w.page_number}",
+                metadata={"source": "pdf_vector", "page": w.page_number, **w.metadata},
+            )
+            for w in pdf_walls
+        ]
     pytest.skip(f"Unsupported fixture extension: {ext}")  # pragma: no cover - defensive; references.json only ships dxf/pdf
 
 

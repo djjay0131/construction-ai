@@ -53,6 +53,7 @@ jobs:
             tests/test_catalog_endpoint.py \
             tests/test_raster_takeoff.py \
             tests/test_pdf_takeoff.py \
+            tests/test_pdf_parser.py \
             tests/integration/test_phase1_e2e.py \
             --cov=app.core.kg \
             --cov=app.api.health \
@@ -69,6 +70,7 @@ jobs:
             --cov=app.api.catalog \
             --cov=app.core.raster_takeoff \
             --cov=app.core.pdf_takeoff \
+            --cov=app.core.parsers.pdf_parser \
             --cov-report=term \
             --cov-report=xml \
             -q

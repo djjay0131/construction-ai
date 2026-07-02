@@ -2,7 +2,76 @@
 
 Last updated: 2026-06-24
 
-## 2026-06-25 (latest)
+## 2026-07-02 (latest)
+
+Sprint 4f (PDF vector-parser unit + path-walking fix) IMPLEMENTED.
+Full rewrite of `backend/app/core/parsers/pdf_parser.py` closing two
+stacked bugs surfaced by Sprint 5's Vermont fixture.
+
+Phase 0 characterization spike found Vermont uses:
+* `("l", Point, Point)` × 3099 — explicit line items (new PyMuPDF format)
+* `("qu", Quad)` × 37 — quads (Vermont uses quads, NOT `re` rectangles)
+* `("c", Point, Point, Point, Point)` × 4516 — cubic beziers
+* Zero `("m", ...)` items — Vermont never uses move-then-line
+
+Sprint 4f additions:
+* `SCALE_PATTERN` broadened regex — optional "SCALE" prefix, straight
+  or curly quotes, em-dash separator, `=` fallback. Passes 8 real-
+  world variants.
+* `_parse_scale_string(s)` → inches per PDF point.
+  `1/4"=1'-0"` → 0.6667.
+* `PDFParser(file_path, manual_scale=None)` — new kwarg.
+* `PDFParser._detect_scale()` cascade: manual > auto_text > 1:1
+  fallback with populated `scale_warning`.
+* `PDFParser.scale_source ∈ {manual, auto_text, unknown}` and
+  `scale_warning: Optional[str]` first-class fields.
+* `PDFWallElement(scale_in_per_pt=1/72)` — scale-aware length. Default
+  1:1 keeps pre-Sprint-4f numerical behavior for callers with no
+  scale (but now they SEE it via `scale_warning`).
+* `_convert_path_to_walls` rewrite handles all 5 item shapes: `m`,
+  `l` (both `("l", p)` and `("l", p1, p2)` forms), `re` rectangles,
+  `qu` quads, `c` cubic beziers (skipped as walls but advance
+  `current_point` to the last point). Unknown commands silently
+  skipped.
+* `MIN_WALL_LENGTH_IN = 1.0` constant — real-world-inch filter that
+  drops sub-tick artifacts without eating jamb returns / wing walls.
+* `PDFParser.get_drawing_info()` now includes `scale_source` and
+  `scale_warning`.
+
+`backend/app/core/pdf_takeoff.py` — one-line wiring change so
+`manual_scale` flows into `PDFParser(file_path, manual_scale=...)`.
+
+`backend/tests/test_pdf_parser.py` (new, 61 tests). Path-walking tests
+drive `_convert_path_to_walls` directly with synthetic item lists so
+they don't depend on PyMuPDF version-specific behaviors.
+
+`backend/tests/integration/test_phase1_e2e.py` PDF dispatch refactored
+to use `PDFParser` directly (bypasses YOLO/EasyOCR imports that only
+matter for raster fallback — Vermont is pure vector, doesn't need
+them). Points scaled to real-world inches when converting to
+WallElement so downstream lumber calc sees uniform units.
+
+`backend/tests/fixtures/phase1/`:
+* `vector_pdf_vermont.pdf` (162KB, CC-BY-SA) re-bundled as an active
+  smoke fixture.
+* `references.json` gets Vermont entry (`role: "smoke"`, `kind: "pdf"`,
+  no reference numbers — Vermont has no auto-detectable scale).
+
+**Vermont produces 132 walls** (up from 0). Sprint 5's Vermont fixture
+is now active and smoke-passing in CI.
+
+Results: 61 new pdf_parser tests + 1 new Vermont e2e; 100% line
+coverage on `pdf_parser.py` (179 stmts) and `test_phase1_e2e.py`.
+Full Sprint 2/3/4/5/4f regression: **355 passing + 8
+testcontainer-gated skips** (was 293). Ruff clean. Spec at
+`llm/features/sprint-4f-pdf-vector-parser-unit-fix.md` (IMPLEMENTED).
+
+Open follow-ups recorded in spec:
+* Ratio-format scales (`1:48`) — separate sprint if needed
+* Multi-page scale detection — page 0 only for now
+* Vermont hand-counted reference — user work when they can
+
+## 2026-06-25 (earlier)
 
 Sprint 5 (Phase 1 e2e integration smoke test) VERIFIED. All four
 quality gates pass:

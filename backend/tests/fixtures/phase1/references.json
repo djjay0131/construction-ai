@@ -11,6 +11,15 @@
     "license_note": null,
     "_provenance": "Hand-authored via _build_dxf_fixture.py: 4 walls of 16 LF (192 in) each"
   },
+  "vector_pdf_vermont": {
+    "role": "smoke",
+    "kind": "pdf",
+    "total_wall_lf": null,
+    "line_items": null,
+    "source_url": "https://github.com/WikihouseUS/Vermont-Microhouse/blob/master/8.6x24%20Main%20Floor%20DESIGN%201.pdf",
+    "license_note": "CC-BY-SA via WikihouseUS",
+    "_provenance": "Activated in Sprint 4f — Sprint 4f's PDF parser rewrite makes Vermont produce walls > 0. Vermont has no auto-detectable scale annotation, so scale_source=='unknown' + scale_warning populates. Smoke-only: no accuracy gate."
+  },
   "_deferred_user_fixtures_when_ready": {
     "_comment": "When you upload hand-counted plans, add entries like:",
     "_example_gated_dxf": {
