@@ -23,16 +23,19 @@ Manual material takeoff from architectural drawings is time-consuming, error-pro
 ### In Scope
 
 - Residential wood framing (new construction)
-- 2D floor plan processing (DWG, DXF, PDF vector-based)
-- Raster/scanned drawing support (JPG, PNG — specified, not yet implemented)
+- 2D floor plan processing (DWG, DXF, PDF vector, PDF scanned, JPG, PNG)
+- Raster/scanned drawing support (JPG, PNG, scanned PDFs) — DONE (Sprint 3+4e)
 - Wall stud calculation (12", 16", 24" O.C. spacing)
 - Top/bottom plate calculation (single and double top plate)
-- Header sizing for openings
-- JSON-formatted material lists
+- Header sizing for openings (beam solver verified; not yet wired into pipeline)
+- JSON-formatted material lists with rule citations + source-wall provenance
 - Object detection via YOLOv8 (3 trained models in GCS)
-- Scale detection via Google Gemini Vision
-- OCR dimension extraction and validation (specified, not yet implemented)
+- Scale detection: cascade of manual scale > auto-text regex (PDF, Sprint 4f) > reference measurement (raster, Sprint 3b) > Gemini Vision
+- OCR dimension extraction with EasyOCR — DONE (Sprint 4a-c)
+- Object catalog graph — DONE (Sprint 4b) with wall-wall CONNECTS_TO + wall-opening CONTAINS edges
+- Knowledge graph (Neo4j) — DONE (Sprint 2) with 6 seeded lumber specs + IRC rule provenance
 - Model versioning and hot-swap via registry
+- Live production deployment: Cloud Run + self-hosted Neo4j on GCE (Sprint 2c)
 
 ### Out of Scope (Current Phase)
 
@@ -48,11 +51,12 @@ Manual material takeoff from architectural drawings is time-consuming, error-pro
 
 - **Accuracy target**: 95%+ component detection from floor plans
 - **Performance**: <2 min processing per project
-- **Input formats**: DWG (auto-converted), DXF, PDF (vector), JPG/PNG (raster — planned)
+- **Input formats**: DWG (auto-converted), DXF, PDF (vector + scanned per-page), JPG/PNG (raster)
 - **Skew policy**: Skewed drawings are rejected, not corrected
-- **Code compliance**: IRC residential building code (planned, not yet implemented)
-- **Architecture**: Follows KG-centered design from companion proposal repo, but Neo4j not yet integrated
+- **Code compliance**: IRC residential building code (rule citations wired via KG; full compliance engine still on backlog)
+- **Architecture**: KG-centered design from companion proposal repo, Neo4j Community Edition self-hosted on GCE
 - **Model storage**: GCS with generation pinning for reproducibility
+- **KG latency target**: <100ms (Phase 1 §8 criterion 3 — deferred to Sprint 6 benchmark)
 
 ## Related Repository
 

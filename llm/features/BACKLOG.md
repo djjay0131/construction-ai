@@ -13,23 +13,25 @@ Parse DXF files via ezdxf, auto-convert DWG via LibreDWG. Extract wall geometry 
 - Files: `backend/app/core/parsers/dxf_parser.py`, `dwg_converter.py`
 
 ### 1.2 PDF Vector Extraction — **DONE**
-Extract wall geometry from vector-based PDF floor plans using PyMuPDF path extraction.
+Extract wall geometry from vector-based PDF floor plans using PyMuPDF path extraction. Sprint 4f rewrite handles 5 path-item shapes (`m`, `l` both forms, `re`, `qu`, `c`) with scale detection cascade + 1-inch minimum wall length filter.
 - Files: `backend/app/core/parsers/pdf_parser.py`
 
-### 1.3 Raster/Scanned Drawing Support — **PLANNED**
-Support scanned drawings (JPG, PNG) via CV pipeline. Requires trained object detection model to identify walls, doors, windows from pixel data.
-- Depends on: 2.1 (YOLOv8 training)
+### 1.3 Raster/Scanned Drawing Support — **DONE** (Sprints 3a, 3b, 4e)
+Scanned drawings (JPG, PNG, scanned PDF pages) via full CV pipeline: skew reject → CLAHE preprocess → YOLO-constrained Hough line extraction → 3-tier scale detection → pixel-to-inch. Per-page dispatch in `pdf_takeoff.py`.
+- Files: `backend/app/core/cv/{image_preprocessor,coordinate_converter,wall_line_extractor,scale_detector}.py`, `parsers/raster_parser.py`, `pdf_takeoff.py`
 
-### 1.4 OCR Dimension Extraction — **PARTIAL**
-Extract numeric dimensions and annotations from drawings using EasyOCR. Scaffolded but not integrated into main pipeline.
-- Depends on: easyocr integration in parsing pipeline
+### 1.4 OCR Dimension Extraction — **DONE** (Sprints 4a, 4c)
+Regex-based dimension parser (imperial ft-in / fractional / inches-only / word-form / metric mm/m) + Protocol-typed `OcrReader` DI. Lazy-init EasyOCR wrapper implements the Protocol.
+- Files: `backend/app/core/cv/{dimension_parser,dimension_extractor,easyocr_reader}.py`
 
-### 1.5 Scale Detection — **PARTIAL**
-Use Google Gemini Vision API to detect drawing scale from title blocks and scale bars. Service exists but integration with takeoff pipeline is incomplete.
-- Files: `backend/app/core/cv/floor_plan_service.py`
+### 1.5 Scale Detection — **DONE** (Sprints 3b, 4f)
+Two independent cascades:
+- Raster (`ScaleDetector`): reference measurement > manual > ScaleWarning fallback.
+- Vector PDF (`PDFParser._detect_scale`): manual > auto_text regex > 1:1 fallback with `scale_warning`.
+Gemini Vision path (`floor_plan_service.py`) is scaffolded for a future auto-detect improvement.
 
-### 1.6 Multi-Sheet Support — **PLANNED**
-Handle multi-page PDF plans and multi-sheet DXF files, mapping sheets to floors/sections.
+### 1.6 Multi-Sheet Support — **PARTIAL** (Sprint 4e)
+Multi-page PDF plans supported and page-tagged (`metadata["page"]`). Single-page scale detection only (page 0's scale is inherited by downstream pages). Multi-sheet DXF not yet built.
 
 ### 1.7 BIM/CAD Integration — **VISION**
 Direct import from Revit (IFC/RVT), Navisworks, Bentley. Parse 3D BIM models for automated takeoff.
@@ -60,7 +62,7 @@ Real-time PPE detection (hard hats, vests, glasses) and hazard identification on
 ## 3. Material Takeoff & Calculation
 
 ### 3.1 Wall Framing (Studs & Plates) — **DONE**
-Calculate stud quantities at 12"/16"/24" O.C. spacing, top plates (single/double), bottom plates. Configurable wall height.
+Calculate stud quantities at 12"/16"/24" O.C. spacing, top plates (single/double), bottom plates. Configurable wall height. Sprint 5 enhancement: `LumberCalculator(kg_client=...)` populates `rule_citations` (IRC R602.3.x etc.) and `source_walls` (page-tagged wall IDs) on every `LumberMaterialItem`.
 - Files: `backend/app/core/extraction/lumber_calculator.py`
 
 ### 3.2 Header Sizing — **PLANNED**
@@ -109,23 +111,24 @@ Optimize order quantities across suppliers, batch purchases, delivery scheduling
 
 ## 5. Knowledge Graph
 
-### 5.1 Neo4j Setup & Schema — **PLANNED**
-Deploy Neo4j and implement the KG schema from the proposal:
-```
-Project → PlanSheet → PlanFact → AssemblyIntent → Component → StockItem → CutPiece
-Component → FastenerRule, CodeRule
-Project → SupplierCatalogItem
-```
-- Reference: `memory-bank/techContext.md` (schema diagram)
+### 5.1 Neo4j Setup & Schema — **DONE** (Sprint 2)
+Neo4j Community Edition self-hosted on GCE `e2-small` (10.150.0.2), reached from Cloud Run via Serverless VPC Access connector. Bolt driver + graceful degradation client. Live in prod.
+- Files: `backend/app/core/kg/client.py`, `infra/main.tf`, `infra/README.md`
 
-### 5.2 Seed Data: Lumber & Fasteners — **PLANNED**
-Populate KG with standard lumber dimensions, grades, fastener types, and connector specifications.
+### 5.2 Seed Data: Lumber & Fasteners — **PARTIAL** (Sprint 2)
+6 lumber specs seeded (`lumber_specs_loaded=6` in `/api/health/kg`). Fasteners and connectors not yet loaded.
+- Files: `backend/app/core/kg/loader.py`
 
-### 5.3 Seed Data: Building Codes (IRC) — **PLANNED**
-Populate KG with IRC residential code rules (span tables, nailing schedules, bearing requirements, fire separation).
+### 5.3 Seed Data: Building Codes (IRC) — **PARTIAL** (Sprint 2, 5)
+Rule citations (IRC R602.3.x) wired through `cite_rule_for(item)` and stamped onto every `LumberMaterialItem`. Full IRC ruleset (span tables, nailing schedules, bearing, fire separation, egress) not yet loaded — needs 8.1.
+- Files: `backend/app/core/kg/provenance.py`
 
-### 5.4 Provenance Tracking — **PLANNED**
-Track the origin and confidence of every fact in the KG. Link decisions to source documents, code sections, and agent reasoning.
+### 5.4 Provenance Tracking — **PARTIAL** (Sprint 5)
+Every BOM line traces to `source_walls` (page-tagged wall IDs) + `rule_citations`. Object catalog carries OCR validation labels (`confirmed` / `minor_discrepancy` / `mismatch`). Confidence scores per plan-fact not yet tracked.
+- Files: `backend/app/core/kg/provenance.py`, `catalog/validation_summary.py`
+
+### 5.6 KG Query Latency <100ms — **PLANNED** (Sprint 6)
+Phase 1 §8 criterion 3. Needs benchmark harness against real query patterns (`cite_rule_for`, lumber-spec lookup). Requires Neo4j-in-CI (extend testcontainers or ephemeral GCE).
 
 ### 5.5 Historical Project Data — **VISION**
 Store past project takeoffs for continuous learning. Use historical accuracy to calibrate future estimates.
@@ -249,11 +252,13 @@ PostgreSQL + FastAPI + React via docker-compose.yml.
 ### 11.2 Async Task Processing — **PLANNED**
 Celery + Redis for background processing of large plans. Commented out in docker-compose.yml, ready to enable.
 
-### 11.3 CI/CD Pipeline — **PLANNED**
-GitHub Actions for test, build, deploy. Exists for proposal repo but not for implementation repo.
+### 11.3 CI/CD Pipeline — **DONE** (Sprint 2b, 2c)
+GitHub Actions:
+- CI (`.github/workflows/ci.yml`) — pytest + coverage on every PR/push to master.
+- CD (`.github/workflows/cd.yml`) — WIF auth → build → push to Artifact Registry → `gcloud run deploy` → smoke-test live URL. Fails CD if new revision isn't `ready`.
 
-### 11.4 Cloud Deployment — **VISION**
-Production deployment on AWS/GCP. From proposal infrastructure section.
+### 11.4 Cloud Deployment — **DONE** (Sprint 2c)
+Cloud Run v2 backend (4 GiB / 2 CPU / scale-to-zero) + self-hosted Neo4j Community Edition on GCE + Artifact Registry + Secret Manager + Serverless VPC Access, all Terraform-managed in `vt-gcp-00042`. Backend live at <https://construction-ai-backend-542888988741.us-east4.run.app>. ≈$28/mo.
 
 ### 11.5 Edge Computing — **VISION**
 On-site processing for low-latency and offline capability. From proposal infrastructure vision.
@@ -262,14 +267,25 @@ On-site processing for low-latency and offline capability. From proposal infrast
 
 ## Priority Guidance
 
+**Immediate Phase 1 closeout** (in order):
+1. Verify Sprint 4f (`/constellize:feature:verify sprint-4f-pdf-vector-parser-unit-fix`) — 4 quality gates against the 2026-07-02 implementation.
+2. **5.6** KG Query Latency <100ms benchmark (Sprint 6) — closes Phase 1 §8 criterion 3.
+3. User hand-counted plans → gated fixtures in `references.json` → Sprint 5's ≤10% wall-LF gate lights up.
+
 **Next sprint candidates** (highest value, most dependencies unblocked):
-1. **5.1** Neo4j Setup — unlocks KG-dependent features (5.2, 5.3, 6.x)
-2. **4.1** Cut List Optimization — high user value, OR-Tools is a declared dependency
-3. **3.2** Header Sizing — beam solver exists, just needs pipeline integration
-4. **2.1** YOLOv8 Training — unlocks CV-based extraction for raster inputs
-5. **8.1** IRC Compliance Engine — core differentiator from competitors
+1. **3.2** Header Sizing — beam solver exists and is verified; just needs pipeline integration in `lumber_calculator.py`. Fastest path to a new capability.
+2. **4.1** Cut List Optimization — high user value, OR-Tools is a declared dependency, directory scaffolded.
+3. **8.1** IRC Compliance Engine — core differentiator from competitors; consumes 5.2 + 5.3.
+4. **6.1** Base Agent Architecture — proposal's 6-agent framework. `core/llm/` is empty.
+5. **2.1** YOLOv8 retraining on construction-specific data — improve raster-drawing robustness.
 
 **Quick wins** (small effort, existing infrastructure):
-- **1.4** OCR Dimension Extraction — easyocr is installed, needs integration
-- **3.2** Header Sizing — connect existing beam_solver.py to takeoff pipeline
-- **10.3** 3D Visualization — Three.js already in frontend deps
+- **3.2** Header Sizing — connect existing `beam_solver.py` to takeoff pipeline.
+- **5.2** Fastener spec seeding — extend `kg/loader.py`.
+- **10.3** 3D Visualization — Three.js + R3F already in frontend deps.
+
+**Recent completions (Sprints 3-5, 4f):**
+- Raster/scanned drawing support (1.3), OCR dimension extraction (1.4), scale detection (1.5).
+- Object catalog graph (was implicit in 5.4; now `catalog/`).
+- Neo4j setup + provenance + partial IRC seed (5.1, 5.3, 5.4).
+- CI/CD pipeline + Cloud deployment (11.3, 11.4).

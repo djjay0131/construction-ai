@@ -15,6 +15,8 @@
 | Containerization | Docker + Docker Compose | compose 3.8 |
 | Infrastructure | Terraform | 1.5.7 |
 | Cloud | Google Cloud Platform | Project: vt-gcp-00042 |
+| Graph DB | Neo4j Community Edition | 5.x, self-hosted on GCE `e2-small` |
+| Container runtime | Cloud Run v2 | 4 GiB / 2 CPU / scale-to-zero |
 
 ## Development Setup
 
@@ -71,11 +73,15 @@ python -m pytest tests/ -v --cov
 - **PyMuPDF 1.23.8** — PDF vector extraction; reads paths/lines from vector-based architectural PDFs
 - **LibreDWG** (system dependency) — Converts proprietary DWG to DXF format
 
-### Computer Vision (Phase 2, partially implemented)
+### Computer Vision (Sprint 3, wired end-to-end)
 - **ultralytics 8.4.21** (YOLOv8) — Object detection for construction elements
-- **opencv-python 4.8.1.78** — Image processing pipeline
-- **easyocr 1.7.0** — OCR for dimension extraction from drawings
-- **google-genai >=0.2.0** — Gemini Vision API for scale detection
+- **opencv-python 4.8.1.78** — Image processing pipeline (skew rejection, CLAHE, Hough)
+- **easyocr 1.7.0** — OCR for dimension extraction (Sprint 4a lazy-init wrapper)
+- **google-genai >=0.2.0** — Gemini Vision API for scale detection (scaffolded)
+
+### Knowledge Graph (Sprint 2)
+- **neo4j >=5.0** — Bolt driver for Cypher queries
+- **testcontainers[neo4j]** — ephemeral Neo4j container for integration tests (8 tests gated on Docker availability)
 
 ### ML Framework
 - **torch 2.10.0 + torchvision 0.25.0** — Backend for YOLOv8 and future ML models
@@ -100,24 +106,37 @@ python -m pytest tests/ -v --cov
 - **PostgreSQL** for production; SQLite for local development
 - **Redis + Celery** planned but commented out in docker-compose.yml
 
-### Cloud (GCP — project `vt-gcp-00042`)
+### Cloud (GCP — project `vt-gcp-00042`) — LIVE
+- **Cloud Run v2 service** `construction-ai-backend` in `us-east4`
+  - 4 GiB / 2 CPU / scale-to-zero
+  - Public URL: <https://construction-ai-backend-542888988741.us-east4.run.app>
+  - Container image pushed to Artifact Registry
+- **Artifact Registry** repo for backend container images
+- **Compute Engine** `e2-small` VM in `us-east4-a` hosting Neo4j Community Edition
+  - Reserved internal IP: `10.150.0.2`
+  - Dedicated runtime SA, systemd-managed
+- **Serverless VPC Access connector** — Cloud Run → Neo4j VM over private VPC
+- **Secret Manager** — 3 secrets (`NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`), Terraform-managed versions
+- **Workload Identity Federation** pool + provider for GitHub Actions
+- **CI deployer SA** with least-privilege IAM (AR writer + run.developer + iam.serviceAccountUser)
 - **GCS bucket** `gs://construction-ai-models/` — YOLO model weight storage
   - Object versioning enabled
   - Lifecycle policy: delete noncurrent after 90 days, keep 1 previous
-  - Generation pinning for exact version reproducibility
 - **Service account** `model-registry@vt-gcp-00042.iam.gserviceaccount.com` — objectAdmin on models bucket
-- **Terraform** manages GCS + IAM in `infra/main.tf`
+- **Terraform** manages everything above in `infra/main.tf` (see `infra/README.md` for the operator runbook)
+- **Est. cost**: ≈$28/mo all-in
 
-### Not Yet Deployed
-- No CI/CD pipeline
-- No Neo4j instance
-- No production deployment (cloud VMs, GKE, etc.)
+### CI/CD
+- **CI** (`.github/workflows/ci.yml`) — pytest with coverage on every PR and push to master. Coverage XML uploaded as artifact.
+- **CD** (`.github/workflows/cd.yml`) — on push to master: WIF auth → build → push to AR → `gcloud run deploy` → smoke-test live URL. Fails CD if new revision isn't `ready` or smoke-test returns non-200.
+- First fully green end-to-end CD run: #27512255933 (2026-06-14).
 
 ## Technical Constraints
 
 - DWG files require LibreDWG system dependency for conversion
-- PDF parsing only works with vector-based drawings (raster support specified but not yet built)
+- PDF parsing handles vector + scanned (per-page dispatch after Sprint 4e); PDF scale detection is single-page-only (page 0)
 - Skewed drawings are rejected (no deskew correction — design decision from specs)
 - No authentication or multi-tenancy
 - Backend uses synchronous processing (no Celery workers yet)
 - YOLO models require GCS credentials to download on first startup (~150MB total)
+- Neo4j is optional for local dev (graceful degradation to `kg_status=degraded`); required in prod

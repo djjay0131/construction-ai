@@ -1,8 +1,138 @@
 # Active Context
 
-Last updated: 2026-06-24
+Last updated: 2026-07-08
 
-## 2026-07-02 (latest)
+## 2026-07-08 (latest)
+
+Sprint 4f (PDF vector-parser unit + path-walking fix) VERIFIED. All
+four quality gates pass:
+
+* **Gate 1 — Test Integrity.** 355 passing + 8 testcontainer-gated
+  skips against the full CI test-file list. `pdf_parser.py` at
+  **100% line coverage** (179 stmts; spec floor was ≥80%). Every
+  affected module at 100% (`pdf_parser.py`, `pdf_takeoff.py`,
+  `test_phase1_e2e.py`, all Sprint 4d/4e catalog modules). Zero
+  regression vs Sprint 5's 293-passing baseline (+62 new tests).
+  Pre-existing `kg/seed.py` at 41% is out of Sprint 4f scope and
+  was already there at Sprint 5 VERIFIED.
+
+* **Gate 2 — Health Check.** External inputs validated at every
+  boundary (`file_path` via load() try/except, `manual_scale` via
+  `ScaleParseError`, `_pt` handles Point/tuple, `("c", ...)`
+  guarded against empty tuples). All raise sites embed offending
+  values via `{s!r}`. `scale_warning` includes both reason and fix
+  ("Pass `manual_scale`…"). No bare excepts — the two
+  `except Exception as e:` blocks (load + `_extract_walls_from_page`)
+  both log with context. Two `except ScaleParseError` — one logs +
+  falls through, the other has a justified pragma (SCALE_PATTERN
+  matches iff `_parse_scale_string` can parse). Graceful
+  degradation cascade: bad manual → auto-detect; bad auto-detect →
+  1:1 + warning; corrupt PDF → load() returns False.
+
+* **Gate 3 — Deployment Readiness.** CI workflow includes
+  `tests/test_pdf_parser.py` (ci.yml:56) + `--cov=app.core.parsers.pdf_parser`
+  (ci.yml:73). Zero new dependencies (PyMuPDF unchanged at 1.23.8).
+  `MIN_WALL_LENGTH_IN` externalized as a module-level constant with
+  tuning comment. No hardcoded paths/secrets. Gate 1's green run
+  against the CI-shape command is the clean-install proxy.
+
+* **Gate 4 — Maintainability.** Sprint 4f files
+  (`pdf_parser.py`, `pdf_takeoff.py`, `test_pdf_parser.py`,
+  `test_phase1_e2e.py`) all ruff-clean. 56 pre-existing violations
+  live in files Sprint 4f didn't touch (`check_backend.py`,
+  `app/core/structural/*`, `app/core/cv/floor_plan_service.py`,
+  `app/api/*`) — same scoping pattern used in Sprint 4d/4e/5
+  verifies.
+
+Coverage pragmas verified (2, all in `pdf_parser.py`):
+1. `_extract_walls_from_page` `except Exception` — defensive
+   against PyMuPDF crashes on malformed docs; can't synthesize a
+   crash in tests without breaking PyMuPDF's API.
+2. `_detect_scale` inner `except ScaleParseError` (auto_text
+   branch) — `SCALE_PATTERN` matches iff `_parse_scale_string`
+   can parse the same shape, so the branch is unreachable.
+
+**AC coverage (all 16 mapped to tests):**
+| AC | Test class::method |
+|---|---|
+| AC-1 | `TestParseScaleString::test_standard_architectural_scales_produce_expected_in_per_pt` |
+| AC-2 | `TestScaleDetection::test_auto_detected_scale_populates_source_and_no_warning` |
+| AC-3 | `TestScaleDetection::test_unknown_scale_populates_warning_and_falls_back_to_1_to_1` |
+| AC-4 | `TestScaleDetection::test_manual_override_beats_auto_detect` |
+| AC-5 | `TestScaleDetection::test_malformed_manual_falls_through_to_auto` (+ double-fallback variant) |
+| AC-6 | `TestPathWalkingExplicitLine::test_produces_one_wall_per_explicit_line` |
+| AC-7 | `TestPathWalkingMoveThenLine::*` (2 tests) |
+| AC-8 | `TestPathWalkingRectangle::test_rectangle_produces_four_walls` |
+| AC-9 | `TestPathWalkingLonelyLine::*` (2 tests) |
+| AC-10 | `TestPathWalkingCubicBezier::*` (2 tests) |
+| AC-11 | `TestLengthFilter::test_filter_at_boundary` (parametrized) |
+| AC-12 | `TestPDFWallElementLengthInches::test_length_inches_uses_injected_scale` |
+| AC-13 | `TestRunPdfTakeoffWiring::test_manual_scale_reaches_pdf_parser` |
+| AC-14 | AC-6/7/8/9/10 tests + `TestPathWalkingQuad` (Vermont spike) + `TestPathWalkingUnknownCommand` |
+| AC-15 | `TestVermontActivation::*` (2 tests — 132 walls extracted) |
+| AC-16 | Gate 1 (100% cov + 355 passing) |
+
+No fixes required during verification. Sprint 4f is ready for
+integration.
+
+**Phase 1 sprint block (Sprints 0–5 + interstitial 4f) is now
+fully VERIFIED end-to-end.** Only Sprint 6 (KG-latency benchmark)
+remains before Phase 1 §8 closes.
+
+## 2026-07-04 (earlier — status snapshot)
+
+**Where we stand — end of Phase 1 sprint block.**
+
+Sprints 0–5 + 4f (interstitial bug-fix) are code-complete. Only Sprint
+4f still needs its verify pass. Sprint 6 (KG-latency benchmark) is
+queued as the last Phase 1 sprint; it needs Neo4j-in-CI infra that
+isn't in scope for the sprint block above.
+
+**Sprint status:**
+| Sprint | Scope | Status |
+|---|---|---|
+| 0 | Memory-bank refresh (both repos) | VERIFIED 2026-06-07 |
+| 1a | 14 structural-mechanics V&V citations | VERIFIED 2026-06-08 |
+| 1b | 4 VVUQ presentation slides | VERIFIED 2026-06-08 |
+| 1c | Paper final review + 5→6 agents fix | VERIFIED 2026-06-08 (VVUQ Phase 3 CLOSED) |
+| 2a | Neo4j KG foundation | VERIFIED 2026-06-09 |
+| 2b | CI/CD + Terraform GCP | VERIFIED 2026-06-10 |
+| 2c | Live deploy + smoke test | VERIFIED 2026-06-14 |
+| 3a | CV pipeline foundation | VERIFIED 2026-06-14 |
+| 3b | Raster wall extraction + parser + API routing | VERIFIED 2026-06-14 |
+| 4a | OCR dimension parser + extractor | VERIFIED 2026-06-14 |
+| 4b | Object catalog foundation | VERIFIED 2026-06-14 |
+| 4c | Catalog integration (EasyOcrReader + catalog API) | VERIFIED 2026-06-14 |
+| 4d | Takeoff wiring (raster + OCR + catalog e2e) | VERIFIED 2026-06-14 |
+| 4e | Scanned-PDF dispatch (multi-page, page-tagged) | VERIFIED 2026-06-20 |
+| 5  | Phase 1 e2e integration smoke test | VERIFIED 2026-06-25 |
+| 4f | PDF vector-parser unit + path-walking fix | VERIFIED 2026-07-08 |
+| 6  | KG-latency benchmark (<100 ms) | Not started — needs Neo4j-in-CI |
+
+**Backend live:** `https://construction-ai-backend-542888988741.us-east4.run.app`
+serving `kg_status=ready, lumber_specs_loaded=6` on Cloud Run
+(4 GiB / 2 CPU) with self-hosted Neo4j Community Edition on GCE.
+
+**Test suite:** 355 passing + 8 testcontainer-gated skips. Full 100%
+line coverage across every module Sprints 2/3/4/5 touched.
+
+**What's next (in priority order):**
+1. Sprint 6 spec — KG-latency benchmark. Needs a spike-of-a-spike:
+   decide whether Neo4j-in-CI is a testcontainers extension or a new
+   ephemeral GCE instance. This closes Phase 1 §8 criterion 3.
+2. User provides hand-counted plans → activate gated fixtures in
+   `references.json` → Sprint 5's ≤10% wall-LF gate lights up.
+3. Backlog item 3.2 (Header Sizing) — wire `beam_solver.py` into
+   `lumber_calculator.py` for opening-header assessment.
+
+**Phase 1 §8 criteria progress:**
+| Criterion | Status |
+|---|---|
+| (1) BOM accuracy >90% | Method proved on 4-wall DXF (100%); waits on hand-counted plans to gate |
+| (2) Provenance complete | DONE — Sprint 5 wires rule citations + source-wall IDs into every BOM line |
+| (3) KG query latency <100 ms | Deferred to Sprint 6 |
+
+## 2026-07-02 (earlier)
 
 Sprint 4f (PDF vector-parser unit + path-walking fix) IMPLEMENTED.
 Full rewrite of `backend/app/core/parsers/pdf_parser.py` closing two
